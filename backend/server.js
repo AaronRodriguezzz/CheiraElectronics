@@ -1,7 +1,8 @@
-require('dotenv').config();
-const mongoose = require('mongoose');
-const app = require('./index');  // Import the app from index.js
+import dotenv from 'dotenv';
+dotenv.config();
 
+import mongoose from 'mongoose';
+import app from './index.js';
 
 // MongoDB connection
 mongoose.connect(process.env.DB_URI)

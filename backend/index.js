@@ -1,8 +1,10 @@
-require('dotenv').config();
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const cors = require('cors');
-const path = require('path');
+import dotenv from 'dotenv';
+dotenv.config();
+
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import path from 'path';
 // Routes Import
 //Admin Routes
 // const AdminAuth = require('./routes/Admin/AdminAuthRoutes');
