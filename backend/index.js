@@ -61,4 +61,4 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // Export the app to use it in server.js
-module.exports = app;
+export default app
