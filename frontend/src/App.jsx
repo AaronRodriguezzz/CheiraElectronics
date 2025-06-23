@@ -9,6 +9,7 @@ import Feedback from "./pages/User/Feedback";
 import Login from "./pages/User/Login";
 import Register from "./pages/User/Register";
 import ServiceCatalog from "./pages/User/ServiceCatalog";
+import RequestForm from "./pages/User/RequestForm";
 
 export default function App() {
   return (
@@ -17,9 +18,9 @@ export default function App() {
         {/* Pages with layout */}
         <Route element={<UserLayout />}>
           <Route path="/" element={<HomePage />} />
-          <Route path="/contact" element={<ContactUs />} />
           <Route path="/feedback" element={<Feedback />} />
           <Route path="/service-catalog" element={<ServiceCatalog />} />
+          <Route path="/request-form" element={<RequestForm />} />
         </Route>
 
         {/* Pages without layout */}
