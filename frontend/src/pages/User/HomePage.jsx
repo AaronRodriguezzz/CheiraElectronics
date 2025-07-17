@@ -26,134 +26,143 @@ export default function Home() {
       feedback: "The barber was skilled and friendly. Loved the clean fade I got!",
       rating: 5,
     },
-    {
-      customerName: "Miguel Santos",
-      feedback: "Great service and chill atmosphere, but the wait time was a bit long.",
-      rating: 3,
-    },
-    {
-      customerName: "Elijah Reyes",
-      feedback: "Affordable and stylish cuts. Definitely coming back.",
-      rating: 4,
-    },
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen block bg-white">
       {/* Hero Section */}
-      <section className="h-screen bg-[url('/electronics_Bg.png')] bg-cover bg-center flex flex-col justify-center items-center bg-orange-500 text-white px-8 text-center" id="Home">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Cheira Electronics</h1>
-        <p className="text-lg mb-6">Your trusted home appliance repair center</p>
+      <section className="h-screen flex flex-col justify-center items-center text-white px-8 text-center" id="Home">
+        <div className="absolute top-0 h-full w-full bg-[url('/img/background-3.png')] bg-cover bg-center z-10" />
+        <div className="absolute top-0 h-full w-full bg-orange-400/60 bg-cover bg-center z-10" />
+
+        <h1 className="text-4xl font-bold mb-4 z-20 tracking-tight opacity-90">Welcome to Cheira Electronics</h1>
+        <p className="text-lg mb-6 w-[700px] opacity-70 z-20">
+          Your trusted partner in appliance and tech repairs. We fix computers, home gadgets, z
+          and everyday electronics with speed, skill, and care—making technology work for everyone.
+        </p>
         <Link
           to="/submit-request"
-          className="bg-white text-orange-500 px-6 py-2 rounded-full font-semibold hover:bg-orange-100"
+          className="bg-white text-orange-500 px-6 py-2 rounded-full font-semibold opacity-90 hover:bg-orange-100 z-20"
         >
           Request a Service
         </Link>
       </section>
 
       {/* About Us */}
-      <section className="py-12 px-8 bg-gray-50 text-center" id="About Us">
-        <h2 className="text-4xl font-semibold mb-6 text-orange-500 tracking-tighter">ABOUT US</h2>
-        <p className="max-w-2xl mx-auto">
-          Cheira Electronics is a local service company dedicated to helping families and businesses maintain the performance of their essential appliances. With years of industry experience and a team of highly-skilled technicians, our mission is to deliver quick, reliable, and honest service with a customer-first attitude.
-        </p>
+      <section className="my-35 flex justify-evenly items-center" id="About Us">
+        <div className="block">
+          <h2 className="text-4xl font-bold mb-6 text-gray-700 tracking-tighter">ABOUT US</h2>
+          <p className="text-lg text-left max-w-2xl">
+            At Cheira Electronics, we specialize in fast and reliable repairs 
+            for home appliances, computers, and everyday tech. Our skilled 
+            technicians are committed to quality service, honest pricing, and 
+            making sure your devices work when you need them most.
+            <br />
+            <br />
+            We’re not just fixing gadgets — we’re helping people stay connected.  
+          </p>
+        </div>
+        
+        <div className="h-[400px] w-lg bg-gray-200 rounded-xl bg-[url('/img/electronics_Bg.png')] bg-cover bg-center">
+          
+        </div>
       </section>
 
       {/* Services */}
-      <section className="py-12 px-8 text-center bg-gray-50">
-        <h2 className="text-4xl font-semibold mb-6 text-orange-500 tracking-tighter">WHAT WE REPAIR</h2>
+      <section className="flex flex-col items-center py-12 px-8 text-center mb-10">
+        <h2 className="text-4xl font-semibold mb-6 text-gray-700 tracking-tighter">WHAT WE REPAIR</h2>
+        <p className="w-xl text-lg tracking-tight text-center">
+          At Cheira Electronics, we offer expert repair services for computers, appliances, 
+          mobile devices, and other essential electronics. Whether it's a faulty motherboard, 
+          a broken screen, or a power issue, our team ensures fast and affordable solutions 
+          you can trust.
+        </p>
         <div className="grid md:grid-cols-3 gap-6 p-10">
 
-          <div className="bg-white p-6 rounded-lg shadow flex flex-col items-center">
-            <FaTshirt className="text-4xl text-orange-500 mb-4" />
-            <h3 className="font-bold text-xl mb-2">Washing Machines</h3>
-            <p>Efficient diagnosis and repair of washers and dryers.</p>
+          <div className="bg-white shadow flex flex-col items-center rounded-b-lg">
+            <img src="/img/background-3.png" alt="service" />
+            <div className="p-6">
+              <h3 className="font-bold text-2xl text-gray-700 tracking-tighter">Air Conditioners</h3>
+              <p className="tracking-tight">Expert maintenance and part replacement for A/C units.</p> 
+            </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow flex flex-col items-center">
-            <FaSnowflake className="text-4xl text-orange-500 mb-4" />
-            <h3 className="font-bold text-xl mb-2">Refrigerators</h3>
-            <p>Quick solutions for common and advanced cooling issues.</p>
+          <div className="bg-white shadow flex flex-col items-center rounded-b-lg">
+            <img src="/img/background-3.png" alt="service" />
+            <div className="p-6">
+              <h3 className="font-bold text-2xl text-gray-700 tracking-tighter">Air Conditioners</h3>
+              <p className="tracking-tight">Expert maintenance and part replacement for A/C units.</p> 
+            </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow flex flex-col items-center">
-            <FaTools className="text-4xl text-orange-500 mb-4" />
-            <h3 className="font-bold text-xl mb-2">Air Conditioners</h3>
-            <p>Expert maintenance and part replacement for A/C units.</p>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow flex flex-col items-center">
-            <FaTshirt className="text-4xl text-orange-500 mb-4" />
-            <h3 className="font-bold text-xl mb-2">Washing Machines</h3>
-            <p>Efficient diagnosis and repair of washers and dryers.</p>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow flex flex-col items-center">
-            <FaSnowflake className="text-4xl text-orange-500 mb-4" />
-            <h3 className="font-bold text-xl mb-2">Refrigerators</h3>
-            <p>Quick solutions for common and advanced cooling issues.</p>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow flex flex-col items-center">
-            <FaTools className="text-4xl text-orange-500 mb-4" />
-            <h3 className="font-bold text-xl mb-2">Air Conditioners</h3>
-            <p>Expert maintenance and part replacement for A/C units.</p>
-          </div>
+          <div className="bg-white shadow flex flex-col items-center rounded-b-lg">
+            <img src="/img/background-3.png" alt="service" />
+            <div className="p-6">
+              <h3 className="font-bold text-2xl text-gray-700 tracking-tighter">Air Conditioners</h3>
+              <p className="tracking-tight">Expert maintenance and part replacement for A/C units.</p> 
+            </div>
+          </div>  
 
         </div>
       </section>
 
       {/* Contact Section */}
-      <section className="bg-gray-100 py-12 px-6" id="Contacts">
-        <h2 className="text-4xl font-semibold mb-6 text-orange-500 tracking-tighter text-center">CONTACT US</h2>
-        <div className="flex flex-row md:flex-row items-center justify-center gap-10 ">
+      <section className="mb-10 py-12 px-6" id="Contacts">
+        <h2 className="text-4xl font-semibold mb-10 text-gray-700 tracking-tighter text-center ">CONTACT US</h2>
+        <div className="flex flex-row md:flex-row items-center justify-center gap-15">
           <div className="space-y-6">
             <div className="flex items-start gap-4">
-              <FaPhone className="text-2xl text-orange-500 mt-1" />
+              <FaPhone className="text-2xl text-gray-500 mt-1" />
               <div>
                 <h4 className="font-bold">Phone</h4>
                 <p>+63 912 345 6789</p>
               </div>
             </div>
             <div className="flex items-start gap-4">
-              <FaEnvelope className="text-2xl text-orange-500 mt-1" />
+              <FaEnvelope className="text-2xl text-gray-500 mt-1" />
               <div>
                 <h4 className="font-bold">Email</h4>
                 <p>cheiraelectronics@yahoo.com</p>
               </div>
             </div>
             <div className="flex items-start gap-4">
-              <FaMapMarkerAlt className="text-2xl text-orange-500 mt-1" />
+              <FaMapMarkerAlt className="text-2xl text-gray-500 mt-1" />
               <div>
                 <h4 className="font-bold">Address</h4>
                 <p className="max-w-[350px]">216 M. L. Quezon Avenue, New Lower Bicutan, Taguig City, Metro Manila, Philippines</p>
               </div>
             </div>
           </div>
-          <div>
+
+          <div className="p-4 bg-gray-100 rounded-lg">
             {/* Embedded Google Map */}
             <iframe 
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1  d4752.997943391294!2d121.0605179758732!3d14.49881317955907!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397cf43c3838829%3A0xab5b6b5483be0fc5!2s216%20M.%20L.%20Quezon%20Ave%2C%20Taguig%20City%2C%201632%20Metro%20Manila!5e1!3m2!1sen!2sph!4v1750651511992!5m2!1sen!2sph" 
-              width="450"
-              height="300" 
+              width="500"
+              height="350" 
               style={{ border: 0 }}
               allowfullscreen="" 
               loading="lazy" 
-              referrerpolicy="no-referrer-when-downgrade">
+              referrerpolicy="no-referrer-when-downgrade"
+            >
             </iframe>
           </div>
         </div>
       </section>
 
       {/* Reviews */}
-      <section className="flex flex-col justify-center items-center px-4 py-10 md:px-10">
-        <h2 className="text-4xl font-semibold mb-6 text-orange-500 tracking-tighter">REVIEWS</h2>
+      <section className="flex flex-col justify-center items-center px-4 py-10 my-10 md:px-10">
+        <h2 className="text-4xl font-semibold mb-6 text-gray-700 tracking-tighter">REVIEWS</h2>
+         <p className="text-gray-700 max-w-xl mx-auto mb-6 text-center text-lg tracking-tight">
+          Hear from our satisfied clients! We value your feedback and use it to 
+          improve our services every day. Whether we fixed your appliance, computer, 
+          or mobile device — your opinion matters.
+        </p>
         <div className="flex flex-wrap gap-4 justify-center">
           {feedbacks.map((feeds, index) => (
             <div
               key={index}
-              className="w-full md:w-[200px] h-[300px] flex flex-col gap-y-4 justify-center items-center shadow p-4"
+              className="w-full md:w-[350px] h-[300px] flex flex-col gap-y-4 justify-center items-center shadow p-4"
             >
               <Rating name="read-only" value={feeds.rating} readOnly />
               <p className="tracking-tighter text-center">"{feeds.feedback}"</p>
@@ -163,12 +172,11 @@ export default function Home() {
         </div>
         <Link
           to="/your-target-page"
-          className="mt-10 px-6 py-2 rounded-full text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white transition-colors duration-300"
+          className="mt-10 px-6 py-2 rounded-full bg-gray-700 text-white hover:bg-green-500 hover:text-white transition-colors duration-300"
         >
           VIEW ALL
         </Link>
       </section>
-
     </div>
   );
 }

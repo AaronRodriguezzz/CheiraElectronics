@@ -11,6 +11,18 @@ import Register from "./pages/User/Register";
 import ServiceCatalog from "./pages/User/ServiceCatalog";
 import RequestForm from "./pages/User/RequestForm";
 
+//Pages under /Admin
+import AdminLayout from "./layouts/AdminLayout";
+import Dashboard from "./pages/Admin/Dashboard";
+import AdminLogin from "./pages/Admin/Login";
+import ServiceRequests from "./pages/Admin/ServiceRequests";
+import TechnicianAssign from "./pages/Admin/Assignments";
+import AdminServices from "./pages/Admin/Services";
+import Technicians from "./pages/Admin/Technicians";
+import AdminFeedback from "./pages/Admin/Feedback";
+import History from "./pages/Admin/History";
+import Accounts from "./pages/Admin/Accounts";
+
 export default function App() {
   return (
     <Router>
@@ -23,9 +35,27 @@ export default function App() {
           <Route path="/request-form" element={<RequestForm />} />
         </Route>
 
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="requests" element={<ServiceRequests />} />
+          <Route path="assign" element={<TechnicianAssign />} />
+          <Route path="catalog" element={<AdminServices />} />
+          <Route path="technicians" element={<Technicians />} />
+          <Route path="feedback" element={<AdminFeedback />} />
+          <Route path="history" element={<History />} />\
+          <Route path="accounts" element={<Accounts />} />
+        </Route>
+        
+        <Route path="/admin/login" element={<AdminLogin />} />
+
+
+
         {/* Pages without layout */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+
+
       </Routes>
     </Router>
   );

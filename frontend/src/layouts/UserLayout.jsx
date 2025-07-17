@@ -6,7 +6,7 @@ import Navbar from "../components/user/NavigationBar"
 
 export default function UserLayout() {
   return (
-    <div className="min-h-screen flex flex-col bg-orange-50">
+    <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
       <main className="flex-grow">
         <Outlet />

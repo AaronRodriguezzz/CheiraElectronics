@@ -15,7 +15,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 left-0 bg-gray-50 shadow-md p-4 flex justify-between items-center">
+    <nav className="sticky top-0 left-0 bg-gray-50 shadow-md p-4 flex justify-between items-center z-20">
       <h1 className="text-2xl font-bold text-orange-500 tracking-tighter">Cheira Electronics</h1>
       <div className="space-x-4 flex flex-row items-center">
         {["Home", "About Us", "Contacts"].map((text) => (

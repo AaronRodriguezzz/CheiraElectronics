@@ -1,1 +1,7 @@
 @import "tailwindcss";
+
+.custom-datagrid .MuiDataGrid-columnHeaders {
+  background-color: #fb923c;
+  color: white;
+  font-weight: bold;
+}
