@@ -13,15 +13,16 @@ const CustomerSchema = new mongoose.Schema({
     },
     password: { 
         type: String, 
-        required: true 
-    }, // Optional if not using auth
+        required: true, 
+        select: false,
+    },
     contact_number: { 
         type: String, 
         required: true 
     },
     address: { 
         type: String 
-    },
+    },  
     createdAt: { 
         type: Date, 
         default: Date.now 

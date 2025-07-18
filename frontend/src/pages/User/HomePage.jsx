@@ -33,7 +33,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="h-screen flex flex-col justify-center items-center text-white px-8 text-center" id="Home">
         <div className="absolute top-0 h-full w-full bg-[url('/img/background-3.png')] bg-cover bg-center z-10" />
-        <div className="absolute top-0 h-full w-full bg-orange-400/60 bg-cover bg-center z-10" />
+        <div className="absolute top-0 h-full w-full bg-orange-500/80 bg-cover bg-center z-10" />
 
         <h1 className="text-4xl font-bold mb-4 z-20 tracking-tight opacity-90">Welcome to Cheira Electronics</h1>
         <p className="text-lg mb-6 w-[700px] opacity-70 z-20">
@@ -41,7 +41,7 @@ export default function Home() {
           and everyday electronics with speed, skill, and care—making technology work for everyone.
         </p>
         <Link
-          to="/submit-request"
+          to="/request-form"
           className="bg-white text-orange-500 px-6 py-2 rounded-full font-semibold opacity-90 hover:bg-orange-100 z-20"
         >
           Request a Service
@@ -69,7 +69,7 @@ export default function Home() {
       </section>
 
       {/* Services */}
-      <section className="flex flex-col items-center py-12 px-8 text-center mb-10">
+      <section className="flex flex-col items-center py-12 px-8 text-center mb-10" id="Services">
         <h2 className="text-4xl font-semibold mb-6 text-gray-700 tracking-tighter">WHAT WE REPAIR</h2>
         <p className="w-xl text-lg tracking-tight text-center">
           At Cheira Electronics, we offer expert repair services for computers, appliances, 

@@ -14,7 +14,7 @@ export default function Login() {
     e.preventDefault();
     
     try{
-      const response = await post_data('/admin-login', form);
+      const response = await post_data('/login/admin', form);
 
       if(response){
         localStorage.setItem('admin', JSON.stringify(response?.admin));
@@ -25,7 +25,7 @@ export default function Login() {
       console.log(err);
     }
   };
-
+  
   return (
     <div className="min-h-screen flex">
       {/* Left Orange Side */}

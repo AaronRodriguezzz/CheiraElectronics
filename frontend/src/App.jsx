@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import UserLayout from "./layouts/UserLayout";
 
 // Pages under /User
 import HomePage from "./pages/User/HomePage";
@@ -12,7 +11,6 @@ import ServiceCatalog from "./pages/User/ServiceCatalog";
 import RequestForm from "./pages/User/RequestForm";
 
 //Pages under /Admin
-import AdminLayout from "./layouts/AdminLayout";
 import Dashboard from "./pages/Admin/Dashboard";
 import AdminLogin from "./pages/Admin/Login";
 import ServiceRequests from "./pages/Admin/ServiceRequests";
@@ -23,11 +21,15 @@ import AdminFeedback from "./pages/Admin/Feedback";
 import History from "./pages/Admin/History";
 import Accounts from "./pages/Admin/Accounts";
 
+import AdminLayout from "./layouts/AdminLayout";
+import UserLayout from "./layouts/UserLayout";
+import ProtectedRoute from "./components/routes/protectedRoutes";
+
 export default function App() {
   return (
     <Router>
       <Routes>
-        {/* Pages with layout */}
+        {/* Pages with layout */} 
         <Route element={<UserLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/feedback" element={<Feedback />} />
@@ -36,15 +38,20 @@ export default function App() {
         </Route>
 
         <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="requests" element={<ServiceRequests />} />
-          <Route path="assign" element={<TechnicianAssign />} />
-          <Route path="catalog" element={<AdminServices />} />
-          <Route path="technicians" element={<Technicians />} />
-          <Route path="feedback" element={<AdminFeedback />} />
-          <Route path="history" element={<History />} />\
-          <Route path="accounts" element={<Accounts />} />
+          <Route
+            element={<ProtectedRoute role="admin" />}
+          >
+            <Route index element={<Dashboard />} />
+            <Route path="requests" element={<ServiceRequests />} />
+            <Route path="assign" element={<TechnicianAssign />} />
+            <Route path="catalog" element={<AdminServices />} />
+            <Route path="technicians" element={<Technicians />} />
+            <Route path="feedback" element={<AdminFeedback />} />
+            <Route path="history" element={<History />} />
+            <Route path="accounts" element={<Accounts />} />
+          </Route>
         </Route>
+
         
         <Route path="/admin/login" element={<AdminLogin />} />
 

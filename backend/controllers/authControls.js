@@ -1,10 +1,18 @@
 import Admin from "../models/AdminAccount.js";
+import User from "../models/Customer.js";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-export const admin_login = async (req, res) => {
+export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
+        const accountType = req.params.type;
+
+        const Account =  {
+            admin: Admin,
+            user: User
+        }
+
         console.log(req.body);
 
         // Validate input
@@ -12,8 +20,14 @@ export const admin_login = async (req, res) => {
             return res.status(400).json({ message: 'Email and password are required' });
         }
 
+        if(!Account[accountType]){
+              return res.status(400).json({ error: "Invalid account type" });
+        }
+
+        const Model = Account[accountType];
+
         // Check if account exists
-        const user = await Admin.findOne({ email }).select("+password");
+        const user = await Model.findOne({ email }).select("+password");
 
         if (!user) {
             return res.status(404).json({ message: 'Sorry, account does not exist' });
@@ -21,20 +35,17 @@ export const admin_login = async (req, res) => {
 
         // Compare passwords using bcrypt
         const password_compare = await bcrypt.compare(password, user.password);
+
         if (!password_compare) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
-        // Convert Mongoose document to plain object and remove password
-        const adminObj = user.toObject();
-        const { password: _, ...admin } = adminObj;
-
         // Generate JWT
         const token = jwt.sign(
-            { admin },
+            { user },
             process.env.JWT_SECRET,
             { expiresIn: '1d' }
-        );
+        );  
 
         res.cookie('jwt', token, {
             httpOnly: true,
@@ -46,7 +57,7 @@ export const admin_login = async (req, res) => {
         // Send success response
         return res.status(200).json({
             message: 'Login successful',
-            admin
+            account: user
         });
 
     } catch (err) {
@@ -84,7 +95,7 @@ export const checkAuth = (req, res) => {
 };
 
 export default {
-    admin_login,
+    login,
     admin_logout,
     checkAuth,
 };

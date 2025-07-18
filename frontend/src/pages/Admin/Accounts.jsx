@@ -9,6 +9,7 @@ export default function ServiceCatalog() {
   const [isAdding, setIsAdding] = useState(false);
   const [loading, setLoading] = useState(true);
   const [accounts, setAccounts] = useState(null);
+  const [searchTxt, setSearchTxt] = useState('');
 
   const columns = [
     { field: "_id", headerName: "Admin Id", flex: 1 },
@@ -19,7 +20,13 @@ export default function ServiceCatalog() {
     { field: "createdAt", headerName: "Date Added", flex: 1 },
   ];  
 
-  useEffect(() => {
+  const filteredRows = accounts && accounts.filter((account) =>
+    Object.values(account).some((value) =>
+      String(value).toLowerCase().includes(searchTxt.toLowerCase())
+    )
+  );
+
+  useEffect(() => { 
     const getServices = async () => {
       const accounts = await get_data('/accounts');
 
@@ -48,12 +55,14 @@ export default function ServiceCatalog() {
           type="text" 
           placeholder="Search name,service type, date, etc."
           className="w-[90%] bg-gray-100 px-4 py-2 rounded-lg outline-gray-300"
+          value={searchTxt}
+          onChange={(e) => setSearchTxt(e.target.value)}
         />
 
         <Button variant="contained" className="mb-4" onClick={() => setIsAdding(true)}>New Admin</Button>
       </div>
 
-      <DataGrid rows={accounts} columns={columns} getRowId={(row) => row._id} pagination />
+      <DataGrid rows={filteredRows} columns={columns} getRowId={(row) => row._id} pagination />
 
       {isAdding && <AccountForm 
         onCancel={setIsAdding}
@@ -62,4 +71,4 @@ export default function ServiceCatalog() {
       />}
     </div>
   );
-}
+} 

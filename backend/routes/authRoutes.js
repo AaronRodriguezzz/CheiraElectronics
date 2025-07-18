@@ -1,11 +1,11 @@
 import express from "express";
 const router = express.Router();
 import {
-    admin_login,
+    login,
     admin_logout,
     checkAuth,
 } from "../controllers/authControls.js"; // ✅ Correct
 
-router.post("/api/admin-login", admin_login);
+router.post("/api/login/:type", login);
 
 export default router;

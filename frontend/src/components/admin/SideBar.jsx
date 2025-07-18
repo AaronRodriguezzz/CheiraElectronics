@@ -1,5 +1,5 @@
 import { Home, List, Users, ClipboardList, FileText, Star, Settings, LogOut } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate} from "react-router-dom";
 
 const navItems = [
     { name: "Dashboard", path: "/admin", icon: <Home size={20} /> },
@@ -10,12 +10,13 @@ const navItems = [
     { name: "Customer Feedback", path: "/admin/feedback", icon: <Star size={20} /> },
     { name: "History", path: "/admin/history", icon: <FileText size={20} /> },
     { name: "Accounts", path: "/admin/accounts", icon: <Users size={20} /> },
-    { name: "Logout", path: "/admin/login", icon: <LogOut size={20} /> },
 ];
 
 export default function AdminSidebar(){
+    const navigate = useNavigate();
+
     return(
-        <aside className="w-64 bg-orange-500 text-white shadow-lg">
+        <aside className="relative w-64 bg-orange-500 text-white shadow-lg">
             <img 
                 src="/img/cheiralogo.png" 
                 className="w-40 h-40 m-auto"
@@ -34,11 +35,22 @@ export default function AdminSidebar(){
                             }`
                         }
                     >
-                        {icon}
+                        {icon}  
                         <span>{name}</span>
                     </NavLink>
                 ))}
             </nav>
+            
+            <button 
+                className="absolute bottom-0 left-0 w-full flex items-center gap-3 p-3 rounded-lg hover:bg-red-600 transition"
+                onClick={() => {
+                    localStorage.removeItem('admin')
+                    navigate('/admin/login')
+                }} 
+            >   
+                <LogOut size={20} />
+                Logout
+            </button>
         </aside>
     )
 }

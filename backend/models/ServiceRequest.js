@@ -1,15 +1,20 @@
+import mongoose from "mongoose";
+
 const ServiceRequestSchema = new mongoose.Schema({
-    customerName: String,
-    customerEmail: String,
+    customer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Customer",    
+        required: true
+    },
     serviceType: { 
         type: String, 
         required: true 
     },
     description: String,
     status: {
-        type: String,
+        type: String,       
         enum: ["Pending", "In Progress", "Completed", "Reopened", "Rejected"],
-        default: "Pending",
+        default: "Pending", 
     },
     submittedAt: { 
         type: Date, 
@@ -19,7 +24,7 @@ const ServiceRequestSchema = new mongoose.Schema({
     feedbackRating: { 
         type: Number, 
         min: 1, 
-        max: 5 
+        max: 5,
     },
 }, { timestamps: true });
 
