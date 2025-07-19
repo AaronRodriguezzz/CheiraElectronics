@@ -14,7 +14,7 @@ export default function SubmitRequest() {
   const [services, setServices] = useState(null);
   const [formData, setFormData] = useState({
     serviceType: "",
-    message: "",
+    description: "",
   });
 
   const handleChange = (e) => {
@@ -32,9 +32,10 @@ export default function SubmitRequest() {
       const response = await post_data('/new-request', finalForm);
 
       if(response) {
+        console.log('hello')
         setFormData({ 
           serviceType: "",
-          message: ""
+          description: ""
         })
       }
     }catch(err){
@@ -71,10 +72,11 @@ export default function SubmitRequest() {
           <select
             name="serviceType"
             onChange={handleChange}
+            value={formData.serviceType}
             required
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
           >
-            <option value="" disabled>Select a Service</option>
+            <option value="" disabled selected>Select a Service</option>
             {services && services.map((service) => (
               <option value={service?.name}>{service?.name}</option>
             ))}
@@ -86,11 +88,12 @@ export default function SubmitRequest() {
         <div className="relative">
           <MessageSquareText className="absolute top-3 left-3 text-gray-500 w-5 h-5" />
           <textarea
-            name="message"
+            name="description"
+            value={formData.description}
             placeholder="Describe the issue..."
             onChange={handleChange}
-            required={formData.service === 'N/A'}
-            rows="8"
+            required={formData.serviceType === 'N/A'}
+            rows="8"  
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
           ></textarea>
         </div>

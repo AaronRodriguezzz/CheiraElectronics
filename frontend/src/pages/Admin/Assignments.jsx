@@ -1,15 +1,21 @@
 // src/pages/admin/TechnicianAssign.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
 import { update_data } from "../../services/putMethod";
-
-const rows = [
-  { id: 1, requestId: "REQ123", technician: "Alex Cruz", assignedAt: "2025-07-15" },
-];
+import { get_data } from "../../services/getMethod";
+import statusColorMap from "../../data/StatusColor";
+import UpdateRequestModal from "../../components/modals/statusUpdateModal";
+import AssignTechnicianForm from "../../components/modals/requestAcceptanceModal";
+import FinishRequestModal from "../../components/modals/finishRequests";
 
 export default function TechnicianAssign() {
   const [isReassigning, setIsReassigning] = useState(false);
+  const [isFailing, setIsFailing] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
+  const [requests, setRequests] = useState(null);
+  const [requestToUpdate, setRequestToUpdate] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const updateStatus = async (newStatus) => {
     try {
@@ -23,20 +29,41 @@ export default function TechnicianAssign() {
   };
 
   const columns = [
-    { field: "requestId", headerName: "Request ID", flex: 1 },
+    { field: "customer", headerName: "Customer Name", flex: 1 },
+    { field: "contactNumber", headerName: "Contact Number", flex: 1 },
+    { field: "serviceType", headerName: "Service", flex: 1 },
     { field: "technician", headerName: "Technician", flex: 1 },
-    { field: "assignedAt", headerName: "Assigned At", flex: 1 },
+    { field: "technicianId", headerName: "Technician", hide: true},
+    { 
+      field: "submittedAt", 
+      headerName: "Date Requested", 
+      width: 150,
+      renderCell: (params) => {
+        return <span>{params.value.split('T')[0]}</span>
+      }
+    },
+    { 
+      field: "status", 
+      headerName: "Status", 
+      width: 120,
+      renderCell: (params) => {
+        return <span className={`p-2 rounded-full text-white bg-${statusColorMap[params.value]}`}>{params.value}</span>
+      } 
+    },
     {
       field: "actions",
       headerName: "Actions",
       flex: 1,
       renderCell: (params) => (
-        <div className="h-full flex items-center gap-2">
+        <div className="h-full flex items-center gap-1">
           <Button 
             variant="contained" 
             size="small" 
-            sx={{bgcolor: 'green'}}
-            onClick={() => updateStatus('Finished', params.row._id)}
+            sx={{bgcolor: 'green', fontSize: 12 }}
+            onClick={() => {
+              setRequestToUpdate(params.row)
+              setIsFinished(true)
+            }}          
           >
             Finish
           </Button>
@@ -44,14 +71,22 @@ export default function TechnicianAssign() {
             variant="outlined" 
             size="small" 
             color="error"
-            onClick={() => updateStatus('Failed', params.row._id)}
+            onClick={() => {
+              setRequestToUpdate(params.row)
+              setIsFailing(true)
+            }}
+            sx={{fontSize: 12}}
           >
             Failed
           </Button>
           <Button 
             variant="contained" 
             size="small"
-            onClick={() => setIsReassigning(true)}
+            onClick={() => {
+              setRequestToUpdate(params.row)
+              setIsReassigning(true)
+            }}
+            sx={{fontSize: 12}}
           >
             Reassigned
           </Button>
@@ -59,6 +94,41 @@ export default function TechnicianAssign() {
       ),
     },
   ];
+
+  useEffect(() => {
+      const getAllRequests = async () => {
+        setLoading(true);
+        try{
+          const requests = await get_data('/progress-requests');
+
+          if(requests){
+            const formatted = requests.map((req) => ({
+              ...req, 
+              customer: req.customer?.full_name,
+              contactNumber: req.customer?.contact_number,
+              technician: req.technician?.full_name,
+              technicianId: req.technician?._id
+            }));
+            setRequests(formatted);
+          }
+  
+        setLoading(false);
+  
+      }catch(err){
+        console.log(err);
+      }
+    }
+  
+    getAllRequests();
+  },[])
+
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <p className="text-lg font-semibold">Loading services...</p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -70,7 +140,35 @@ export default function TechnicianAssign() {
           className="w-full bg-gray-100 px-4 py-2 rounded-lg outline-gray-300"/>
       </div>
 
-      <DataGrid rows={rows} columns={columns} pagination />
+      <DataGrid 
+        rows={requests} 
+        columns={columns}
+        getRowId={(row) => row._id} 
+        pagination 
+      />
+
+      {isFailing && <UpdateRequestModal 
+        onCancel={setIsFailing}
+        requestData={requestToUpdate}
+        updatedData={setRequests}
+        newStatus={'Failed'}
+      />}
+
+      {isReassigning && <AssignTechnicianForm 
+        onCancel={setIsReassigning}
+        requestData={requestToUpdate}
+        updatedData={setRequests}
+        
+      />}
+      
+
+      {isFinished && <FinishRequestModal 
+        onCancel={setIsFinished}
+        requestData={requestToUpdate}
+        updatedData={setRequests}
+      />}
+
+      
     </div>
   );
 }

@@ -1,21 +1,41 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { update_data } from '../../services/putMethod';
 import { get_data } from "../../services/getMethod";
+import statusColorMap from "../../data/StatusColor";
+import Button from "@mui/material/Button";
+import AssignTechnicianForm from "../../components/modals/requestAcceptanceModal";
+import UpdateRequestModal from "../../components/modals/statusUpdateModal";
 
 export default function ServiceRequests() {
   const [requests, setRequests] = useState(null);
+  const [isAccepting, setIsAccepting] = useState(false);
+  const [isRejecting, setIsRejecting] = useState(false);
+  const [requestToUpdate, setRequestToUpdate] = useState(null);
   const [loading, setLoading] = useState(null);
 
-  const columns = [
+  const serviceRequestsCols = [
     { field: "customer", headerName: "Customer Name", flex: 1 },
     { field: "contactNumber", headerName: "Contact Number", flex: 1 },
     { field: "email", headerName: "Email", flex: 1 },
     { field: "serviceType", headerName: "Service", flex: 1 },
     { field: "description", headerName: "Description", flex: 1 },
-    { field: "submittedAt", headerName: "Date Requested", flex: 1 },
-    { field: "status", headerName: "Status", flex: 1 },
+    { 
+      field: "submittedAt", 
+      headerName: "Date Requested", 
+      width: 150,
+      renderCell: (params) => {
+        return <span>{params.value.split('T')[0]}</span>
+      }
+    },
+    { 
+      field: "status", 
+      headerName: "Status", 
+      width: 100,
+      renderCell: (params) => {
+        return <span className={`p-2 rounded-full text-white bg-${statusColorMap[params.value]}`}>{params.value}</span>
+      } 
+    },
     {
       field: "actions",
       headerName: "Actions",
@@ -25,7 +45,12 @@ export default function ServiceRequests() {
           <Button
             variant="contained"
             size="small"
-            onClick={() => updateStatus("In Progress", params.row._id)}
+            color="success"
+            onClick={() => {
+              setRequestToUpdate(params.row)
+              setIsAccepting(true)
+            }}
+            sx={{fontSize: 12}}
           >
             Accept
           </Button>
@@ -33,9 +58,21 @@ export default function ServiceRequests() {
             variant="outlined"
             size="small"
             color="error"
-            onClick={() => updateStatus("Rejected", params.row._id)}
+            onClick={() => {
+              setRequestToUpdate(params.row)
+              setIsRejecting(true)
+            }}            
+            sx={{fontSize: 12}}
           >
             Reject
+          </Button>
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => updateStatus("Rejected", params.row._id)}
+            sx={{fontSize: 12}}
+          >
+            View
           </Button>
         </div>
       ),
@@ -44,10 +81,12 @@ export default function ServiceRequests() {
 
   const updateStatus = async (newStatus, id) => {
     try {
-      const updateResponse = await update_data('/update_request_status', { status: newStatus });
+      const updateResponse = await update_data(`/update-status/${id}`, { status: newStatus });
+
       if (updateResponse) {
-        console.log("Status updated successfully!");
+        setRequests(prev => prev.filter(req => req._id !== updateResponse._id ))
       }
+
     } catch (err) {
       console.log(err);
     }
@@ -81,10 +120,6 @@ export default function ServiceRequests() {
     getAllRequests();
   },[])
 
-  useEffect(() => {
-    console.log(requests);
-  },[requests])
-
   if (loading) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
@@ -105,10 +140,24 @@ export default function ServiceRequests() {
 
       <DataGrid
         rows={requests}
-        columns={columns}
-        getRowId={(row) => row._id} // 👈 This tells MUI to use _id as the unique identifier
+        columns={serviceRequestsCols}
+        getRowId={(row) => row._id}
         pagination
       />
+
+      {isAccepting && <AssignTechnicianForm 
+        onCancel={setIsAccepting}
+        requestData={requestToUpdate}
+        updatedData={setRequests}
+      />}
+
+      {isRejecting && <UpdateRequestModal 
+        onCancel={setIsRejecting}
+        requestData={requestToUpdate}
+        updatedData={setRequests}
+        newStatus={'Rejected'}
+      />}
+
     </div>
   );
 }

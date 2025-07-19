@@ -1,12 +1,38 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect} from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, PencilLine, Lock, Wrench, Power, ChevronRight, ChevronDown } from "lucide-react"
+import statusColorMap from '../../data/StatusColor';
+import { get_data } from '../../services/getMethod';
 
 const ProfileSidebar = ({ open }) => {
     const user =  JSON.parse(localStorage.getItem('user'));
     const navigate = useNavigate();
     const [requestHistoryOpen, setRequestHistoryOpen] = useState(false);
+    const [requests, setRequests] = useState(null);
+    const [loading, setLoading] = useState(false);
     
+
+    useEffect(() => {
+        const getUserRequests = async () => {
+            setLoading(true);
+            try{
+                const requests = await get_data(`/requests/${user?._id}`);
+
+                if(requests){
+                    console.log(requests);
+                    setRequests(requests);
+                }
+
+                setLoading(false);
+            }catch(err){
+                console.log(err);
+            }
+        }
+
+        requestHistoryOpen && getUserRequests();
+
+    },[requestHistoryOpen])
+
     return (
         <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex justify-end">
             <div className="relative h-full w-[20rem] bg-white p-6 shadow-2xl flex flex-col">
@@ -74,49 +100,36 @@ const ProfileSidebar = ({ open }) => {
                     </button>
                 </div>  
 
-                {requestHistoryOpen && 
-                <div className='max-h-[600px] overflow-y-auto mt-4 space-y-2'>
-                    <div className='relative pl-6 p-2 text-sm'>
-                        <div className='absolute h-full left-0 top-0 w-[10px] bg-yellow-500 rounded-l-lg'/>
-
-                        <h1 className='max-w-[250px] text-lg  tracking-tighter font-semibold truncate overflow-hidden'>Cellphone Battery Replacement</h1>
-                        <p>01/20/2025</p>
-                        <p className='text-yellow-500'>Pending</p>
+                {!requests && requestHistoryOpen ? (
+                    <div> 
+                        <h1>No Request yet</h1>
                     </div>
+                ) : (
+                    <>
+                        {requestHistoryOpen && <div className='max-h-[600px] overflow-y-auto mt-4 space-y-2'>
+                            {requests && requests.map((req) => (
+                                <div
+                                    key={req._id}
+                                    className='relative pl-6 p-2 text-sm bg-white rounded shadow'
+                                >
+                                    <div
+                                        className={`absolute h-full left-0 top-0 w-[10px] bg-${statusColorMap[req?.status]} rounded-l-lg`}
+                                    />
 
-                    <div className='relative pl-6 p-2 text-sm'>
-                        <div className='absolute h-full left-0 top-0 w-[10px] bg-orange-500 rounded-l-lg'/>
+                                    <h1 className='max-w-[250px] text-lg tracking-tighter font-semibold truncate'>
+                                        {req?.serviceType}
+                                    </h1>
+                                    <p>{req?.submittedAt.split('T')[0]}</p>
+                                    <p className={`text-${statusColorMap[req?.status]}`}>{req.status}</p>
+                                </div>
+                            ))}
+                        </div>}
+                    </>
+                )}
 
-                        <h1 className='max-w-[250px] text-lg  tracking-tighter font-semibold truncate overflow-hidden'>Cellphone Battery Replacement</h1>
-                        <p>01/20/2025</p>
-                        <p className='text-orange-500'>In Progress</p>
-                    </div>
 
-                    <div className='relative pl-6 p-2 text-sm'>
-                        <div className='absolute h-full left-0 top-0 w-[10px] bg-green-500 rounded-l-lg'/>
+                {}
 
-                        <h1 className='max-w-[250px] text-lg  tracking-tighter font-semibold truncate overflow-hidden'>Cellphone Battery Replacement</h1>
-                        <p>01/20/2025</p>
-                        <p className='text-green-500'>Completed</p>
-                    </div>
-
-                    <div className='relative pl-6 p-2 text-sm'>
-                        <div className='absolute h-full left-0 top-0 w-[10px] bg-gray-500 rounded-l-lg'/>
-
-                        <h1 className='max-w-[250px] text-lg  tracking-tighter font-semibold truncate overflow-hidden'>Cellphone Battery Replacement</h1>
-                        <p>01/20/2025</p>
-                        <p className='text-gray-500'>Reopened</p>
-                    </div>
-
-                    <div className='relative pl-6 p-2 text-sm'>
-                        <div className='absolute h-full left-0 top-0 w-[10px] bg-red-500 rounded-l-lg'/>
-
-                        <h1 className='max-w-[250px] text-lg  tracking-tighter font-semibold truncate overflow-hidden'>Cellphone Battery Replacement</h1>
-                        <p>01/20/2025</p>
-                        <p className='text-red-500'>Failed</p>
-                    </div>
-                    
-                </div>}
             </div>
         </div>
     )

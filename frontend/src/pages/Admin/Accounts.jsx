@@ -15,7 +15,6 @@ export default function ServiceCatalog() {
     { field: "_id", headerName: "Admin Id", flex: 1 },
     { field: "full_name", headerName: "Full Name", flex: 1 },
     { field: "email", headerName: "Email", flex: 1 },
-    { field: "contact_number", headerName: "Contact Number", flex: 1 },
     { field: "status", headerName: "Status", flex: 1 },
     { field: "createdAt", headerName: "Date Added", flex: 1 },
   ];  
@@ -31,6 +30,7 @@ export default function ServiceCatalog() {
       const accounts = await get_data('/accounts');
 
       if (accounts) {
+        console.log(accounts);
         setAccounts(accounts);
       }
 

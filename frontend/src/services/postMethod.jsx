@@ -3,7 +3,6 @@ import axios from 'axios';
 import CustomAlert from '../components/modals/CustomerAlert';
 
 export const post_data = async (route, credentials) => {
-    console.log(credentials);
     try {
         const response = await axios.post(`/api${route}`, credentials , {
             withCredentials: true
