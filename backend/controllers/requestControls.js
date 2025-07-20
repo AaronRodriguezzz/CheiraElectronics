@@ -1,4 +1,5 @@
 import ServiceRequest from "../models/ServiceRequest.js";
+import { send_request_update } from "../utils/sendEmail.js";
 
 // ✅ Create a new service request
 export const createServiceRequest = async (req, res) => {
@@ -36,6 +37,8 @@ export const updateServiceRequestStatus = async (req, res) => {
       return res.status(404).json({ error: "Request not found" });
     }
 
+    // await send_request_update(id,email,serviceType,status,remarks)
+
     return res.status(200).json(updated);
   } catch (err) {
     console.error("Error updating request status:", err);
@@ -45,7 +48,7 @@ export const updateServiceRequestStatus = async (req, res) => {
 
 export const acceptRequests = async (req, res) => {
   try {
-    const { id, status, technician } = req.body.newData;
+    const { id, email, serviceType, status, technician } = req.body.newData;
 
     if (!id || !status || !technician) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -61,6 +64,8 @@ export const acceptRequests = async (req, res) => {
       return res.status(404).json({ error: "Request not found" });
     }
 
+    await send_request_update(id,email,serviceType,status)
+
     return res.status(200).json(updated);
   } catch (err) {
     console.error("Error updating request status:", err);
@@ -70,7 +75,7 @@ export const acceptRequests = async (req, res) => {
 
 export const updateRequest = async (req, res) => {
   try {
-    const { id, status, remarks, updatedBy, price } = req.body.newData;
+    const { id, email, serviceType, status, remarks, updatedBy, price} = req.body.newData;
     console.log('missing', id, status, remarks, updatedBy);
 
     if (!id || !status || !remarks || !updatedBy) {
@@ -91,6 +96,9 @@ export const updateRequest = async (req, res) => {
     if (!updated) {
       return res.status(404).json({ error: "Request not found" });
     }
+
+
+    await send_request_update(id,email,serviceType,status,remarks)
 
     return res.status(200).json(updated);
   } catch (err) {

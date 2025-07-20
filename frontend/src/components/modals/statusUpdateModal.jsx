@@ -15,6 +15,8 @@ const UpdateRequestModal = ({ onCancel, requestData, updatedData, newStatus }) =
     try {
       const payload = {
         id: requestData._id,
+        email: requestData?.email,
+        serviceType: requestData?.serviceType,
         status: newStatus,
         remarks: reason,
         updatedBy: admin?._id

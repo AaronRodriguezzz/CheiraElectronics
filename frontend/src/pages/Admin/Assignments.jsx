@@ -17,23 +17,13 @@ export default function TechnicianAssign() {
   const [requestToUpdate, setRequestToUpdate] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const updateStatus = async (newStatus) => {
-    try {
-      const updateResponse = await update_data('/update_request_status', { status: newStatus });
-      if (updateResponse) {
-        console.log("Status updated successfully!");
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   const columns = [
     { field: "customer", headerName: "Customer Name", flex: 1 },
     { field: "contactNumber", headerName: "Contact Number", flex: 1 },
     { field: "serviceType", headerName: "Service", flex: 1 },
     { field: "technician", headerName: "Technician", flex: 1 },
     { field: "technicianId", headerName: "Technician", hide: true},
+    { field: "email", headerName: "Email", hide: true},
     { 
       field: "submittedAt", 
       headerName: "Date Requested", 
@@ -105,6 +95,7 @@ export default function TechnicianAssign() {
             const formatted = requests.map((req) => ({
               ...req, 
               customer: req.customer?.full_name,
+              email: req.customer?.email,
               contactNumber: req.customer?.contact_number,
               technician: req.technician?.full_name,
               technicianId: req.technician?._id
@@ -144,6 +135,10 @@ export default function TechnicianAssign() {
         rows={requests} 
         columns={columns}
         getRowId={(row) => row._id} 
+        columnVisibilityModel={{
+          email: false,
+          technicianId: false,
+        }}
         pagination 
       />
 

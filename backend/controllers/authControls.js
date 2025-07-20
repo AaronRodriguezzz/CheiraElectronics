@@ -33,7 +33,7 @@ export const login = async (req, res) => {
             return res.status(404).json({ message: 'Sorry, account does not exist' });
         }
 
-        // Compare passwords using bcrypt
+        // Compare passwords using bcrypt   
         const password_compare = await bcrypt.compare(password, user.password);
 
         if (!password_compare) {
@@ -54,10 +54,13 @@ export const login = async (req, res) => {
             secure: process.env.NODE_ENV === 'production' // Only secure in production
         });
 
+        const adminObj = user.toObject();
+        const { password: _, ...account } = adminObj;
+
         // Send success response
         return res.status(200).json({
             message: 'Login successful',
-            account: user
+            account
         });
 
     } catch (err) {

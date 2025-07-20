@@ -3,11 +3,12 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import AdminSidebar from "../components/admin/SideBar";
 import { Bell, UserCircle } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate} from "react-router-dom";
 import pageTitles from "../data/PageTitles";
 
 export default function AdminLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const currentTitle = pageTitles[location.pathname] || "" ; 
 
   return (
@@ -19,7 +20,7 @@ export default function AdminLayout() {
         <div className="w-full flex items-center justify-between mb-4">
           <h1 className="text-4xl font-bold mb-4 tracking-tight">{currentTitle}</h1>
 
-          <div className="flex gap-x-4">
+          <div className="flex gap-x-4" onClick={() => navigate('/admin/profile')}>
             <button className="relative">
               <Bell className="w-7 h-7 text-gray-700 hover:text-orange-500 cursor-pointer" />
             </button>

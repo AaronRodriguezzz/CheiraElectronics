@@ -6,10 +6,11 @@ const FinishRequestModal = ({ onCancel, requestData, updatedData }) => {
     const [servicePrice, setServicePrice] = useState('');
     const [remarks, setRemarks] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-
+    
     const handleFinish = async (e) => {
         e.preventDefault();
-
+        console.log('request', requestData);
+        
         if (!servicePrice || isNaN(servicePrice)) return alert("Price must be a number.");
 
         setIsLoading(true);
@@ -17,6 +18,8 @@ const FinishRequestModal = ({ onCancel, requestData, updatedData }) => {
         try {
             const payload = {
                 id: requestData?._id,
+                email: requestData?.email,
+                serviceType: requestData?.serviceType,
                 status: 'Completed',
                 remarks: remarks,
                 price: Number(servicePrice),

@@ -41,41 +41,64 @@ export const addAdmin = async (req, res) => {
   }
 };
 
-// Update admin details
 export const updateAdmin = async (req, res) => {
   try {
-    const adminId = req.params.id;
-    const updates = req.body;
+    const { id, email, full_name, password, currentPassword } = req.body.newData;
 
-    if (updates.email) {
-      const existing = await Admin.findOne({ email: updates.email, _id: { $ne: adminId } });
+    if (!id) {
+      return res.status(400).json({ message: 'Admin ID is required' });
+    }
+
+    // Check if email is already used by another admin
+    if (email) {
+      const existing = await Admin.findOne({ email, _id: { $ne: id } });
       if (existing) {
-        return res.status(400).json({ message: "Email already taken by another account." });
+        return res.status(400).json({ message: 'Email already taken by another account.' });
       }
     }
 
-    // If password is being updated, hash it
-    if (updates.password) {
-      updates.password = await bcrypt.hash(updates.password, 10);
-    } else {
-      delete updates.password; // Avoid overwriting with empty value
+    const updatedData = { full_name, email };
+
+    // If new password is being set, validate the current one
+    if (password) {
+      const user = await Admin.findById(id).select('+password');
+
+      if (!user) {
+        return res.status(404).json({ message: 'Admin not found.' });
+      }
+
+      const matched = await bcrypt.compare(currentPassword, user.password);
+      if (!matched) {
+        return res.status(400).json({ message: 'Current password is incorrect.' });
+      }
+
+      updatedData.password = await bcrypt.hash(password, 10);
     }
 
-    const updatedAdmin = await Admin.findByIdAndUpdate(adminId, updates, { new: true });
+
+    // Update the admin document
+    const updatedAdmin = await Admin.findByIdAndUpdate(id, updatedData, {
+      new: true,
+    });
 
     if (!updatedAdmin) {
-      return res.status(404).json({ message: "Admin not found." });
+      return res.status(404).json({ message: 'Admin not found.' });
     }
 
-    res.json({
-      message: "Admin updated successfully.",
-      updated: true,
-      admin: updatedAdmin,
+    // Omit password from the response
+    const { password: _, ...adminData } = updatedAdmin.toObject();
+
+    return res.status(200).json({
+      message: 'Admin updated successfully.',
+      admin: adminData,
     });
+
   } catch (error) {
-    res.status(500).json({ message: "Error updating admin", error });
+    console.error('Update Admin Error:', error);
+    return res.status(500).json({ message: 'Error updating admin', error });
   }
 };
+
 
 // Mark admin as Removed
 export const removeAdmin = async (req, res) => {

@@ -20,6 +20,7 @@ import Technicians from "./pages/Admin/Technicians";
 import AdminFeedback from "./pages/Admin/Feedback";
 import History from "./pages/Admin/History";
 import Accounts from "./pages/Admin/Accounts";
+import AdminProfile from "./pages/Admin/Profile";
 
 import AdminLayout from "./layouts/AdminLayout";
 import UserLayout from "./layouts/UserLayout";
@@ -49,6 +50,7 @@ export default function App() {
             <Route path="feedback" element={<AdminFeedback />} />
             <Route path="history" element={<History />} />
             <Route path="accounts" element={<Accounts />} />
+            <Route path="profile" element={<AdminProfile />} />
           </Route>
         </Route>
 

@@ -19,6 +19,8 @@ const AssignTechnicianForm = ({ onCancel, requestData, updatedData }) => {
     try {
       const payload = {
         id: requestData?._id,
+        email: requestData?.email,
+        serviceType: requestData?.serviceType,
         status: 'In Progress',
         technician: technicianId, 
       };

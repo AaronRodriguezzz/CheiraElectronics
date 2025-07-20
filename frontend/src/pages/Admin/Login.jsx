@@ -17,7 +17,7 @@ export default function Login() {
       const response = await post_data('/login/admin', form);
 
       if(response){
-        localStorage.setItem('admin', JSON.stringify(response?.admin));
+        localStorage.setItem('admin', JSON.stringify(response?.account));
         navigate('/admin')
       }
       

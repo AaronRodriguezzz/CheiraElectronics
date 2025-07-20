@@ -4,7 +4,6 @@ const ServiceRequestSchema = new mongoose.Schema({
     customer: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Customer",    
-        required: true
     },
     technician: {
         type: mongoose.Schema.Types.ObjectId,
