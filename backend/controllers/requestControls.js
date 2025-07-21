@@ -1,3 +1,4 @@
+import Service from "../models/Service.js";
 import ServiceRequest from "../models/ServiceRequest.js";
 import { send_request_update } from "../utils/sendEmail.js";
 
@@ -5,6 +6,26 @@ import { send_request_update } from "../utils/sendEmail.js";
 export const createServiceRequest = async (req, res) => {
   try {
     const { customerId, serviceType, description } = req.body;
+
+
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+
+    // Find requests made by this customer today
+    const customerRequestsToday = await ServiceRequest.find({
+      customer: customerId,
+      submittedAt: {
+        $gte: startOfDay,
+        $lte: endOfDay,
+      },
+    });
+
+    if(customerRequestsToday.length >= 3){
+      return res.status(400).json({ message: 'You already requested 3 times in a day'})
+    }
 
     const newRequest = new ServiceRequest({
       customer: customerId,

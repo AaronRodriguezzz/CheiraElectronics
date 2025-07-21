@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, PencilLine, Lock, Wrench, Power, ChevronRight, ChevronDown } from "lucide-react"
 import statusColorMap from '../../data/StatusColor';
 import { get_data } from '../../services/getMethod';
+import clsx from 'clsx';
 
 const ProfileSidebar = ({ open }) => {
     const user =  JSON.parse(localStorage.getItem('user'));
@@ -32,6 +33,13 @@ const ProfileSidebar = ({ open }) => {
         requestHistoryOpen && getUserRequests();
 
     },[requestHistoryOpen])
+
+    useEffect(() => {
+        requests && requests.map(req => (
+            console.log(statusColorMap[req?.status])
+        ))
+    },[requests])
+
 
     return (
         <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex justify-end">
@@ -85,7 +93,7 @@ const ProfileSidebar = ({ open }) => {
                     
                     <button
                         className="flex items-center justify-between w-full gap-3 px-3 py-2 rounded-md hover:bg-orange-50 text-gray-700 hover:text-orange-500 transition"
-                        onClick={() => {setRequestHistoryOpen(!requestHistoryOpen); console.log('hello')}}
+                        onClick={() => setRequestHistoryOpen(!requestHistoryOpen)}
                     >
                         <span className="flex items-center gap-2">
                             <Wrench className="w-5 h-5" />
@@ -113,23 +121,19 @@ const ProfileSidebar = ({ open }) => {
                                     className='relative pl-6 p-2 text-sm bg-white rounded shadow'
                                 >
                                     <div
-                                        className={`absolute h-full left-0 top-0 w-[10px] bg-${statusColorMap[req?.status]} rounded-l-lg`}
+                                        className={`absolute h-full left-0 top-0 w-[10px] rounded-l-lg bg-${statusColorMap[req?.status]}`}
                                     />
 
                                     <h1 className='max-w-[250px] text-lg tracking-tighter font-semibold truncate'>
                                         {req?.serviceType}
                                     </h1>
                                     <p>{req?.submittedAt.split('T')[0]}</p>
-                                    <p className={`text-${statusColorMap[req?.status]}`}>{req.status}</p>
+                                    <p className={`text-${statusColorMap[req?.status]}`}>{req?.status}</p>
                                 </div>
                             ))}
                         </div>}
                     </>
                 )}
-
-
-                {}
-
             </div>
         </div>
     )

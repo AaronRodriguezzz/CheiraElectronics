@@ -78,7 +78,9 @@ export default function SubmitRequest() {
           >
             <option value="" disabled selected>Select a Service</option>
             {services && services.map((service) => (
-              <option value={service?.name}>{service?.name}</option>
+              <>
+                {service.isActive && <option value={service?.name}>{service?.name}</option>}
+              </>
             ))}
             <option value="N/A">Not in the option</option>
           </select>

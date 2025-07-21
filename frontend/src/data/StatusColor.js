@@ -1,4 +1,4 @@
-const statusColorMap = {
+export const statusColorMap = {
   Pending: "yellow-500",
   "In Progress": "orange-500",
   Completed: "green-500",

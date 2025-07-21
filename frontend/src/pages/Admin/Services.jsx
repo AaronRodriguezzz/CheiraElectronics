@@ -17,8 +17,18 @@ export default function ServiceCatalog() {
     { field: "name", headerName: "Service Name", flex: 1 },
     { field: "price", headerName: "Price (₱)", flex: 1 },
     { field: "duration", headerName: "Duration", flex: 1 },
-    { field: "status", headerName: "Status", flex: 1 },
     { field: "createdAt", headerName: "Date Added", flex: 1 },
+    { 
+      field: "isActive", 
+      headerName: "Status", 
+      flex: 1,
+      renderCell: (params) => {
+        console.log(params.value);
+        return  <span className={`p-2 rounded-full ${params.value ? 'text-green-500' : 'text-red-500'}`}>
+                  {params.value ? 'Active' : 'Inactive'}
+                </span>
+      } 
+    },
     {
       field: "actions",
       headerName: "Actions",
@@ -47,6 +57,7 @@ export default function ServiceCatalog() {
 
       if (services) {
         setServices(services);
+        console.log(services);
       }
 
       setLoading(false);

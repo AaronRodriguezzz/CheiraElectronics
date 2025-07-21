@@ -7,6 +7,7 @@ import ServiceRoutes from './routes/serviceRoutes.js';
 import TechnicianRoutes from './routes/technicianRoutes.js';
 import AccountsRoutes from './routes/accountsRoutes.js';
 import AccountAuth from './routes/authRoutes.js';
+import ChatBot from './routes/chatbotRoute.js';
 
 import UserRoutes from './routes/userRoutes.js'
 import RequestsRoutes from './routes/serviceRequestRoutes.js';
@@ -25,5 +26,6 @@ app.use(AccountsRoutes);
 
 app.use(UserRoutes);
 app.use(RequestsRoutes);
+app.use(ChatBot);
 
 export default app;
