@@ -33,7 +33,12 @@ export const createServiceRequest = async (req, res) => {
       description,
     });
 
-    const saved = await newRequest.save();
+    const saved = await newRequest.save([
+      { path: "customer", select: "full_name email" }
+    ]);
+
+    global.sendRequestNotification(saved);
+
     return res.status(200).json(saved);
     
   } catch (err) {
@@ -165,7 +170,7 @@ export const getRequestsByCustomer = async (req, res) => {
 
 export const getAllRequests = async (req,res) => {
   try{
-    const requests = await ServiceRequest.find({status: 'Pending'})
+    const requests = await ServiceRequest.find({status: 'Pending'}).sort({ createdAt: -1 })
       .populate('customer')    
     
     return res.status(200).json(requests);

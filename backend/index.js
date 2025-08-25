@@ -19,6 +19,22 @@ app.use(morgan('dev'));
 app.use(cors());
 app.use(express.json());
 
+app.get('/api/protected', (req, res) => {
+    const token = req.cookies.user; 
+    
+    if (!token) {
+      return res.status(401).json({ message: 'No token found' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        res.json({ message: 'Access granted', user: decoded.user || decoded.employee});
+    } catch (err) {
+        res.status(403).json({ message: err.message });
+    }
+});
+
+
 app.use(AccountAuth);
 app.use(ServiceRoutes);
 app.use(TechnicianRoutes);

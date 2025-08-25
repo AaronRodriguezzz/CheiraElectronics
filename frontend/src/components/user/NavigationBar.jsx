@@ -37,7 +37,7 @@ export default function Navbar({ open }) {
             className="flex items-center gap-1 font-semibold bg-orange-500 p-2 rounded-full text-white hover:bg-orange-600 transition-colors"
           >
             <UserCircle/> 
-            {user?.full_name.split(' ')[0]}
+            {user?.full_name}
           </button> 
           :
           <Link to="/login" className="bg-orange-500 tracking-tighter text-white rounded-full px-4 py-2 font-semibold">Login</Link>

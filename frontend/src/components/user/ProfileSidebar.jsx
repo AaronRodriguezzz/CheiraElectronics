@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, PencilLine, Lock, Wrench, Power, ChevronRight, ChevronDown } from "lucide-react"
 import statusColorMap from '../../data/StatusColor';
 import { get_data } from '../../services/getMethod';
-import clsx from 'clsx';
+import { notificationsSocket } from '../../sockets/notificationSocket';
 
 const ProfileSidebar = ({ open }) => {
     const user =  JSON.parse(localStorage.getItem('user'));
@@ -33,6 +33,7 @@ const ProfileSidebar = ({ open }) => {
         requestHistoryOpen && getUserRequests();
 
     },[requestHistoryOpen])
+
 
     useEffect(() => {
         requests && requests.map(req => (
