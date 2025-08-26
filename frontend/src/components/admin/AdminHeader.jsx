@@ -1,19 +1,28 @@
 import { Bell, UserCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import pageTitles from "../../data/PageTitles";
 import { useLocation} from "react-router-dom";
+import { useNotifSocket } from '../../contexts/RequestsContext';
 
 export default function adminHeader({ notificationOpen, setNotificationOpen }) {
-    const navigate = useNavigate();
     const location = useLocation();
+    const { notifCount, setNotifCount } = useNotifSocket();
     const currentTitle = pageTitles[location.pathname] || "" ; 
 
     return (
         <div className="w-full flex items-center justify-between mb-4">
             <h1 className="text-4xl font-bold mb-4 tracking-tight">{currentTitle}</h1>
   
-            <div className="flex gap-x-4" onClick={() => setNotificationOpen(prev => !prev)}>
-              <button className="relative">
+            <div 
+              className="flex gap-x-4" 
+            >
+              <button 
+                className="relative" 
+                onClick={() => {
+                  setNotificationOpen(prev => !prev); 
+                  setNotifCount(0);
+                }}
+              >
+                <p className={`absolute top-0 left-3 px-2 rounded-full bg-red-500 text-white text-sm ${notifCount === 0 ? 'hidden' : 'visible'}`}>{notifCount}</p>
                 <Bell className={`w-7 h-7 text-gray-700 hover:text-orange-500 cursor-pointer ${notificationOpen ? 'text-orange-500' : 'text-gray-700'}` } />
               </button>
   

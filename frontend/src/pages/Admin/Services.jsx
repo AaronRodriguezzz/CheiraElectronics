@@ -83,10 +83,14 @@ export default function ServiceCatalog() {
           className="w-[90%] bg-gray-100 px-4 py-2 rounded-lg outline-gray-300"
         />
 
-        <Button variant="contained" className="mb-4" onClick={() => setIsAdding(true)}>Add Service</Button>
+        <Button variant="contained" className="w-[10%] min-w-[300px] mb-4" onClick={() => setIsAdding(true)}>Add Service</Button>
       </div>
 
-      <DataGrid rows={services} columns={columns} getRowId={(row) => row._id} pagination />
+      <div className="w-full overflow-x-auto">
+        <div style={{ minWidth: "1350px"}}>
+          <DataGrid rows={services} columns={columns} getRowId={(row) => row._id} pagination />
+        </div>
+      </div>
 
       {isAdding && <ServiceForm 
         onCancel={setIsAdding}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { update_data } from '../../services/putMethod';
 import { get_data } from "../../services/getMethod";
-import statusColorMap from "../../data/StatusColor";
+import { statusColorMap } from "../../data/StatusColor";
 import Button from "@mui/material/Button";
 import AssignTechnicianForm from "../../components/modals/requestAcceptanceModal";
 import UpdateRequestModal from "../../components/modals/statusUpdateModal";
@@ -19,11 +19,10 @@ export default function ServiceRequests() {
     { field: "contactNumber", headerName: "Contact Number", flex: 1 },
     { field: "email", headerName: "Email", flex: 1 },
     { field: "serviceType", headerName: "Service", flex: 1 },
-    { field: "description", headerName: "Description", flex: 1 },
     { 
       field: "submittedAt", 
       headerName: "Date Requested", 
-      width: 150,
+      width: 120,
       renderCell: (params) => {
         return <span>{params.value.split('T')[0]}</span>
       }
@@ -31,9 +30,15 @@ export default function ServiceRequests() {
     { 
       field: "status", 
       headerName: "Status", 
-      width: 100,
+      width:100,
       renderCell: (params) => {
-        return <span className={`p-2 rounded-full text-white bg-${statusColorMap[params.value]}`}>{params.value}</span>
+        console.log('statusColorMap', statusColorMap, params.value);
+        return <span 
+          className={`p-2 rounded-full text-white`}
+          style={{ backgroundColor: statusColorMap[params.value] }}
+        >
+          {params.value}
+        </span>
       } 
     },
     {
@@ -41,7 +46,7 @@ export default function ServiceRequests() {
       headerName: "Actions",
       flex: 1,
       renderCell: (params) => (
-        <div className="h-full flex items-center gap-2">
+        <div className="h-full w-auto flex md:flex-row flex-col items-center gap-2">
           <Button
             variant="contained"
             size="small"
@@ -105,6 +110,7 @@ export default function ServiceRequests() {
             ...req, 
             customer: req.customer?.full_name,
             email: req.customer?.email,
+            serviceType: req.serviceType?.name,
             contactNumber: req.customer?.contact_number
           }));
           setRequests(formatted);
@@ -138,12 +144,17 @@ export default function ServiceRequests() {
         />
       </div>
 
-      <DataGrid
-        rows={requests}
-        columns={serviceRequestsCols}
-        getRowId={(row) => row._id}
-        pagination
-      />
+      <div className="w-full overflow-x-auto">
+        <div style={{ minWidth: "1350px"}}>
+          <DataGrid
+            rows={requests}
+            columns={serviceRequestsCols}
+            getRowId={(row) => row._id}
+            pagination
+            autoHeight
+          />
+        </div>
+      </div>
 
       {isAccepting && <AssignTechnicianForm 
         onCancel={setIsAccepting}

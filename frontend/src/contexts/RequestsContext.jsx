@@ -41,7 +41,7 @@ export const NotificationProvider = ({children}) => {
     }, []);
     
     return (
-        <NotificationContext.Provider value={{ notifications, notifCount}}>
+        <NotificationContext.Provider value={{ notifications, notifCount, setNotifCount}}>
             {children}
         </NotificationContext.Provider>
     );

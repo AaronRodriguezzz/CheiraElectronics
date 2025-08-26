@@ -59,10 +59,14 @@ export default function ServiceCatalog() {
           onChange={(e) => setSearchTxt(e.target.value)}
         />
 
-        <Button variant="contained" className="mb-4" onClick={() => setIsAdding(true)}>New Admin</Button>
+        <Button variant="contained" className="w-[10%] min-w-[300px] mb-4" onClick={() => setIsAdding(true)}>New Admin</Button>
       </div>
-
-      <DataGrid rows={filteredRows} columns={columns} getRowId={(row) => row._id} pagination />
+      
+      <div className="w-full overflow-x-auto">
+        <div style={{ minWidth: "1350px"}}>
+          <DataGrid rows={filteredRows} columns={columns} getRowId={(row) => row._id} pagination />
+        </div>
+      </div> 
 
       {isAdding && <AccountForm 
         onCancel={setIsAdding}

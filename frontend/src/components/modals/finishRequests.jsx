@@ -7,6 +7,7 @@ const FinishRequestModal = ({ onCancel, requestData, updatedData }) => {
     const [remarks, setRemarks] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     
+    console.log(admin);
     const handleFinish = async (e) => {
         e.preventDefault();
         console.log('request', requestData);
@@ -22,10 +23,9 @@ const FinishRequestModal = ({ onCancel, requestData, updatedData }) => {
                 serviceType: requestData?.serviceType,
                 status: 'Completed',
                 remarks: remarks,
-                price: Number(servicePrice),
+                servicePrice: Number(servicePrice),
                 updatedBy: admin?._id
             };
-
 
             console.log(payload);
 

@@ -47,6 +47,7 @@ export default function SubmitRequest() {
     const getServices = async () => {
       const services = await get_data('/services');
 
+      console.log(services);
       if(services){
         setServices(services);
       }
@@ -54,6 +55,17 @@ export default function SubmitRequest() {
 
     getServices();
   },[])
+
+
+  if (!services) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <p className="text-lg font-semibold">Loading services...</p>
+      </div>
+    );
+  }
+
+  
 
   return (
     <div className="min-h-screen pt-24 px-4 sm:px-8 bg-orange-500  bg-cover bg-center bg-blend-overlay bg-[url('/img/electronics_Bg.png')] bg-opacity-30">
@@ -79,7 +91,7 @@ export default function SubmitRequest() {
             <option value="" disabled selected>Select a Service</option>
             {services && services.map((service) => (
               <>
-                {service.isActive && <option value={service?.name}>{service?.name}</option>}
+                {service.isActive && <option value={service?._id}>{service?.name}</option>}
               </>
             ))}
             <option value="N/A">Not in the option</option>

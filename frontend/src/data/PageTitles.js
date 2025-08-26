@@ -6,6 +6,8 @@ const pageTitles = {
   "/admin/technicians": "Technicians",
   "/admin/feedback": "Customer Feedback",
   "/admin/history": "History",
+  "/admin/accounts": "Accounts Management",
+
 };
 
 export default pageTitles

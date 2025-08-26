@@ -8,7 +8,8 @@ import {
   getRequestsByCustomer,
   getAllRequests,
   requestToAssign,
-  requestsHistory
+  requestsHistory,
+  dashboardRecord
 } from "../controllers/requestControls.js";    
 
 const router = express.Router();
@@ -22,5 +23,6 @@ router.get("/api/requests/:customerId", getRequestsByCustomer);
 router.get("/api/all-requests", getAllRequests);
 router.get("/api/progress-requests", requestToAssign);
 router.get("/api/requests-history", requestsHistory);
+router.get("/api/dashboard-record", dashboardRecord);
 
 export default router;

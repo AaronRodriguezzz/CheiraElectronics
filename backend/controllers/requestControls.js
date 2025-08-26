@@ -27,19 +27,23 @@ export const createServiceRequest = async (req, res) => {
       return res.status(400).json({ message: 'You already requested 3 times in a day'})
     }
 
+    const serviceTypeId = req.body.serviceType === 'N/A' ? null : req.body.serviceType;
+
+
     const newRequest = new ServiceRequest({
       customer: customerId,
-      serviceType,
+      serviceType: serviceTypeId,
       description,
     });
 
-    const saved = await newRequest.save([
-      { path: "customer", select: "full_name email" }
-    ]);
+    const savedRequest = await newRequest.save();
 
-    global.sendRequestNotification(saved);
+    const populatedRequest = await savedRequest.populate('customer serviceType');
 
-    return res.status(200).json(saved);
+
+    global.sendRequestNotification(populatedRequest);
+
+    return res.status(200).json(populatedRequest);
     
   } catch (err) {
     console.error("Error creating service request:", err);
@@ -57,13 +61,13 @@ export const updateServiceRequestStatus = async (req, res) => {
       id,
       { status },
       { new: true }
-    );
+    ).populate('customer serviceType'); // Optional: return full technician & customer data
 
     if (!updated) {
       return res.status(404).json({ error: "Request not found" });
     }
 
-    // await send_request_update(id,email,serviceType,status,remarks)
+    await send_request_update(updated.id,updated.email,updated.serviceType,status,updated?.remarks)
 
     return res.status(200).json(updated);
   } catch (err) {
@@ -90,6 +94,7 @@ export const acceptRequests = async (req, res) => {
       return res.status(404).json({ error: "Request not found" });
     }
 
+
     await send_request_update(id,email,serviceType,status)
 
     return res.status(200).json(updated);
@@ -101,8 +106,7 @@ export const acceptRequests = async (req, res) => {
 
 export const updateRequest = async (req, res) => {
   try {
-    const { id, email, serviceType, status, remarks, updatedBy, price} = req.body.newData;
-    console.log('missing', id, status, remarks, updatedBy);
+    const { id, email, serviceType, status, remarks, updatedBy, servicePrice} = req.body.newData;
 
     if (!id || !status || !remarks || !updatedBy) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -114,17 +118,17 @@ export const updateRequest = async (req, res) => {
         status, 
         remarks, 
         updatedBy,
-        ...(price != null && { price })
+        ...(servicePrice != null && { servicePrice })
       },
       { new: true }
-    ).populate('customer');
+    ).populate('customer serviceType'); // Optional: return full technician & customer data
 
     if (!updated) {
       return res.status(404).json({ error: "Request not found" });
     }
 
 
-    await send_request_update(id,email,serviceType,status,remarks)
+    await send_request_update(id,email,updated.serviceType,status,remarks)
 
     return res.status(200).json(updated);
   } catch (err) {
@@ -171,7 +175,7 @@ export const getRequestsByCustomer = async (req, res) => {
 export const getAllRequests = async (req,res) => {
   try{
     const requests = await ServiceRequest.find({status: 'Pending'}).sort({ createdAt: -1 })
-      .populate('customer')    
+      .populate('customer serviceType');    
     
     return res.status(200).json(requests);
 
@@ -186,9 +190,8 @@ export const requestToAssign = async (req, res) => {
     const requests = await ServiceRequest.find({ 
       status: { $in: ['In Progress', 'Reopened'] } 
     })
-      .populate('customer')
-      .populate('technician');
-
+      .populate('customer technician serviceType')
+      .sort({ createdAt: -1 });
 
     return res.status(200).json(requests);
   } catch (err) {
@@ -201,9 +204,10 @@ export const requestsHistory = async (req, res) => {
   try {
 
     const [finishedRequest, rejectedRequest] = await Promise.all([
-      ServiceRequest.find({ status: { $in: ['Completed', 'Failed'] } })
+      ServiceRequest.find({ status: { $in: ['Completed', 'Failed', 'Cancelled'] } })
         .populate('customer')
         .populate('technician')
+        .populate('serviceType')
         .populate('updatedBy'),
 
       ServiceRequest.find({ status: { $in: 'Rejected' } })
@@ -222,6 +226,81 @@ export const requestsHistory = async (req, res) => {
   }
 };
 
+
+export const dashboardRecord = async (req,res) => {
+  try{
+    const [
+      pendingRequests,
+      inProgressRequests,
+      completedRequests,
+      reOpenedRequests
+    ] = await Promise.all([
+      ServiceRequest.countDocuments({ status: 'Pending' }),
+      ServiceRequest.countDocuments({ status: 'In Progress' }),
+      ServiceRequest.countDocuments({ status: 'Completed' }),
+      ServiceRequest.countDocuments({ status: 'Reopened' })
+    ]);
+
+    const serviceAvailsSummary  = await ServiceRequest.aggregate([
+      {
+        $group: {
+          _id: "$serviceType",        // Group by status
+          count: { $sum: 1 }     // Count documents per status
+        }
+      },
+      {
+        $lookup: {
+          from: "services",           // The collection to join
+          localField: "_id",          // Field from the input documents
+          foreignField: "_id",        // Field from the documents of the "from" collection
+          as: "serviceDetails"        // Output array field
+        }
+      },
+      {
+        $unwind: "$serviceDetails"    // Deconstructs the array field to get object
+      },
+      {
+        $project: {
+          _id: 0,
+          serviceName: "$serviceDetails.name", // Project desired fields
+          count: 1
+        }
+      }
+    ]);
+
+    const salesSummary  = await ServiceRequest.aggregate([
+      {
+        $match: { status: "Completed" } // Only consider completed requests
+      },
+      {
+        $group: {
+         _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
+          },   
+          totalRevenue: { $sum: "$servicePrice"} 
+        }
+      }
+    ]);
+
+    const statusSummaryData = [
+      { label: "Pending", count: pendingRequests },
+      { label: "In Progress", count: inProgressRequests },
+      { label: "Completed", count: completedRequests },
+      { label: "Re-opened", count: reOpenedRequests },
+    ]
+
+    return res.status(200).json({
+      statusSummaryData,
+      serviceAvailsSummary,
+      salesSummary
+    });
+
+  }catch(err){
+    console.error("Error getting requests:", err);
+    res.status(500).json({ error: "Failed to retrieve requests" });
+  }
+}
+
 export default {
   createServiceRequest,
   updateServiceRequestStatus,
@@ -231,5 +310,6 @@ export default {
   getRequestsByCustomer,
   getAllRequests,
   requestToAssign,
-  requestsHistory
+  requestsHistory,
+  dashboardRecord
 }

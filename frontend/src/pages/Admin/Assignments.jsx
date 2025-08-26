@@ -4,7 +4,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
 import { update_data } from "../../services/putMethod";
 import { get_data } from "../../services/getMethod";
-import statusColorMap from "../../data/StatusColor";
+import { statusColorMap } from "../../data/StatusColor";
 import UpdateRequestModal from "../../components/modals/statusUpdateModal";
 import AssignTechnicianForm from "../../components/modals/requestAcceptanceModal";
 import FinishRequestModal from "../../components/modals/finishRequests";
@@ -37,7 +37,12 @@ export default function TechnicianAssign() {
       headerName: "Status", 
       width: 120,
       renderCell: (params) => {
-        return <span className={`p-2 rounded-full text-white bg-${statusColorMap[params.value]}`}>{params.value}</span>
+        return <span 
+          className={`p-2 rounded-full text-white bg-${statusColorMap[params.value]}`}
+          style={{ backgroundColor: statusColorMap[params.value] }}
+        >
+          {params.value}
+        </span>
       } 
     },
     {
@@ -69,16 +74,17 @@ export default function TechnicianAssign() {
           >
             Failed
           </Button>
-          <Button 
-            variant="contained" 
+          <Button
+            variant="contained"
             size="small"
             onClick={() => {
-              setRequestToUpdate(params.row)
-              setIsReassigning(true)
+              setRequestToUpdate(params.row);
+              setIsReassigning(true);
             }}
             sx={{fontSize: 12}}
           >
-            Reassigned
+            <span className="hidden 2xl:inline">Reassigned</span>
+            <span className="inline 2xl:hidden">↻</span> {/* icon or short text */}
           </Button>
         </div>      
       ),
@@ -96,6 +102,7 @@ export default function TechnicianAssign() {
               ...req, 
               customer: req.customer?.full_name,
               email: req.customer?.email,
+              serviceType: req.serviceType?.name || 'N/A',
               contactNumber: req.customer?.contact_number,
               technician: req.technician?.full_name,
               technicianId: req.technician?._id
@@ -131,16 +138,21 @@ export default function TechnicianAssign() {
           className="w-full bg-gray-100 px-4 py-2 rounded-lg outline-gray-300"/>
       </div>
 
-      <DataGrid 
-        rows={requests} 
-        columns={columns}
-        getRowId={(row) => row._id} 
-        columnVisibilityModel={{
-          email: false,
-          technicianId: false,
-        }}
-        pagination 
-      />
+      <div className="w-full overflow-x-auto">
+        <div style={{ minWidth: "1350px"}}>
+          <DataGrid 
+            rows={requests} 
+            columns={columns}
+            getRowId={(row) => row._id} 
+            columnVisibilityModel={{
+              email: false,
+              technicianId: false,
+            }}
+            pagination 
+            autoHeight
+          />
+        </div>
+      </div>
 
       {isFailing && <UpdateRequestModal 
         onCancel={setIsFailing}

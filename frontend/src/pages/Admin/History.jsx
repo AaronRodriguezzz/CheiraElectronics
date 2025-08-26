@@ -3,7 +3,7 @@ import React, {useState, useEffect} from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
 import { get_data } from "../../services/getMethod";
-import statusColorMap from "../../data/StatusColor";
+import { statusColorMap } from "../../data/StatusColor";
 
 export default function History() {
   const [requests, setRequests] = useState(null);
@@ -57,6 +57,7 @@ export default function History() {
             customerName: req.customer?.full_name,
             contactNumber: req.customer?.contact_number,
             technician: req.technician?.full_name || 'N/A',
+            serviceType: req.serviceType?.name || 'N/A',
             updatedBy: req?.updatedBy?.full_name || 'N/A',
             rejectionReason: req?.remarks || 'N/A'
           }));
@@ -93,12 +94,17 @@ export default function History() {
         />
       </div>
 
-      <DataGrid 
-        rows={requests} 
-        columns={columns}
-        getRowId={(row) => row._id} 
-        pagination 
-      />
+
+      <div className="w-full overflow-x-auto">
+        <div style={{ minWidth: "1350px"}}>
+          <DataGrid 
+            rows={requests} 
+            columns={columns}
+            getRowId={(row) => row._id} 
+            pagination 
+          />
+        </div>
+      </div>
 
       <div className="w-full flex justify-end mt-4">
         <Button variant="contained" className="mb-4">Export</Button>

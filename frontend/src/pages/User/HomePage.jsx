@@ -31,7 +31,7 @@ export default function Home() {
   return (
     <div className="min-h-screen block bg-white">
       {/* Hero Section */}
-      <section className="h-screen flex flex-col justify-center items-center text-white px-8 text-center" id="Home">
+      <section className="h-screen flex flex-col justify-center items-center text-white md:px-8 text-center" id="Home">
         <div className="absolute top-0 h-full w-full bg-[url('/img/background-3.png')] bg-cover bg-center z-10" />
         <div className="absolute top-0 h-full w-full bg-orange-500/80 bg-cover bg-center z-10" />
 

@@ -10,7 +10,7 @@ export default function UserLayout() {
   
   return (
     <div className="min-h-screen flex flex-col bg-white overflow-hidden">
-      <Navbar open={setProfileSidebarOpen} />
+      <Navbar setSideBarOpen={setProfileSidebarOpen} />
 
       <main className="flex-grow">
         {profileSidebarOpen && <ProfileSidebar open={setProfileSidebarOpen} />}

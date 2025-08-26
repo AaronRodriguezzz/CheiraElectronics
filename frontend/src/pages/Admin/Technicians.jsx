@@ -4,6 +4,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
 import TechnicianForm from "../../components/modals/technicianModal";
 import { get_data } from '../../services/getMethod';
+import { statusColorMap } from "../../data/StatusColor";
 
 export default function Technicians() {
 
@@ -18,7 +19,19 @@ export default function Technicians() {
     { field: "full_name", headerName: "Full Name", flex: 1 },
     { field: "email", headerName: "Email", flex: 1 },
     { field: "contact_number", headerName: "Contact Number", flex: 1 },
-    { field: "status", headerName: "Status", flex: 1 },
+    { 
+      field: "status", 
+      headerName: "Status", 
+      width: 120,
+      renderCell: (params) => {
+        return <span 
+          className={`p-2 rounded-full text-white bg-${statusColorMap[params.value]}`}
+          style={{ backgroundColor: statusColorMap[params.value] }}
+        >
+          {params.value}
+        </span>
+      } 
+    },
     {
       field: "actions",
       headerName: "Actions",
@@ -81,19 +94,23 @@ export default function Technicians() {
         <Button 
           variant="contained" 
           className="mb-4" 
-          sx={{fontSize: '12px'}}
+          sx={{flex: 1, fontSize: {md: '10px', lg: '12px'}}}
           onClick={() => setIsAdding(true)}
         >
           Add Technician
         </Button>
       </div>
 
-      <DataGrid 
-        rows={technician} 
-        columns={columns} 
-        getRowId={(row) => row._id} 
-        pagination 
-      />
+      <div className="w-full overflow-x-auto">
+        <div style={{ minWidth: "1350px"}}>
+          <DataGrid 
+            rows={technician} 
+            columns={columns} 
+            getRowId={(row) => row._id} 
+            pagination 
+          />
+        </div>
+      </div>
 
       {isAdding && <TechnicianForm 
         onCancel={setIsAdding}

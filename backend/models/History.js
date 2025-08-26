@@ -4,7 +4,10 @@ const HistorySchema = new mongoose.Schema({
     ref: "ServiceRequest",
   },
   customerName: String,
-  serviceType: String,
+  serviceType: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Service",
+  },
   completedAt: { type: Date, required: true },
 }, { timestamps: true });
 

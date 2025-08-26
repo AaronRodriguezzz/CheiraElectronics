@@ -10,8 +10,8 @@ const ServiceRequestSchema = new mongoose.Schema({
         ref: "Technician",    
     },
     serviceType: { 
-        type: String, 
-        required: true 
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Service",
     },
     description: String,
     servicePrice: Number,

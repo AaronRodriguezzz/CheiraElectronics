@@ -16,7 +16,7 @@ export default function AdminSidebar(){
     const navigate = useNavigate();
 
     return(
-        <aside className="relative w-64 bg-orange-500 text-white shadow-lg">
+        <aside className="relative w-48 bg-orange-500 text-white shadow-lg">
             <img 
                 src="/img/cheiralogo.png" 
                 className="w-40 h-40 m-auto"
@@ -36,7 +36,7 @@ export default function AdminSidebar(){
                         }
                     >
                         {icon}  
-                        <span>{name}</span>
+                        <span className="text-sm">{name}</span>
                     </NavLink>
                 ))}
             </nav>

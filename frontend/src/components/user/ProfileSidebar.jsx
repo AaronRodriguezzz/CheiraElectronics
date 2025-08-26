@@ -1,7 +1,7 @@
 import React, { useState, useEffect} from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, PencilLine, Lock, Wrench, Power, ChevronRight, ChevronDown } from "lucide-react"
-import statusColorMap from '../../data/StatusColor';
+import { statusColorMap } from '../../data/StatusColor';
 import { get_data } from '../../services/getMethod';
 import { notificationsSocket } from '../../sockets/notificationSocket';
 
@@ -33,14 +33,6 @@ const ProfileSidebar = ({ open }) => {
         requestHistoryOpen && getUserRequests();
 
     },[requestHistoryOpen])
-
-
-    useEffect(() => {
-        requests && requests.map(req => (
-            console.log(statusColorMap[req?.status])
-        ))
-    },[requests])
-
 
     return (
         <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex justify-end">
@@ -129,7 +121,7 @@ const ProfileSidebar = ({ open }) => {
                                         {req?.serviceType}
                                     </h1>
                                     <p>{req?.submittedAt.split('T')[0]}</p>
-                                    <p className={`text-${statusColorMap[req?.status]}`}>{req?.status}</p>
+                                    <p style={{color: statusColorMap[req?.status]}}>{req?.status}</p>
                                 </div>
                             ))}
                         </div>}

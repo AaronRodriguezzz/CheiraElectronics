@@ -12,6 +12,9 @@ import {
 } from "chart.js";
 import { Bar, Line, Pie } from "react-chartjs-2";
 import { Star } from "lucide-react";
+import { useEffect, useState } from "react";
+import { get_data } from "../../services/getMethod";
+import { statusColorMap } from "../../data/StatusColor";
 
 ChartJS.register(
   BarElement,
@@ -25,52 +28,74 @@ ChartJS.register(
 );
 
 export default function Dashboard() {
-  const summaryStats = [
-    { label: "Pending", count: 12 },
-    { label: "In Progress", count: 8 },
-    { label: "Completed", count: 30 },
-    { label: "Re-opened", count: 2 },
-    { label: "Accepted", count: 40 },
-  ];
+  const [dashboardData, setDashboardData] = useState([]);
+  const [lineData, setLineData] = useState({});
+  const [barData, setBarData] = useState({});
+  const [pieData, setPieData] = useState({});
 
-  const barData = {
-    labels: ["Repair A", "Repair B", "Repair C"],
-    datasets: [
-      {
-        label: "Requests this Month",
-        data: [20, 35, 10],
-        backgroundColor: "rgba(255, 165, 0, 0.8)",
-      },
-    ],
-  };
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const res = await get_data('/dashboard-record');
+        
+        if(res) {
+          setDashboardData(res.statusSummaryData);
+          setLineData({
+            labels: res.salesSummary?.map(item => item._id) || [],
+            datasets: [
+              {
+                label: "Total Revenue",
+                data: res.salesSummary?.map(item => item.totalRevenue) || [],
+                borderColor: "orange",
+                fill: true,
+              },
+            ],
+          });
+          setBarData({
+            labels: res.serviceAvailsSummary?.map(item => item.serviceName) || [],
+            datasets: [
+              {
+                label: "Services Availed Ranking",
+                data: res.serviceAvailsSummary?.map(item => item.count) || [],
+                backgroundColor: res.serviceAvailsSummary
+                  ? res.serviceAvailsSummary.map(() => "rgba(255, 165, 0, 0.8)") // same color for all
+                  : [],
+              },
+            ],
+          });
+          setPieData({
+            labels: res.statusSummaryData?.map(item => item.label) || [],
+            datasets: [
+              {
+                data: res.statusSummaryData?.map(item => item.count) || [],
+                backgroundColor: res.statusSummaryData?.map(item => statusColorMap[item.label] || "gray") || [],
+              },
+            ],
+          });
 
-  const lineData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-    datasets: [
-      {
-        label: "Completed Services",
-        data: [5, 10, 8, 15, 20, 25],
-        borderColor: "orange",
-        fill: false,
-      },
-    ],
-  };
+        }
+        
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      }
+    }
 
-  const pieData = {
-    labels: ["Completed", "In Progress", "Not Started"],
-    datasets: [
-      {
-        data: [15, 5, 3],
-        backgroundColor: ["green", "orange", "gray"],
-      },
-    ],
-  };
+    fetchDashboardData();
+  }, []);
+
+  if (dashboardData.length === 0 || lineData.labels?.length === 0 || barData.labels?.length === 0 || pieData.labels?.length === 0) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <p className="text-lg font-semibold">Loading services...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-h-screen space-y-6">
       {/* Summary Boxes */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        {summaryStats.map((stat, index) => (
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {dashboardData && dashboardData.map((stat, index) => (
           <div
             key={index}
             className="bg-white p-4 rounded-xl shadow text-center"
