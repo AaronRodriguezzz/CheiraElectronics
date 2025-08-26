@@ -4,6 +4,8 @@ import { ArrowLeft, PencilLine, Lock, Wrench, Power, ChevronRight, ChevronDown }
 import { statusColorMap } from '../../data/StatusColor';
 import { get_data } from '../../services/getMethod';
 import { notificationsSocket } from '../../sockets/notificationSocket';
+import ChangePasswordModal from '../modals/ChangePasswordModal';
+import UpdateProfile from '../modals/UpdateProfile';
 
 const ProfileSidebar = ({ open }) => {
     const user =  JSON.parse(localStorage.getItem('user'));
@@ -11,7 +13,9 @@ const ProfileSidebar = ({ open }) => {
     const [requestHistoryOpen, setRequestHistoryOpen] = useState(false);
     const [requests, setRequests] = useState(null);
     const [loading, setLoading] = useState(false);
-    
+    const [changePasswordOpen, setChangePasswordOpen] = useState(false);
+    const [updateProfileOpen, setUpdateProfileOpen] = useState(false);
+
 
     useEffect(() => {
         const getUserRequests = async () => {
@@ -72,13 +76,13 @@ const ProfileSidebar = ({ open }) => {
                 <div className="flex flex-col gap-y-2">
                     <button 
                         className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-orange-50 text-gray-700 hover:text-orange-500 transition"
-                        onClick={() => alert('hi')}
+                        onClick={() => setUpdateProfileOpen(true)}
                     >
                         <PencilLine className="w-5 h-5" />
                         Edit Profile
                     </button>
 
-                    <button className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-orange-50 text-gray-700 hover:text-orange-500 transition">
+                    <button className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-orange-50 text-gray-700 hover:text-orange-500 transition" onClick={() => setChangePasswordOpen(true)}>
                         <Lock className="w-5 h-5" />
                         Change Password 
                     </button>
@@ -128,6 +132,9 @@ const ProfileSidebar = ({ open }) => {
                     </>
                 )}
             </div>
+
+            {changePasswordOpen && <ChangePasswordModal onClose={setChangePasswordOpen} userId={user?._id}/>}
+            {updateProfileOpen && <UpdateProfile onClose={setUpdateProfileOpen} user={user}/>}
         </div>
     )
 }

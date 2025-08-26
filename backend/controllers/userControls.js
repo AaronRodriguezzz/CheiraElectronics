@@ -1,6 +1,7 @@
 import Customer from "../models/Customer.js";
 import ServiceRequest from "../models/ServiceRequest.js"; // You need to have this schema
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 // 1. Register New Customer
 export const registerCustomer = async (req, res) => {
@@ -48,18 +49,71 @@ export const submitServiceRequest = async (req, res) => {
   }
 };
 
+export const updatePassword = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { currentPassword, newPassword } = req.body.newData;
+
+    console.log(req.body.newData , userId);
+
+    const user = await Customer.findById(userId).select("+password");
+
+    console.log(user);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({ error: "Current password is incorrect." });
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedNewPassword;
+
+    await user.save();
+
+    return res.status(200).json({ updated: true, message: "Password updated successfully." });
+
+  }catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: err.message });
+  }
+};
+
 // 3. Update Customer Info
 export const updateCustomerInfo = async (req, res) => {
   try {
-    const { customerId, full_name, contact_number, address } = req.body;
+    const { customerId } = req.body.newData;
+
+    const emailExist = await Customer.findOne({ email: req.body.email, _id: { $ne: customerId } });
+
+    if(emailExist) return res.status(400).json({ error: "Email already in use." });
 
     const updated = await Customer.findByIdAndUpdate(
       customerId,
-      { full_name, contact_number, address },
+      req.body.newData,
       { new: true }
     );
 
-    res.json({ customer: updated });
+    delete updated.password;
+
+    const token = jwt.sign(
+      { user: updated },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    );  
+    
+    res.cookie('jwt', token, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production' // Only secure in production
+    });
+
+    return res.status(200).json({ customer: updated, message: "Profile updated successfully." });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -83,4 +137,5 @@ export default {
   submitServiceRequest,
   updateCustomerInfo,
   deleteCustomerAccount,
+  updatePassword
 }
