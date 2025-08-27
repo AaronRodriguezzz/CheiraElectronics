@@ -106,7 +106,7 @@ export default function SubmitRequest() {
             value={formData.description}
             placeholder="Describe the issue..."
             onChange={handleChange}
-            required={formData.serviceType === 'N/A'}
+            required
             rows="8"  
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
           ></textarea>
