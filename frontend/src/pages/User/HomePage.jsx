@@ -1,181 +1,208 @@
 // src/pages/Home.jsx
-import React from "react";
+import React, { useRef } from "react";
 import { Link } from "react-router-dom";
-import { FaTools, FaSnowflake, FaTshirt, FaPhone, FaMapMarkerAlt, FaEnvelope } from "react-icons/fa";
+import {
+  FaTools,
+  FaSnowflake,
+  FaPhone,
+  FaMapMarkerAlt,
+  FaEnvelope,
+  FaLaptop,
+  FaMobileAlt,
+  FaTv,
+  FaBlender,
+} from "react-icons/fa";
 import Rating from "@mui/material/Rating";
+import { motion, useInView } from "framer-motion";
+import { feedbacks, services } from "../../data/HomePageTxt";
 
 export default function Home() {
-  const feedbacks = [
-    {
-      customerName: "James Cruz",
-      feedback: "The barber was skilled and friendly. Loved the clean fade I got!",
-      rating: 5,
-    },
-    {
-      customerName: "Miguel Santos",
-      feedback: "Great service and chill atmosphere, but the wait time was a bit long.",
-      rating: 3,
-    },
-    {
-      customerName: "Elijah Reyes",
-      feedback: "Affordable and stylish cuts. Definitely coming back.",
-      rating: 4,
-    },
-    {
-      customerName: "James Cruz",
-      feedback: "The barber was skilled and friendly. Loved the clean fade I got!",
-      rating: 5,
-    },
-  ];
+
+    const AnimatedSection = ({ children }) => {
+      const ref = useRef(null);
+      const inView = useInView(ref, { once: true, margin: "-100px" });
+
+      return (
+        <motion.section
+          ref={ref}
+          initial={{ opacity: 0, y: 50 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          {children}
+        </motion.section>
+      );
+    };
 
   return (
-    <div className="min-h-screen block bg-white">
+    <div className="min-h-screen block bg-white text-gray-700">
       {/* Hero Section */}
-      <section className="h-screen flex flex-col justify-center items-center text-white md:px-8 text-center" id="Home">
-        <div className="absolute top-0 h-full w-full bg-[url('/img/background-3.png')] bg-cover bg-center z-10" />
-        <div className="absolute top-0 h-full w-full bg-orange-500/80 bg-cover bg-center z-10" />
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        className="h-screen flex flex-col justify-center items-center text-white px-4 text-center relative"
+        id="Home"
+      >
+        <div className="absolute inset-0 bg-[url('/img/background-3.png')] bg-cover bg-center z-0" />
+        <div className="absolute inset-0 bg-gradient-to-r from-orange-600/80 to-gray-900/80 z-0" />
 
-        <h1 className="text-4xl font-bold mb-4 z-20 tracking-tight opacity-90">Welcome to Cheira Electronics</h1>
-        <p className="max-w-xs md:max-w-xl p-2 sm:text-sm md:text-lg mb-6 w-[700px] opacity-70 z-20">
-          Your trusted partner in appliance and tech repairs. We fix computers, home gadgets,
-          and everyday electronics with speed, skill, and care—making technology work for everyone.
+        <h1 className="text-5xl md:text-6xl font-bold mb-4 z-10 tracking-tight">
+          Welcome to Cheira Electronics
+        </h1>
+        <p className="max-w-2xl text-lg md:text-xl mb-6 opacity-90 z-10">
+          Your trusted partner in appliance and tech repairs. We fix computers,
+          home gadgets, and electronics with speed, skill, and care.
         </p>
         <Link
           to="/request-form"
-          className="bg-white text-orange-500 px-6 py-2 rounded-full font-semibold opacity-90 hover:bg-orange-100 z-20"
+          className="bg-white text-orange-600 px-6 py-3 rounded-full font-semibold shadow hover:bg-orange-100 transition z-10"
         >
           Request a Service
         </Link>
-      </section>
+      </motion.section>
 
       {/* About Us */}
-      <section className=" my-15 lg:my-35 block space-y-4 md:flex justify-evenly items-center p-4" id="About Us">
-        <div className="block mr-4">
-          <h2 className="text-4xl font-bold mb-6 text-gray-700 tracking-tighter">ABOUT US</h2>
-          <p className="text-sm md:text-md lg:text-lg text-left max-w-3xl">
-            At Cheira Electronics, we specialize in fast and reliable repairs 
-            for home appliances, computers, and everyday tech. Our skilled 
-            technicians are committed to quality service, honest pricing, and 
-            making sure your devices work when you need them most.
-            <br />
-            <br />
-            We’re not just fixing gadgets — we’re helping people stay connected.  
-          </p>
+      <AnimatedSection>
+        <div
+          className="my-20 block space-y-8 md:flex justify-evenly items-center p-6"
+          id="About Us"
+        >
+          <div className="block md:w-1/2">
+            <h2 className="text-4xl font-bold mb-6 tracking-tight text-gray-800">
+              ABOUT US
+            </h2>
+            <p className="text-lg leading-relaxed">
+              At Cheira Electronics, we specialize in fast and reliable repairs
+              for home appliances, computers, and everyday tech. Our skilled
+              technicians are committed to quality service, honest pricing, and
+              making sure your devices work when you need them most.
+              <br />
+              <br />
+              We’re not just fixing gadgets — we’re helping people stay
+              connected.
+            </p>
+          </div>
+
+          <div className="h-[300px] md:h-[400px] w-full md:w-1/2 bg-gray-200 rounded-xl bg-[url('/img/electronics_Bg.png')] bg-cover bg-center shadow-lg" />
         </div>
-        
-        <div className="h-[250px] md:h-[400px] w-full md:w-lg bg-gray-200 rounded-xl bg-[url('/img/electronics_Bg.png')] bg-cover bg-center">
-          
-        </div>
-      </section>
+      </AnimatedSection>
 
       {/* Services */}
-      <section className="flex flex-col items-center py-12 px-4 text-center mb-10" id="Services">
-        <h2 className="text-4xl font-semibold mb-6 text-gray-700 tracking-tighter">WHAT WE REPAIR</h2>
-        <p className="max-w-md md:max-w-xl text-sm md:text-md lg:text-lg tracking-tight text-center">
-          At Cheira Electronics, we offer expert repair services for computers, appliances, 
-          mobile devices, and other essential electronics. Whether it's a faulty motherboard, 
-          a broken screen, or a power issue, our team ensures fast and affordable solutions 
-          you can trust.
-        </p>
-        <div className="grid md:grid-cols-3 gap-6 p-5">
-
-          <div className="bg-white shadow flex flex-col items-center rounded-b-lg">
-            <img src="/img/background-3.png" alt="service" className="w-full md:h-[250px] lg:h-[300px]"/>
-            <div className="p-4 lg:p-6">
-              <h3 className="font-bold text-2xl text-gray-700 tracking-tighter">Air Conditioners</h3>
-              <p className="text-sm md:text-md tracking-tight">Expert maintenance and part replacement for A/C units.</p> 
-            </div>
+      <AnimatedSection>
+        <div
+          className="flex flex-col items-center py-16 px-6 text-center bg-gray-50"
+          id="Services"
+        >
+          <h2 className="text-4xl font-semibold mb-6 text-gray-800">
+            WHAT WE REPAIR
+          </h2>
+          <p className="max-w-2xl text-lg mb-12">
+            From appliances to electronics, our expert team ensures fast and
+            affordable solutions you can trust.
+          </p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {services.map((service, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: i * 0.2 }}
+                className="bg-white shadow-md hover:shadow-xl rounded-lg p-6 flex flex-col items-center text-center transition"
+              >
+                {service.icon}
+                <h3 className="font-bold text-2xl mt-4 mb-2 text-gray-800">
+                  {service.title}
+                </h3>
+                <p className="text-sm text-gray-600">{service.desc}</p>
+              </motion.div>
+            ))}
           </div>
-
-          <div className="bg-white shadow flex flex-col items-center rounded-b-lg">
-            <img src="/img/background-3.png" alt="service" className="w-full md:h-[250px] lg:h-[300px]"/>
-            <div className="p-4 lg:p-6">
-              <h3 className="font-bold text-2xl text-gray-700 tracking-tighter">Air Conditioners</h3>
-              <p className="text-sm md:text-md tracking-tight">Expert maintenance and part replacement for A/C units.</p> 
-            </div>
-          </div>
-
-          <div className="bg-white shadow flex flex-col items-center rounded-b-lg">
-            <img src="/img/background-3.png" alt="service" className="w-full md:h-[250px] lg:h-[300px]"/>
-            <div className="p-4 lg:p-6">
-              <h3 className="font-bold text-2xl text-gray-700 tracking-tighter">Air Conditioners</h3>
-              <p className="text-sm md:text-md tracking-tight">Expert maintenance and part replacement for A/C units.</p> 
-            </div>
-          </div>  
-
         </div>
-      </section>
+      </AnimatedSection>
 
       {/* Contact Section */}
-      <section className="mb-10 py-12 px-6" id="Contacts">
-        <h2 className="text-4xl font-semibold mb-10 text-gray-700 tracking-tighter text-center ">CONTACT US</h2>
-        <div className="flex flex-col md:flex-row items-center justify-center gap-15">
-          <div className="space-y-6">
-            <div className="flex items-start gap-4">
-              <FaPhone className="text-2xl text-gray-500 mt-1" />
-              <div>
-                <h4 className="font-bold">Phone</h4>
-                <p>+63 912 345 6789</p>
+      <AnimatedSection>
+        <div className="mb-10 py-16 px-6" id="Contacts">
+          <h2 className="text-4xl font-semibold mb-10 text-gray-800 text-center">
+            CONTACT US
+          </h2>
+          <div className="flex flex-col md:flex-row items-center justify-center gap-10">
+            <div className="space-y-6">
+              <div className="flex items-start gap-4">
+                <FaPhone className="text-3xl text-orange-500 mt-1" />
+                <div>
+                  <h4 className="font-bold">Phone</h4>
+                  <p>+63 912 345 6789</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <FaEnvelope className="text-3xl text-orange-500 mt-1" />
+                <div>
+                  <h4 className="font-bold">Email</h4>
+                  <p>cheiraelectronics@yahoo.com</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <FaMapMarkerAlt className="text-3xl text-orange-500 mt-1" />
+                <div>
+                  <h4 className="font-bold">Address</h4>
+                  <p className="max-w-[350px]">
+                    216 M. L. Quezon Avenue, New Lower Bicutan, Taguig City,
+                    Metro Manila, Philippines
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="flex items-start gap-4">
-              <FaEnvelope className="text-2xl text-gray-500 mt-1" />
-              <div>
-                <h4 className="font-bold">Email</h4>
-                <p>cheiraelectronics@yahoo.com</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <FaMapMarkerAlt className="text-2xl text-gray-500 mt-1" />
-              <div>
-                <h4 className="font-bold">Address</h4>
-                <p className="max-w-[350px]">216 M. L. Quezon Avenue, New Lower Bicutan, Taguig City, Metro Manila, Philippines</p>
-              </div>
-            </div>
-          </div>
 
-          <div className="w-[300px] md:w-[35%] h-[400px] p-4 bg-gray-100 rounded-lg">
-            {/* Embedded Google Map */}
-            <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1  d4752.997943391294!2d121.0605179758732!3d14.49881317955907!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397cf43c3838829%3A0xab5b6b5483be0fc5!2s216%20M.%20L.%20Quezon%20Ave%2C%20Taguig%20City%2C%201632%20Metro%20Manila!5e1!3m2!1sen!2sph!4v1750651511992!5m2!1sen!2sph" 
-              className=" w-full h-full"
-              style={{ border: 0 }}
-              allowfullscreen="" 
-              loading="lazy" 
-              referrerpolicy="no-referrer-when-downgrade"
-            >
-            </iframe>
+            <div className="w-[300px] md:w-[40%] h-[400px] bg-gray-100 rounded-lg shadow-md overflow-hidden">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18..."
+                className="w-full h-full"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+              />
+            </div>
           </div>
         </div>
-      </section>
+      </AnimatedSection>
 
       {/* Reviews */}
-      <section className="flex flex-col justify-center items-center px-4 py-10 my-10 md:px-10">
-        <h2 className="text-4xl font-semibold mb-6 text-gray-700 tracking-tighter">REVIEWS</h2>
-         <p className="text-gray-700 max-w-xl mx-auto mb-6 text-center text-lg tracking-tight">
-          Hear from our satisfied clients! We value your feedback and use it to 
-          improve our services every day. Whether we fixed your appliance, computer, 
-          or mobile device — your opinion matters.
-        </p>
-        <div className="flex flex-wrap gap-4 justify-center">
-          {feedbacks.map((feeds, index) => (
-            <div
-              key={index}
-              className="w-full md:w-[300px] h-[200px] md:h-[300px] flex flex-col gap-y-4 justify-center items-center shadow p-4"
-            >
-              <Rating name="read-only" value={feeds.rating} readOnly />
-              <p className="tracking-tighter text-center">"{feeds.feedback}"</p>
-              <h2>-{feeds.customerName}</h2>
-            </div>
-          ))}
+      <AnimatedSection>
+        <div className="flex flex-col justify-center items-center px-6 py-16 bg-gray-50">
+          <h2 className="text-4xl font-semibold mb-6 text-gray-800">REVIEWS</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto mb-10 text-center text-lg">
+            Hear from our satisfied clients! We value your feedback and use it
+            to improve our services every day.
+          </p>
+          <div className="flex flex-wrap gap-6 justify-center">
+            {feedbacks.map((feeds, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+                className="w-full md:w-[280px] flex flex-col gap-y-4 justify-center items-center bg-white shadow-md hover:shadow-lg rounded-lg p-6 transition"
+              >
+                <Rating name="read-only" value={feeds.rating} readOnly />
+                <p className="tracking-tight text-center text-gray-700">
+                  "{feeds.feedback}"
+                </p>
+                <h2 className="font-semibold text-gray-800">
+                  - {feeds.customerName}
+                </h2>
+              </motion.div>
+            ))}
+          </div>
+          <Link
+            to="/your-target-page"
+            className="mt-10 px-6 py-3 rounded-full bg-orange-500 text-white hover:bg-orange-600 transition"
+          >
+            VIEW ALL
+          </Link>
         </div>
-        <Link
-          to="/your-target-page"
-          className="mt-10 px-6 py-2 rounded-full bg-gray-700 text-white hover:bg-green-500 hover:text-white transition-colors duration-300"
-        >
-          VIEW ALL
-        </Link>
-      </section>
+      </AnimatedSection>
     </div>
   );
 }
