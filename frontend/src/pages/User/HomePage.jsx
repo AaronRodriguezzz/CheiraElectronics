@@ -3,7 +3,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FaTools, FaSnowflake, FaTshirt, FaPhone, FaMapMarkerAlt, FaEnvelope } from "react-icons/fa";
 import Rating from "@mui/material/Rating";
-import { Motion, StaggeredMotion, spring } from "react-motion";
 
 export default function Home() {
   const feedbacks = [
@@ -29,65 +28,24 @@ export default function Home() {
     },
   ];
 
-  const services = [
-    {
-      title: "Air Conditioners",
-      description: "Expert maintenance and part replacement for A/C units.",
-      image: "/img/background-3.png",
-    },
-    {
-      title: "Air Conditioners",
-      description: "Expert maintenance and part replacement for A/C units.",
-      image: "/img/background-3.png",
-    },
-    {
-      title: "Air Conditioners",
-      description: "Expert maintenance and part replacement for A/C units.",
-      image: "/img/background-3.png",
-    },
-  ];
-
   return (
     <div className="min-h-screen block bg-white">
       {/* Hero Section */}
-      <section className="h-screen relative flex flex-col justify-center items-center text-white md:px-8 text-center" id="Home">
+      <section className="h-screen flex flex-col justify-center items-center text-white md:px-8 text-center" id="Home">
         <div className="absolute top-0 h-full w-full bg-[url('/img/background-3.png')] bg-cover bg-center z-10" />
         <div className="absolute top-0 h-full w-full bg-orange-500/80 bg-cover bg-center z-10" />
 
-        <Motion defaultStyle={{ opacity: 0, y: -16 }} style={{ opacity: spring(1), y: spring(0) }}>
-          {style => (
-            <h1
-              className="text-4xl font-bold mb-4 z-20 tracking-tight opacity-90"
-              style={{ opacity: style.opacity, transform: `translateY(${style.y}px)` }}
-            >
-              Welcome to Cheira Electronics
-            </h1>
-          )}
-        </Motion>
-
-        <Motion defaultStyle={{ opacity: 0, y: 10 }} style={{ opacity: spring(1), y: spring(0) }}>
-          {style => (
-            <p
-              className="max-w-xs md:max-w-xl p-2 sm:text-sm md:text-lg mb-6 w-[700px] opacity-70 z-20"
-              style={{ opacity: style.opacity, transform: `translateY(${style.y}px)` }}
-            >
-              Your trusted partner in appliance and tech repairs. We fix computers, home gadgets,
-              and everyday electronics with speed, skill, and care—making technology work for everyone.
-            </p>
-          )}
-        </Motion>
-
-        <Motion defaultStyle={{ opacity: 0, y: 8 }} style={{ opacity: spring(1), y: spring(0) }}>
-          {style => (
-            <Link
-              to="/request-form"
-              className="bg-white text-orange-500 px-6 py-2 rounded-full font-semibold opacity-90 hover:bg-orange-100 z-20"
-              style={{ opacity: style.opacity, transform: `translateY(${style.y}px)` }}
-            >
-              Request a Service
-            </Link>
-          )}
-        </Motion>
+        <h1 className="text-4xl font-bold mb-4 z-20 tracking-tight opacity-90">Welcome to Cheira Electronics</h1>
+        <p className="max-w-xs md:max-w-xl p-2 sm:text-sm md:text-lg mb-6 w-[700px] opacity-70 z-20">
+          Your trusted partner in appliance and tech repairs. We fix computers, home gadgets,
+          and everyday electronics with speed, skill, and care—making technology work for everyone.
+        </p>
+        <Link
+          to="/request-form"
+          className="bg-white text-orange-500 px-6 py-2 rounded-full font-semibold opacity-90 hover:bg-orange-100 z-20"
+        >
+          Request a Service
+        </Link>
       </section>
 
       {/* About Us */}
@@ -119,34 +77,33 @@ export default function Home() {
           a broken screen, or a power issue, our team ensures fast and affordable solutions 
           you can trust.
         </p>
-        <StaggeredMotion
-          defaultStyles={services.map(() => ({ opacity: 0, y: 20 }))}
-          styles={prev =>
-            prev.map((_, i) =>
-              i === 0
-                ? { opacity: spring(1), y: spring(0) }
-                : { opacity: spring(prev[i - 1].opacity), y: spring(prev[i - 1].y) }
-            )
-          }
-        >
-          {interpolated => (
-            <div className="grid md:grid-cols-3 gap-6 p-5">
-              {interpolated.map((style, i) => (
-                <div
-                  key={i}
-                  className="bg-white shadow hover:shadow-lg transition-shadow duration-300 flex flex-col items-center rounded-b-lg"
-                  style={{ opacity: style.opacity, transform: `translateY(${style.y}px)` }}
-                >
-                  <img src={services[i].image} alt="service" className="w-full md:h-[250px] lg:h-[300px]"/>
-                  <div className="p-4 lg:p-6">
-                    <h3 className="font-bold text-2xl text-gray-700 tracking-tighter">{services[i].title}</h3>
-                    <p className="text-sm md:text-md tracking-tight">{services[i].description}</p>
-                  </div>
-                </div>
-              ))}
+        <div className="grid md:grid-cols-3 gap-6 p-5">
+
+          <div className="bg-white shadow flex flex-col items-center rounded-b-lg">
+            <img src="/img/background-3.png" alt="service" className="w-full md:h-[250px] lg:h-[300px]"/>
+            <div className="p-4 lg:p-6">
+              <h3 className="font-bold text-2xl text-gray-700 tracking-tighter">Air Conditioners</h3>
+              <p className="text-sm md:text-md tracking-tight">Expert maintenance and part replacement for A/C units.</p> 
             </div>
-          )}
-        </StaggeredMotion>
+          </div>
+
+          <div className="bg-white shadow flex flex-col items-center rounded-b-lg">
+            <img src="/img/background-3.png" alt="service" className="w-full md:h-[250px] lg:h-[300px]"/>
+            <div className="p-4 lg:p-6">
+              <h3 className="font-bold text-2xl text-gray-700 tracking-tighter">Air Conditioners</h3>
+              <p className="text-sm md:text-md tracking-tight">Expert maintenance and part replacement for A/C units.</p> 
+            </div>
+          </div>
+
+          <div className="bg-white shadow flex flex-col items-center rounded-b-lg">
+            <img src="/img/background-3.png" alt="service" className="w-full md:h-[250px] lg:h-[300px]"/>
+            <div className="p-4 lg:p-6">
+              <h3 className="font-bold text-2xl text-gray-700 tracking-tighter">Air Conditioners</h3>
+              <p className="text-sm md:text-md tracking-tight">Expert maintenance and part replacement for A/C units.</p> 
+            </div>
+          </div>  
+
+        </div>
       </section>
 
       {/* Contact Section */}
@@ -183,9 +140,9 @@ export default function Home() {
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1  d4752.997943391294!2d121.0605179758732!3d14.49881317955907!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397cf43c3838829%3A0xab5b6b5483be0fc5!2s216%20M.%20L.%20Quezon%20Ave%2C%20Taguig%20City%2C%201632%20Metro%20Manila!5e1!3m2!1sen!2sph!4v1750651511992!5m2!1sen!2sph" 
               className=" w-full h-full"
               style={{ border: 0 }}
-              allowFullScreen 
+              allowfullscreen="" 
               loading="lazy" 
-              referrerPolicy="no-referrer-when-downgrade"
+              referrerpolicy="no-referrer-when-downgrade"
             >
             </iframe>
           </div>
@@ -200,32 +157,18 @@ export default function Home() {
           improve our services every day. Whether we fixed your appliance, computer, 
           or mobile device — your opinion matters.
         </p>
-        <StaggeredMotion
-          defaultStyles={feedbacks.map(() => ({ opacity: 0, y: 16 }))}
-          styles={prev =>
-            prev.map((_, i) =>
-              i === 0
-                ? { opacity: spring(1), y: spring(0) }
-                : { opacity: spring(prev[i - 1].opacity), y: spring(prev[i - 1].y) }
-            )
-          }
-        >
-          {interpolated => (
-            <div className="flex flex-wrap gap-4 justify-center">
-              {interpolated.map((style, index) => (
-                <div
-                  key={index}
-                  className="w-full md:w-[300px] h-[200px] md:h-[300px] flex flex-col gap-y-4 justify-center items-center shadow p-4"
-                  style={{ opacity: style.opacity, transform: `translateY(${style.y}px)` }}
-                >
-                  <Rating name="read-only" value={feedbacks[index].rating} readOnly />
-                  <p className="tracking-tighter text-center">"{feedbacks[index].feedback}"</p>
-                  <h2>-{feedbacks[index].customerName}</h2>
-                </div>
-              ))}
+        <div className="flex flex-wrap gap-4 justify-center">
+          {feedbacks.map((feeds, index) => (
+            <div
+              key={index}
+              className="w-full md:w-[300px] h-[200px] md:h-[300px] flex flex-col gap-y-4 justify-center items-center shadow p-4"
+            >
+              <Rating name="read-only" value={feeds.rating} readOnly />
+              <p className="tracking-tighter text-center">"{feeds.feedback}"</p>
+              <h2>-{feeds.customerName}</h2>
             </div>
-          )}
-        </StaggeredMotion>
+          ))}
+        </div>
         <Link
           to="/your-target-page"
           className="mt-10 px-6 py-2 rounded-full bg-gray-700 text-white hover:bg-green-500 hover:text-white transition-colors duration-300"
