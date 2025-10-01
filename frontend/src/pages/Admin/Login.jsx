@@ -29,20 +29,22 @@ export default function Login() {
   return (
     <div className="min-h-screen flex">
       {/* Left Orange Side */}
-      <div className="w-1/2 bg-orange-500 text-white flex flex-col justify-center items-center p-10 space-y-6">
+      <div className="w-1/2 bg-gradient-to-b from-orange-600 to-black text-white flex flex-col justify-center items-center p-10 space-y-6">
         <img src="/img/cheiralogo.png" alt="Logo" className="w-40" />
-        <h1 className="text-3xl font-bold">Cheira Electronics</h1>
-        <div className="space-y-4">
+        <h1 className="text-3xl font-bold tracking-wide">
+          Cheira Electronics
+        </h1>
+        <div className="space-y-4 text-lg">
           <div className="flex items-center gap-3">
-            <Wrench size={28} />
+            <Wrench size={28} className="text-orange-300" />
             <span>Reliable Electronics Repair</span>
           </div>
           <div className="flex items-center gap-3">
-            <ShieldCheck size={28} />
+            <ShieldCheck size={28} className="text-orange-300" />
             <span>Secure Admin Access</span>
           </div>
           <div className="flex items-center gap-3">
-            <UserCog size={28} />
+            <UserCog size={28} className="text-orange-300" />
             <span>Manage Services & Technicians</span>
           </div>
         </div>
@@ -79,7 +81,7 @@ export default function Login() {
 
           <button
             type="submit"
-            className="bg-orange-500 hover:bg-orange-600 transition text-white font-semibold text-lg py-3 rounded-md w-full"
+            className="bg-orange-600 hover:bg-orange-500 transition text-white font-semibold text-lg py-3 rounded-md w-full"
           >
             Login
           </button>

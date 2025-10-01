@@ -1,10 +1,11 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserCircle, Menu, X} from "lucide-react";
+import { useUser } from "../../hooks/protectHooks";
 
 export default function Navbar({ setSideBarOpen }) {
   const navigate = useNavigate();
-  const user =  JSON.parse(localStorage.getItem('user'));
+  const user = useUser();
   const [isOpen, setIsOpen] = React.useState(false);
 
   const navClicked = (id) => {

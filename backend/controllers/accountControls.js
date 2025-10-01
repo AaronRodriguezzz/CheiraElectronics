@@ -3,8 +3,7 @@ import bcrypt from "bcryptjs";
 
 // Create a new admin
 export const addAdmin = async (req, res) => {
-  console.log(req.body);
-
+  
   try {
     const { full_name, email, password, role, status } = req.body;
     // Check required fields

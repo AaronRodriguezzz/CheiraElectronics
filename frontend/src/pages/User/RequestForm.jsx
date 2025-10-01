@@ -4,9 +4,12 @@ import { Wrench, MessageSquareText } from "lucide-react";
 import { post_data } from "../../services/postMethod";
 import { get_data } from "../../services/getMethod";
 import { motion } from "framer-motion";
+import { usePageProtection } from "../../hooks/protectHooks";
+import { useUser } from "../../hooks/protectHooks";
 
 export default function SubmitRequest() {
-  const user = JSON.parse(localStorage.getItem("user"));
+  usePageProtection();
+  const user = useUser();
   const [services, setServices] = useState(null);
   const [formData, setFormData] = useState({
     serviceType: "",

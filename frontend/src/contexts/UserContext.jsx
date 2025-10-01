@@ -1,0 +1,43 @@
+import { createContext, useState, useEffect, useContext } from 'react';
+import axios from 'axios';
+import { Navigate } from 'react-router-dom';
+
+const UserAuthContext = createContext();
+
+export const AuthProvider = ({children}) => {
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const checkAuth = async () => {
+            try {
+                setLoading(true)
+                const res = await axios.get('/api/protected', { withCredentials: true});
+                setUser(res.data.user);
+            } catch (err) {
+                console.log('hello', err)
+                setUser(null);
+            } finally {
+                setLoading(false);
+            }
+        };
+        checkAuth();
+    }, []);
+    
+
+    const logout = async () => {
+        const response = await axios.post('/api/logout', {}, { withCredentials: true });
+        
+        if(response.status === 200){
+            setUser(null);
+        }
+    };
+
+    return (
+        <UserAuthContext.Provider value={{ user, setUser, loading, logout }}>
+            {children}
+        </UserAuthContext.Provider>
+    );
+};
+
+export const useAuth = () => useContext(UserAuthContext);

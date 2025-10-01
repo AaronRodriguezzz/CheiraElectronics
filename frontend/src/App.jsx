@@ -3,10 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // Pages under /User
 import HomePage from "./pages/User/HomePage";
-import ContactUs from "./pages/User/ContactUs";
 import Feedback from "./pages/User/Feedback";
 import Login from "./pages/User/Login";
-import Register from "./pages/User/Register";
 import RequestForm from "./pages/User/RequestForm";
 
 //Pages under /Admin
@@ -62,8 +60,6 @@ export default function App() {
 
         {/* Pages without layout */}
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-
 
 
       </Routes>

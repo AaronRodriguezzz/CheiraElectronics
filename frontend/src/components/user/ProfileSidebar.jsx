@@ -1,15 +1,15 @@
 import React, { useState, useEffect} from 'react'
-import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, PencilLine, Lock, Wrench, Power, ChevronRight, ChevronDown } from "lucide-react"
 import { statusColorMap } from '../../data/StatusColor';
 import { get_data } from '../../services/getMethod';
-import { notificationsSocket } from '../../sockets/notificationSocket';
 import ChangePasswordModal from '../modals/ChangePasswordModal';
 import UpdateProfile from '../modals/UpdateProfile';
-
+import { useAuth } from '../../contexts/UserContext';
+import { useNavigate } from 'react-router-dom';
 const ProfileSidebar = ({ open }) => {
-    const user =  JSON.parse(localStorage.getItem('user'));
+    
     const navigate = useNavigate();
+    const { user, logout } = useAuth();
     const [requestHistoryOpen, setRequestHistoryOpen] = useState(false);
     const [requests, setRequests] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -56,17 +56,17 @@ const ProfileSidebar = ({ open }) => {
 
                     <div>
                         <h1 className="text-2xl font-semibold text-orange-500 tracking-tight">
-                            {user?.full_name || 'Francis Aaron'}
+                            {user?.full_name}
                         </h1>
                         <p className="text-sm text-white mt-1 break-words max-w-xs">
-                            {user?.address || '#11 Pres Roxas South Signal'}
+                            {user?.address}
                         </p>
                     </div>
                     
                     <button 
                         className='h-3 w-3 text-orange-500 hover:text-red-500' 
                         onClick={() => {
-                            localStorage.removeItem('user')
+                            logout()
                             navigate('/login')
                         }}
                     >
