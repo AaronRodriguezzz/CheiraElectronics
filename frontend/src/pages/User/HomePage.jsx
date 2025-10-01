@@ -1,41 +1,17 @@
 // src/pages/Home.jsx
 import React, { useRef } from "react";
 import { Link } from "react-router-dom";
-import {
-  FaTools,
-  FaSnowflake,
-  FaPhone,
-  FaMapMarkerAlt,
-  FaEnvelope,
-  FaLaptop,
-  FaMobileAlt,
-  FaTv,
-  FaBlender,
-} from "react-icons/fa";
+import { FaPhone, FaMapMarkerAlt, FaEnvelope } from "react-icons/fa";
 import Rating from "@mui/material/Rating";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import { feedbacks, services } from "../../data/HomePageTxt";
+import AnimatedSection from '../../components/user/AnimationContainer';
 
 export default function Home() {
-
-    const AnimatedSection = ({ children }) => {
-      const ref = useRef(null);
-      const inView = useInView(ref, { once: true, margin: "-100px" });
-
-      return (
-        <motion.section
-          ref={ref}
-          initial={{ opacity: 0, y: 50 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-        >
-          {children}
-        </motion.section>
-      );
-    };
+  
 
   return (
-    <div className="min-h-screen block bg-white text-gray-700">
+    <div className="min-h-screen block text-orange-500 z-50 relative">
       {/* Hero Section */}
       <motion.section
         initial={{ opacity: 0 }}
@@ -44,9 +20,6 @@ export default function Home() {
         className="h-screen flex flex-col justify-center items-center text-white px-4 text-center relative"
         id="Home"
       >
-        <div className="absolute inset-0 bg-[url('/img/background-3.png')] bg-cover bg-center z-0" />
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-600/80 to-gray-900/80 z-0" />
-
         <h1 className="text-5xl md:text-6xl font-bold mb-4 z-10 tracking-tight">
           Welcome to Cheira Electronics
         </h1>
@@ -56,7 +29,7 @@ export default function Home() {
         </p>
         <Link
           to="/request-form"
-          className="bg-white text-orange-600 px-6 py-3 rounded-full font-semibold shadow hover:bg-orange-100 transition z-10"
+          className="bg-orange-500 text-white px-6 py-3 rounded-full font-semibold shadow hover:bg-orange-600 transition z-10"
         >
           Request a Service
         </Link>
@@ -65,14 +38,14 @@ export default function Home() {
       {/* About Us */}
       <AnimatedSection>
         <div
-          className="my-20 block space-y-8 md:flex justify-evenly items-center p-6"
+          className="block space-y-8 p-16 md:flex justify-evenly items-center z-50 bg-black/70 backdrop-blur-sm rounded-xl mx-6 mb-8"
           id="About Us"
         >
-          <div className="block md:w-1/2">
-            <h2 className="text-4xl font-bold mb-6 tracking-tight text-gray-800">
+          <div className="block md:w-1/2 text-gray-200">
+            <h2 className="text-4xl font-bold mb-6 tracking-tight text-orange-500">
               ABOUT US
             </h2>
-            <p className="text-lg leading-relaxed">
+            <p className="text-lg leading-relaxed w-xl">
               At Cheira Electronics, we specialize in fast and reliable repairs
               for home appliances, computers, and everyday tech. Our skilled
               technicians are committed to quality service, honest pricing, and
@@ -84,20 +57,20 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="h-[300px] md:h-[400px] w-full md:w-1/2 bg-gray-200 rounded-xl bg-[url('/img/electronics_Bg.png')] bg-cover bg-center shadow-lg" />
+          <div className="h-[300px] md:h-[400px] w-full md:w-1/2 rounded-xl bg-[url('/img/electronics_Bg.png')] bg-cover bg-center shadow-lg" />
         </div>
       </AnimatedSection>
 
       {/* Services */}
       <AnimatedSection>
         <div
-          className="flex flex-col items-center py-16 px-6 text-center bg-gray-50"
+          className="flex flex-col items-center py-16 px-6 text-center bg-black/70 backdrop-blur-sm rounded-xl mx-6 mb-8"
           id="Services"
         >
-          <h2 className="text-4xl font-semibold mb-6 text-gray-800">
+          <h2 className="text-4xl font-semibold mb-6 text-orange-500">
             WHAT WE REPAIR
           </h2>
-          <p className="max-w-2xl text-lg mb-12">
+          <p className="max-w-2xl text-lg mb-12 text-gray-200">
             From appliances to electronics, our expert team ensures fast and
             affordable solutions you can trust.
           </p>
@@ -108,13 +81,14 @@ export default function Home() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: i * 0.2 }}
-                className="bg-white shadow-md hover:shadow-xl rounded-lg p-6 flex flex-col items-center text-center transition"
+                className="bg-black/60 backdrop-blur-md shadow-md hover:shadow-orange-500/50 
+                           rounded-lg p-6 flex flex-col items-center text-center transition"
               >
                 {service.icon}
-                <h3 className="font-bold text-2xl mt-4 mb-2 text-gray-800">
+                <h3 className="font-bold text-2xl mt-4 mb-2 text-orange-400">
                   {service.title}
                 </h3>
-                <p className="text-sm text-gray-600">{service.desc}</p>
+                <p className="text-sm text-gray-300">{service.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -123,11 +97,14 @@ export default function Home() {
 
       {/* Contact Section */}
       <AnimatedSection>
-        <div className="mb-10 py-16 px-6" id="Contacts">
-          <h2 className="text-4xl font-semibold mb-10 text-gray-800 text-center">
+        <div
+          className="mb-10 py-16 px-6 bg-black/70 backdrop-blur-sm rounded-xl mx-6"
+          id="Contacts"
+        >
+          <h2 className="text-4xl font-semibold mb-10 text-orange-500 text-center">
             CONTACT US
           </h2>
-          <div className="flex flex-col md:flex-row items-center justify-center gap-10">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-10 text-gray-200">
             <div className="space-y-6">
               <div className="flex items-start gap-4">
                 <FaPhone className="text-3xl text-orange-500 mt-1" />
@@ -155,7 +132,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="w-[300px] md:w-[40%] h-[400px] bg-gray-100 rounded-lg shadow-md overflow-hidden">
+            <div className="w-[300px] md:w-[40%] h-[400px] bg-black/50 rounded-lg shadow-md overflow-hidden border border-orange-500/20">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18..."
                 className="w-full h-full"
@@ -170,9 +147,9 @@ export default function Home() {
 
       {/* Reviews */}
       <AnimatedSection>
-        <div className="flex flex-col justify-center items-center px-6 py-16 bg-gray-50">
-          <h2 className="text-4xl font-semibold mb-6 text-gray-800">REVIEWS</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto mb-10 text-center text-lg">
+        <div className="flex flex-col justify-center items-center px-6 py-16 bg-black/70 backdrop-blur-sm rounded-xl mx-6 mb-8">
+          <h2 className="text-4xl font-semibold mb-6 text-orange-500">REVIEWS</h2>
+          <p className="text-gray-200 max-w-2xl mx-auto mb-10 text-center text-lg">
             Hear from our satisfied clients! We value your feedback and use it
             to improve our services every day.
           </p>
@@ -183,13 +160,15 @@ export default function Home() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: index * 0.2 }}
-                className="w-full md:w-[280px] flex flex-col gap-y-4 justify-center items-center bg-white shadow-md hover:shadow-lg rounded-lg p-6 transition"
+                className="w-full md:w-[280px] flex flex-col gap-y-4 justify-center items-center 
+                           bg-black/60 backdrop-blur-md shadow-md hover:shadow-orange-500/50 
+                           rounded-lg p-6 transition"
               >
                 <Rating name="read-only" value={feeds.rating} readOnly />
-                <p className="tracking-tight text-center text-gray-700">
+                <p className="tracking-tight text-center text-gray-300">
                   "{feeds.feedback}"
                 </p>
-                <h2 className="font-semibold text-gray-800">
+                <h2 className="font-semibold text-orange-400">
                   - {feeds.customerName}
                 </h2>
               </motion.div>

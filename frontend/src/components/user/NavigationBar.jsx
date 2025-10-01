@@ -19,23 +19,23 @@ export default function Navbar({ setSideBarOpen }) {
 
   return (
     <>
-      <nav className="fixed w-full top-0 left-0 bg-gray-50 shadow-md p-4 flex justify-between items-center z-20">
+      <nav className="fixed w-full top-0 left-0 bg-black shadow-md shadow-orange-800 p-4 flex justify-between items-center z-20">
         <button className="visible md:hidden" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <X size={24} /> : <Menu size={24} color="orange"/>}
         </button>
         <h1 className="text-2xl font-bold text-orange-500 tracking-tighter">Cheira Electronics</h1>
 
-        <div className="space-x-4 hidden flex-row items-center md:flex">
+        <div className="space-x-4 hidden text-white flex-row items-center md:flex">
           {["Home", "About Us", "Contacts", "Services"].map((text) => (
               <li
                 key={text}
                 onClick={() => navClicked(text)}
-                className="text-gray-700 tracking-tighter hover:text-orange-500 font-medium list-none cursor-pointer"
+                className="text-orange-500 tracking-tighter hover:text-orange-500 font-medium list-none cursor-pointer"
               >
                 {text}
               </li>
           ))}
-          <Link to="/request-form" className="text-gray-700 tracking-tighter hover:text-orange-500 font-medium">Request</Link>
+          <Link to="/request-form" className="text-orange-500 tracking-tighter hover:text-orange-500 font-medium">Request</Link>
         </div>
 
           {user ?  
@@ -56,17 +56,17 @@ export default function Navbar({ setSideBarOpen }) {
           }
       </nav>
 
-      {isOpen && <div className="fixed top-17 left-0 w-full flex md:hidden flex-col gap-y-4 items-center bg-white p-4 z-100 ">
+      {isOpen && <div className="fixed top-17 left-0 w-full flex md:hidden flex-col gap-y-4 items-center bg-black/90 p-4 z-100 ">
           {["Home", "About Us", "Contacts", "Services"].map((text) => (
           <li
             key={text}
             onClick={() => navClicked(text)}
-            className="text-gray-700 tracking-tighter hover:text-orange-500 font-medium list-none cursor-pointer"
+            className="text-white tracking-tighter hover:text-orange-500 font-medium list-none cursor-pointer"
           >
             {text}
           </li>
         ))}
-        <Link to="/request-form" className="text-gray-700 tracking-tighter hover:text-orange-500 font-medium">Request</Link>
+        <Link to="/request-form" className="text-white tracking-tighter hover:text-orange-500 font-medium">Request</Link>
       </div>}
     </>
     

@@ -10,7 +10,7 @@ export const chat_bot = async (req, res) => {
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.5-flash',
       systemInstruction: `
         You are a smart, helpful assistant that responds only to inquiries related to **Chreia Electronics**, an electronics repair and service business.
         Do NOT answer unrelated questions, and NEVER provide personal opinions. But answer appropriately when it is not a question, don't apologize, instead

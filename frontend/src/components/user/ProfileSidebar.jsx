@@ -39,13 +39,13 @@ const ProfileSidebar = ({ open }) => {
     },[requestHistoryOpen])
 
     return (
-        <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex justify-end">
-            <div className="relative h-full w-[20rem] bg-white p-6 shadow-2xl flex flex-col">
+        <div className="fixed inset-0 z-[9999] bg-black/30 backdrop-blur-sm flex justify-end">
+            <div className="relative h-full w-[20rem] bg-black/80 p-6 shadow-2xl flex flex-col">
                 
                 {/* Back Button */}
                 <button
                     onClick={() => open(false)}
-                    className="flex items-center gap-2 text-sm text-gray-600 hover:text-orange-500 mb-6"
+                    className="flex items-center gap-2 text-sm text-gray-100 hover:text-orange-500 mb-6"
                 >
                     <ArrowLeft className="w-5 h-5" />   
                     Back
@@ -56,40 +56,42 @@ const ProfileSidebar = ({ open }) => {
 
                     <div>
                         <h1 className="text-2xl font-semibold text-orange-500 tracking-tight">
-                        {user?.full_name}
+                            {user?.full_name || 'Francis Aaron'}
                         </h1>
-                        <p className="text-sm text-gray-700 mt-1 break-words max-w-xs">
-                            {user?.address}
+                        <p className="text-sm text-white mt-1 break-words max-w-xs">
+                            {user?.address || '#11 Pres Roxas South Signal'}
                         </p>
                     </div>
                     
                     <button 
-                        className='h-3 w-3 hover:text-red-500' 
+                        className='h-3 w-3 text-orange-500 hover:text-red-500' 
                         onClick={() => {
                             localStorage.removeItem('user')
                             navigate('/login')
                         }}
-                    ><Power/></button>
+                    >
+                        <Power/>
+                    </button>
                 </div>
 
                     {/* Menu Actions */}
                 <div className="flex flex-col gap-y-2">
                     <button 
-                        className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-orange-50 text-gray-700 hover:text-orange-500 transition"
+                        className="flex items-center gap-3 px-3 py-2 rounded-md text-white hover:bg-gray-500/50 hover:text-orange-500 transition"
                         onClick={() => setUpdateProfileOpen(true)}
                     >
                         <PencilLine className="w-5 h-5" />
                         Edit Profile
                     </button>
 
-                    <button className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-orange-50 text-gray-700 hover:text-orange-500 transition" onClick={() => setChangePasswordOpen(true)}>
+                    <button className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-500/50 text-white hover:text-orange-500 transition" onClick={() => setChangePasswordOpen(true)}>
                         <Lock className="w-5 h-5" />
                         Change Password 
                     </button>
 
                     
                     <button
-                        className="flex items-center justify-between w-full gap-3 px-3 py-2 rounded-md hover:bg-orange-50 text-gray-700 hover:text-orange-500 transition"
+                        className="flex items-center justify-between w-full gap-3 px-3 py-2 rounded-md hover:bg-gray-500/50 text-white hover:text-orange-500 transition"
                         onClick={() => setRequestHistoryOpen(!requestHistoryOpen)}
                     >
                         <span className="flex items-center gap-2">

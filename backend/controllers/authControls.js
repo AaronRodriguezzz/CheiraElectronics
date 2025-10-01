@@ -13,8 +13,6 @@ export const login = async (req, res) => {
             user: User
         }
 
-        console.log(req.body);
-
         // Validate input
         if (!email || !password) {
             return res.status(400).json({ message: 'Email and password are required' });
@@ -40,6 +38,9 @@ export const login = async (req, res) => {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
+        const adminObj = user.toObject();
+        const { password: _, ...account } = adminObj;
+
         // Generate JWT
         const token = jwt.sign(
             { user },
@@ -53,9 +54,6 @@ export const login = async (req, res) => {
             sameSite: 'lax',
             secure: process.env.NODE_ENV === 'production' // Only secure in production
         });
-
-        const adminObj = user.toObject();
-        const { password: _, ...account } = adminObj;
 
         // Send success response
         return res.status(200).json({

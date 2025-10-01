@@ -48,8 +48,8 @@ export default function SubmitRequest() {
 
   if (!services) {
     return (
-      <div className="w-full h-screen flex items-center justify-center bg-gray-100">
-        <p className="text-lg font-semibold text-gray-600 animate-pulse">
+      <div className="w-full h-screen flex items-center justify-center bg-gray-950">
+        <p className="text-lg font-semibold text-gray-200 animate-pulse">
           Loading services...
         </p>
       </div>
@@ -57,7 +57,7 @@ export default function SubmitRequest() {
   }
 
   return (
-    <div className="min-h-screen pt-24 px-4 sm:px-8 bg-gradient-to-br from-orange-500 via-orange-600 to-orange-700 bg-cover bg-center relative">
+    <div className="min-h-screen pt-24 px-4 sm:px-8 bg-black relative">
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
 
@@ -68,15 +68,15 @@ export default function SubmitRequest() {
         className="relative z-10 max-w-2xl mx-auto"
       >
         {/* Title */}
-        <h1 className="text-4xl font-extrabold text-white mb-8 text-center drop-shadow-lg">
-          <Wrench className="inline w-8 h-8 mr-2 mb-1 text-yellow-300" />
+        <h1 className="text-4xl font-extrabold mb-8 text-center drop-shadow-lg text-orange-500">
+          <Wrench className="inline w-8 h-8 mr-2 mb-1 text-orange-500" />
           Submit a Service Request
         </h1>
 
         {/* Form */}
         <motion.form
           onSubmit={handleSubmit}
-          className="bg-white rounded-2xl shadow-xl p-8 space-y-6"
+          className="rounded-2xl shadow-xl p-8 space-y-6 bg-gradient-to-r from-black/80 to-black/90 text-white shadow-orange-800"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -106,6 +106,18 @@ export default function SubmitRequest() {
               <option value="N/A">Not in the option</option>
             </select>
           </div>
+
+          <input type="text"  
+                 placeholder="Model/Brand"
+                 className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm 
+                              focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
+          />
+          <input type="text"  
+                 placeholder="Device Type"
+                 className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm 
+                              focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
+          />
+
 
           {/* Message Field */}
           <div className="relative">

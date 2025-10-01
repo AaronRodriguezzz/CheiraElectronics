@@ -1,5 +1,9 @@
 // Animation helper component
-  export const AnimatedSection = ({ children }) => {
+import { useRef } from "react";
+import { useInView } from "framer-motion";
+import { motion } from "framer-motion";
+
+ const AnimatedSection = ({ children }) => {
     const ref = useRef(null);
     const inView = useInView(ref, { once: true, margin: "-100px" });
 
@@ -13,5 +17,7 @@
         {children}
       </motion.section>
     );
-  };
+};
+
+export default AnimatedSection
 

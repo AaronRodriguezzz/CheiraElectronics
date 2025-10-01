@@ -1,3 +1,16 @@
+
+import {
+  FaTools,
+  FaPhone,
+  FaMapMarkerAlt,
+  FaEnvelope,
+  FaLaptop,
+  FaMobileAlt,
+  FaTv,
+  FaBlender,
+  FaSnowflake
+} from "react-icons/fa";
+
 export const feedbacks = [
     {
       customerName: "James Cruz",

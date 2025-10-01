@@ -25,15 +25,18 @@ import AdminLayout from "./layouts/AdminLayout";
 import UserLayout from "./layouts/UserLayout";
 import ProtectedRoute from "./components/routes/protectedRoutes";
 
+import Apps from "./components/user/demo";
 export default function App() {
   return (
     <Router>
       <Routes>
         {/* Pages with layout */} 
+
         <Route element={<UserLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/feedback" element={<Feedback />} />
           <Route path="/request-form" element={<RequestForm />} />
+          <Route path="/demo" element={<Apps />} />
         </Route>
 
         <Route path="/admin" element={<AdminLayout />}>
