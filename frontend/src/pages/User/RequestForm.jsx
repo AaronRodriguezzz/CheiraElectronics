@@ -33,8 +33,9 @@ export default function SubmitRequest() {
         setFormData({
           serviceType: "",
           description: "",
+          deviceType: "",
+          model: "",
         });
-        alert("✅ Request submitted successfully!");
       }
     } catch (err) {
       console.log(err);

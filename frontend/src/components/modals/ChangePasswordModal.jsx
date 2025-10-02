@@ -38,7 +38,7 @@ const ChangePasswordModal = ({ onClose, userId }) => {
 
     return (
         <div class="fixed top-1/4 left-1/2 transform -translate-x-1/2">
-            <div class="bg-white p-6 rounded shadow-lg w-96">
+            <div class="bg-black/90 p-6 rounded shadow-lg w-96 text-white">
                 <h2 class="text-xl font-semibold mb-4">Change Password</h2>
                 <form onSubmit={handleSubmit}>
                     <div class="mb-4">

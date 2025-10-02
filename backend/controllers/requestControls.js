@@ -38,9 +38,11 @@ export const createServiceRequest = async (req, res) => {
       return res.status(400).json({ message: 'You already requested 3 times in a day'})
     }
 
+    const service = serviceType === 'N/A' ? undefined : serviceType
+
     const newRequest = new ServiceRequest({
       customer: customerId,
-      serviceType,
+      serviceType: service,
       model, 
       deviceType,
       description,

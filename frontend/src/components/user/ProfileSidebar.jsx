@@ -117,14 +117,15 @@ const ProfileSidebar = ({ open }) => {
                             {requests && requests.map((req) => (
                                 <div
                                     key={req._id}
-                                    className='relative pl-6 p-2 text-sm bg-white rounded shadow'
+                                    className='relative pl-6 p-2 text-sm bg-orange-500 rounded shadow text-white'
                                 >
                                     <div
-                                        className={`absolute h-full left-0 top-0 w-[10px] rounded-l-lg bg-${statusColorMap[req?.status]}`}
+                                        className={`absolute h-full left-0 top-0 w-[10px] rounded-l-lg`}
+                                        style={{backgroundColor: statusColorMap[req?.status]}}
                                     />
 
                                     <h1 className='max-w-[250px] text-lg tracking-tighter font-semibold truncate'>
-                                        {req?.serviceType}
+                                        {req?.serviceType || 'Not on the option'}
                                     </h1>
                                     <p>{req?.submittedAt.split('T')[0]}</p>
                                     <p style={{color: statusColorMap[req?.status]}}>{req?.status}</p>
