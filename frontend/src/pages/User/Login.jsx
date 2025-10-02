@@ -6,7 +6,6 @@ import RegistrationSection from "../../components/user/sections/RegistrationSect
 
 export default function Login() {
   useCustomerPageProtection();
-  useUserProtection();
 
   const [registration, setRegistration] = useState(false);
 
