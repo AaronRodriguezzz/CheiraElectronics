@@ -9,7 +9,6 @@ import { get_data } from "../services/getMethod";
 import { useAdminPageProtection } from '../hooks/protectHooks';
 
 export default function AdminLayout() {
-  useAdminPageProtection();
   const [notificationOpen, setNotificationOpen] = React.useState(false);
 
   return (
