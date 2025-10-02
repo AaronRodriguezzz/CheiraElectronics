@@ -13,6 +13,14 @@ const ServiceRequestSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Service",
     },
+    model: {
+        type: String,
+        required: true,
+    },
+    deviceType: {
+        type: String,
+        required: true,
+    },
     description: String,
     servicePrice: Number,
     status: {

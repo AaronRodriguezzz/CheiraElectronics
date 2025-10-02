@@ -6,6 +6,7 @@ import { get_data } from "../../services/getMethod";
 import { motion } from "framer-motion";
 import { usePageProtection } from "../../hooks/protectHooks";
 import { useUser } from "../../hooks/protectHooks";
+import { model } from "mongoose";
 
 export default function SubmitRequest() {
   usePageProtection();
@@ -13,6 +14,8 @@ export default function SubmitRequest() {
   const [services, setServices] = useState(null);
   const [formData, setFormData] = useState({
     serviceType: "",
+    deviceType: "",
+    model: "",
     description: "",
   });
 
@@ -111,13 +114,19 @@ export default function SubmitRequest() {
           </div>
 
           <input type="text"  
-                 placeholder="Model/Brand"
-                 className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm 
+                  name="deviceType"
+                  onChange={handleChange}
+                  value={formData.deviceType}
+                  placeholder="Model/Brand"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm 
                               focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
           />
           <input type="text"  
-                 placeholder="Device Type"
-                 className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm 
+                  name="model"
+                  onChange={handleChange}
+                  value={formData.model}
+                  placeholder="Device Type"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm 
                               focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
           />
 

@@ -4,9 +4,20 @@ import { send_request_update } from "../utils/sendEmail.js";
 
 // ✅ Create a new service request
 export const createServiceRequest = async (req, res) => {
-  try {
-    const { customerId, serviceType, description } = req.body;
 
+  const { 
+    customerId, 
+    serviceType, 
+    model, 
+    deviceType, 
+    description 
+  } = req.body;
+
+  if(!customerId || !serviceType || !model || !deviceType || !description){
+    return res.status(400).json({ message: 'All fields are required'})
+  }
+
+  try {
 
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
@@ -27,12 +38,11 @@ export const createServiceRequest = async (req, res) => {
       return res.status(400).json({ message: 'You already requested 3 times in a day'})
     }
 
-    const serviceTypeId = req.body.serviceType === 'N/A' ? null : req.body.serviceType;
-
-
     const newRequest = new ServiceRequest({
       customer: customerId,
-      serviceType: serviceTypeId,
+      serviceType,
+      model, 
+      deviceType,
       description,
     });
 
