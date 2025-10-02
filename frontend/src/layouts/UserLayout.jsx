@@ -8,7 +8,6 @@ import HyperSpeedBg from "../components/user/HyperSpeedBg";
 import { useUserProtection } from '../hooks/protectHooks';
 
 export default function UserLayout() {
-  useUserProtection();
   const [profileSidebarOpen, setProfileSidebarOpen] = useState(false);
   
   return (
