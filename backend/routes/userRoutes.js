@@ -6,7 +6,7 @@ import {
   deleteCustomerAccount,
   updatePassword
 } from "../controllers/userControls.js";
-import verifyToken from "../middleware/tokenVerification.js";
+import { verifyToken } from "../middleware/tokenVerification.js";
 
 const router = express.Router();
 

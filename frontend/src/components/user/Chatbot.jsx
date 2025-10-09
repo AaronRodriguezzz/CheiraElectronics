@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Bot, User, MessageCircle, X } from 'lucide-react';
 import axios from 'axios';
+import { motion, AnimatePresence } from "framer-motion";
 
 const Chatbot = () => {
   const [open, setOpen] = useState(false);
@@ -51,60 +52,74 @@ const Chatbot = () => {
   return (
     <div className="fixed bottom-2 right-2 z-50 flex flex-col items-end gap-2">
       {/* Chat window */}
-      {open && (
-        <div className="w-[300px] h-[500px] bg-white border border-gray-300 shadow-xl rounded-xl flex flex-col overflow-hidden">
-          {/* Header */}
-          <div className="bg-orange-500 text-white p-3 font-bold text-lg flex items-center justify-between">
-            <span>CheiraBot</span>
-            <button onClick={() => setOpen(false)}>
-              <X className="w-5 h-5" />
-            </button>
-          </div>
+      <AnimatePresence>
+        {open && (
+          <motion.div 
+            initial={{ y: open ? 100 : 0, opacity: 0 }}  // start above and invisible
+            animate={{ y: 0, opacity: 1 }}     // slide down and fade in
+            exit={{ opacity: 0, y: 100 }}   // 👈 this runs when unmounting
+            transition={{
+              type: "spring",    // smooth, natural motion
+              stiffness: 100,
+              damping: 15,
+              duration: 0.5      // optional: limits total time
+            }}
+            className="w-[300px] h-[500px] bg-white shadow-md shadow-orange-500 rounded-xl flex flex-col overflow-hidden"
+          >
+            {/* Header */}
+            <div className="bg-black/90 text-white p-3 font-bold text-lg flex items-center justify-between">
+              <span className='text-orange-500'>CheiraBot</span>
+              <button onClick={() => setOpen(false)}>
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-3 space-y-2 bg-gray-50">
-            {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`flex items-center gap-2 ${
-                  msg.sender === 'user' ? 'justify-end' : 'justify-start'
-                }`}
-              >
-                {msg.sender === 'bot' && <Bot className="w-5 h-5 text-orange-500" />}
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-3 space-y-2 bg-black">
+              {messages.map((msg, index) => (
                 <div
-                  className={`p-2 rounded-lg max-w-[75%] text-sm ${
-                    msg.sender === 'user'
-                      ? 'bg-orange-100 text-right'
-                      : 'bg-white text-left border'
+                  key={index}
+                  className={`flex items-center gap-2 ${
+                    msg.sender === 'user' ? 'justify-end' : 'justify-start'
                   }`}
                 >
-                  {msg.text}
+                  {msg.sender === 'bot' && <Bot className="w-8 h-8 text-orange-500" />}
+                  <div
+                    className={`p-2 rounded-lg max-w-[75%] text-sm ${
+                      msg.sender === 'user'
+                        ? 'bg-orange-100 text-right'
+                        : 'bg-orange-500 text-left text-white border'
+                    }`}
+                  >
+                    {msg.text}
+                  </div>
+                  {msg.sender === 'user' && <User className="w-8 h-8 text-orange-500" />}
                 </div>
-                {msg.sender === 'user' && <User className="w-5 h-5 text-orange-500" />}
-              </div>
-            ))}
-            <div ref={messagesEndRef} />
-          </div>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
 
-          {/* Input */}
-          <div className="flex gap-2 p-3 border-t">
-            <input
-              type="text"
-              placeholder="Type a message..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyPress}
-              className="flex-1 border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
-            />
-            <button
-              onClick={handleSend}
-              className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition"
-            >
-              {waiting ? '...' : 'Send'}
-            </button>
-          </div>
-        </div>
-      )}
+            {/* Input */}
+            <div className="bg-black/90 flex gap-2 p-3 border-t">
+              <input
+                type="text"
+                placeholder="Type a message..."
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyPress}
+                className="flex-1 rounded bg-orange-500 text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-900"
+              />
+              <button
+                onClick={handleSend}
+                className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition"
+              >
+                {waiting ? '...' : 'Send'}
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
 
       {/* Floating Button */}
       <button

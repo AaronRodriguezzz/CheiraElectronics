@@ -6,11 +6,11 @@ import {
     removeTechnician,
     getTechnicians
 } from "../controllers/technicianControls.js"; // ✅ Correct
-import verifyToken from "../middleware/tokenVerification.js";
+import { verifyAdminToken } from "../middleware/tokenVerification.js";
 
-router.post("/api/new-technician", verifyToken, addTechnician);
-router.put("/api/update-technician", verifyToken, updateTechnician);
-router.put("/api/delete-technician/:id", verifyToken, removeTechnician);
-router.get("/api/technicians", verifyToken, getTechnicians);
+router.post("/api/new-technician", verifyAdminToken, addTechnician);
+router.put("/api/update-technician", verifyAdminToken, updateTechnician);
+router.put("/api/delete-technician/:id", verifyAdminToken, removeTechnician);
+router.get("/api/technicians", verifyAdminToken, getTechnicians);
 
 export default router;

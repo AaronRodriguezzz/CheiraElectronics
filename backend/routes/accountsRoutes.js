@@ -6,11 +6,11 @@ import {
     removeAdmin,
     getAllAdmins
 } from "../controllers/accountControls.js";
-import verifyToken from "../middleware/tokenVerification.js";
+import { verifyAdminToken } from "../middleware/tokenVerification.js";
 
-router.post("/api/new-account", verifyToken, addAdmin);
-router.put("/api/update-account", verifyToken, updateAdmin);
-router.delete("/api/delete-account/:id", verifyToken, removeAdmin);
-router.get("/api/accounts", verifyToken, getAllAdmins);
+router.post("/api/new-account", verifyAdminToken, addAdmin);
+router.put("/api/update-account", verifyAdminToken, updateAdmin);
+router.delete("/api/delete-account/:id", verifyAdminToken, removeAdmin);
+router.get("/api/accounts", verifyAdminToken, getAllAdmins);
 
 export default router;

@@ -1,5 +1,6 @@
 import { Home, List, Users, ClipboardList, FileText, Star, Settings, LogOut } from "lucide-react";
 import { NavLink, useNavigate} from "react-router-dom";
+import { useAuth } from "../../contexts/UserContext";
 
 const navItems = [
     { name: "Dashboard", path: "/admin", icon: <Home size={20} /> },
@@ -14,6 +15,7 @@ const navItems = [
 
 export default function AdminSidebar(){
     const navigate = useNavigate();
+    const { logout } = useAuth();
 
     return(
         <aside className="relative w-48 bg-orange-500 text-white shadow-lg">
@@ -44,7 +46,7 @@ export default function AdminSidebar(){
             <button 
                 className="absolute bottom-0 left-0 w-full flex items-center gap-3 p-3 rounded-lg hover:bg-red-600 transition"
                 onClick={() => {
-                    localStorage.removeItem('admin')
+                    logout();
                     navigate('/admin/login')
                 }} 
             >   

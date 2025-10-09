@@ -21,7 +21,6 @@ import AdminProfile from "./pages/Admin/Profile";
 
 import AdminLayout from "./layouts/AdminLayout";
 import UserLayout from "./layouts/UserLayout";
-import ProtectedRoute from "./components/routes/protectedRoutes";
 
 export default function App() {
   return (
@@ -36,9 +35,6 @@ export default function App() {
         </Route>
 
         <Route path="/admin" element={<AdminLayout />}>
-          <Route
-            element={<ProtectedRoute role="admin" />}
-          >
             <Route index element={<Dashboard />} />
             <Route path="requests" element={<ServiceRequests />} />
             <Route path="assign" element={<TechnicianAssign />} />
@@ -48,7 +44,6 @@ export default function App() {
             <Route path="history" element={<History />} />
             <Route path="accounts" element={<Accounts />} />
             <Route path="profile" element={<AdminProfile />} />
-          </Route>
         </Route>
 
         

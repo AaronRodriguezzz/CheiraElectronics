@@ -22,7 +22,7 @@ export default function SubmitRequest() {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  }; 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -76,8 +76,7 @@ export default function SubmitRequest() {
         className="relative z-10 max-w-2xl mx-auto"
       >
         {/* Title */}
-        <h1 className="text-4xl font-extrabold mb-8 text-center drop-shadow-lg text-orange-500">
-          <Wrench className="inline w-8 h-8 mr-2 mb-1 text-orange-500" />
+        <h1 className="text-2xl md:text-4xl font-extrabold mb-8 text-center drop-shadow-lg text-orange-500">
           Submit a Service Request
         </h1>
 
@@ -100,18 +99,18 @@ export default function SubmitRequest() {
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm 
               focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
             >
-              <option value="" disabled>
+              <option value="" className="bg-black text-white" disabled>
                 Select a Service
               </option>
               {services.map(
                 (service) =>
                   service.isActive && (
-                    <option key={service._id} value={service._id}>
+                    <option key={service._id} value={service._id} className="bg-black text-white">
                       {service.name}
                     </option>
                   )
               )}
-              <option value="N/A">Not in the option</option>
+              <option value="N/A" className="bg-black text-white">Not in the option</option>
             </select>
           </div>
 

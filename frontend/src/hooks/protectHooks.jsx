@@ -1,67 +1,79 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useAuth } from "../contexts/UserContext";
+import { useLocation } from "react-router-dom";
 
+// Return the current user
 export const useUser = () => {
-    const { user } = useAuth();
-     
-    return user;
-}
+  const { user } = useAuth();
+  return user;
+};
 
+// Prevent logged-in users from accessing login/signup pages
 export const useUserProtection = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.pathname || '/'
     const { user, loading } = useAuth();
 
     useEffect(() => {
-        if (loading) return;
-        // if admin, block access to login (go to admin area)
-        if (user && user.role !== undefined) {
-            navigate("/admin", { replace: true });
-        } else if (user && user.role === undefined) {
-            navigate("/", { replace: true });
-        }
-    }, [user, loading, navigate]);
-}
-
-export const useCustomerPageProtection = () => {
-    const navigate = useNavigate();
-    const { user, loading } = useAuth();
-
-    useEffect(() => {
-        if(!loading){
-            if (user && user?.role === undefined) {
-                navigate('/');
-            }else {
-                navigate('/login');
+        if (!loading && user) {
+        // Redirect based on role
+            if (user.role === "Admin" || user.role === "Super Admin") {
+                navigate("/admin", { replace: true });
+            } else {
+                navigate(from, { replace: true });
             }
         }
-        
     }, [user, loading, navigate]);
-}
+};
 
+// Protect pages that only logged-in customers can view
+export const useCustomerPageProtection = () => {
+  const navigate = useNavigate();
+  const { user, loading } = useAuth();
+
+    useEffect(() => {
+        if (!loading) {
+        // Not logged in → login
+            if (!user) {
+                navigate("/login", { replace: true });
+            }
+            // Admin trying to access customer page → redirect to admin dashboard
+            else if (user.role === "Admin" || user.role === "Super Admin") {
+                navigate("/admin", { replace: true });
+            }
+        }
+    }, [user, loading, navigate]);
+};
+
+// Protect general pages from unauthenticated users
 export const usePageProtection = () => {
     const navigate = useNavigate();
     const { user, loading } = useAuth();
 
     useEffect(() => {
-        if(!loading){
-            if (!user) {
-                navigate('/login');
-            }
+        if (!loading && !user) {
+            navigate("/login", { replace: true });
         }
     }, [user, loading, navigate]);
-}
+};
 
-
+// Protect admin-only pages
 export const useAdminPageProtection = () => {
     const navigate = useNavigate();
     const { user, loading } = useAuth();
 
     useEffect(() => {
-        if (loading) return; // WAIT until auth status is known
-        // if not logged in OR user has no role, redirect to admin login
-        if (!user || user.role === undefined) {
+        if (!loading) {
+        // Not logged in → admin login
+        if (!user) {
             navigate("/admin/login", { replace: true });
+        }
+        // Non-admin → redirect home
+        else if (user.role !== "Admin" && user.role !== "Super Admin") {
+            navigate("/", { replace: true });
+        }
         }
     }, [user, loading, navigate]);
 };

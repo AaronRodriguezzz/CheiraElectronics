@@ -6,11 +6,11 @@ import {
   deleteService,
   getServices
 } from "../controllers/serviceControls.js"; // ✅ Correct
-import verifyToken from "../middleware/tokenVerification.js";
+import { verifyAdminToken } from "../middleware/tokenVerification.js";
 
-router.post("/api/new-service", verifyToken, addService);
-router.put("/api/update-service", verifyToken, updateService);
-router.delete("/api/delete-service/:id", verifyToken, deleteService);
-router.get("/api/services", verifyToken, getServices);
+router.post("/api/new-service", verifyAdminToken, addService);
+router.put("/api/update-service", verifyAdminToken, updateService);
+router.delete("/api/delete-service/:id", verifyAdminToken, deleteService);
+router.get("/api/services", getServices);
 
 export default router;
