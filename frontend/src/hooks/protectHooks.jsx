@@ -1,23 +1,26 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/UserContext";
 
 export const useUser = () => {
     const { user } = useAuth();
-    
+     
     return user;
 }
 
 export const useUserProtection = () => {
     const navigate = useNavigate();
-    const { user } = useAuth();
-    
+    const { user, loading } = useAuth();
+
     useEffect(() => {
-        if (user && user?.role !== undefined) {
-            navigate('/admin');
+        if (loading) return;
+        // if admin, block access to login (go to admin area)
+        if (user && user.role !== undefined) {
+            navigate("/admin", { replace: true });
+        } else if (user && user.role === undefined) {
+            navigate("/", { replace: true });
         }
-    }, [user, navigate]);
+    }, [user, loading, navigate]);
 }
 
 export const useCustomerPageProtection = () => {
@@ -46,18 +49,19 @@ export const usePageProtection = () => {
                 navigate('/login');
             }
         }
-        
     }, [user, loading, navigate]);
 }
 
 
 export const useAdminPageProtection = () => {
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
 
-    useEffect(() => {   
-        if(user && user.role !== undefined) return navigate('/')
-        if(!user) return navigate('/admin/login')
-
-    }, [user, navigate]);
-}
+    useEffect(() => {
+        if (loading) return; // WAIT until auth status is known
+        // if not logged in OR user has no role, redirect to admin login
+        if (!user || user.role === undefined) {
+            navigate("/admin/login", { replace: true });
+        }
+    }, [user, loading, navigate]);
+};

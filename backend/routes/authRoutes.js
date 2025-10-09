@@ -3,9 +3,11 @@ const router = express.Router();
 import {
     login,
     admin_logout,
-    checkAuth,
+    tokenProtection
 } from "../controllers/authControls.js"; // ✅ Correct
 
 router.post("/api/login/:type", login);
+router.post("/api/logout", admin_logout);
+router.get("/api/protected", tokenProtection);
 
 export default router;

@@ -301,6 +301,7 @@ export const dashboardRecord = async (req,res) => {
       { label: "Re-opened", count: reOpenedRequests },
     ]
 
+    console.log('hello', serviceAvailsSummary);
     return res.status(200).json({
       statusSummaryData,
       serviceAvailsSummary,

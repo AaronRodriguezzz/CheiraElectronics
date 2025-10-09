@@ -5,7 +5,6 @@ const NotificationBar = ({isOpen}) => {
 
     const { notifications } = useNotifSocket();
 
-    console.log('notifications', notifications);
     if(!isOpen) return 
 
     return (

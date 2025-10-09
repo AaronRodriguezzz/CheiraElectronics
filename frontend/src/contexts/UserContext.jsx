@@ -1,6 +1,5 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { Navigate } from 'react-router-dom';
 
 const UserAuthContext = createContext();
 
@@ -12,7 +11,7 @@ export const AuthProvider = ({children}) => {
         const checkAuth = async () => {
             try {
                 setLoading(true)
-                const res = await axios.get('/api/protected', { withCredentials: true});
+                const res = await axios.get('/api/protected', { withCredentials: true });
                 setUser(res.data.user);
             } catch (err) {
                 console.log('hello', err)

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import CustomAlert from '../components/modals/CustomerAlert';
+axios.defaults.withCredentials = true;
 
 export const update_data = async (route, newData) => {
 

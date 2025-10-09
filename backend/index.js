@@ -23,36 +23,6 @@ app.use(cookieParser());
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true}));
 
 
-app.get('/api/protected', (req, res) => {
-    const token = req.cookies.user; 
-        
-    if (!token) {
-      return res.status(401).json({ message: 'No token found' });
-    }
-
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        
-        console.log('hello', decoded.account);
-        res.json({ user: decoded.account });
-    } catch (err) {
-        res.status(403).json({ message: err.message });
-    }
-});
-
-app.post("/api/logout", (req, res) => {
-  res.clearCookie("user", {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  });
-
-  return res.status(200).json({ message: "Logged out successfully" });
-});
-
-
-
-
 app.use(AccountAuth);
 app.use(ServiceRoutes);
 app.use(TechnicianRoutes);

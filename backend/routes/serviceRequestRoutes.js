@@ -11,18 +11,19 @@ import {
   requestsHistory,
   dashboardRecord
 } from "../controllers/requestControls.js";    
+import verifyToken from "../middleware/tokenVerification.js";
 
 const router = express.Router();
 
-router.post("/api/new-request", createServiceRequest);
-router.put("/api/update-status/:id", updateServiceRequestStatus);
-router.put("/api/accept-request", acceptRequests);
-router.put("/api/update-request", updateRequest);
-router.put("/api/cancel", cancelServiceRequest);
-router.get("/api/requests/:customerId", getRequestsByCustomer);
-router.get("/api/all-requests", getAllRequests);
-router.get("/api/progress-requests", requestToAssign);
-router.get("/api/requests-history", requestsHistory);
-router.get("/api/dashboard-record", dashboardRecord);
+router.post("/api/new-request", verifyToken, createServiceRequest);
+router.put("/api/update-status/:id", verifyToken, updateServiceRequestStatus);
+router.put("/api/accept-request", verifyToken, acceptRequests);
+router.put("/api/update-request", verifyToken, updateRequest);
+router.put("/api/cancel", verifyToken, cancelServiceRequest);
+router.get("/api/requests/:customerId", verifyToken, getRequestsByCustomer);
+router.get("/api/all-requests", verifyToken, getAllRequests);
+router.get("/api/progress-requests", verifyToken, requestToAssign);
+router.get("/api/requests-history", verifyToken, requestsHistory);
+router.get("/api/dashboard-record", verifyToken, dashboardRecord);
 
 export default router;

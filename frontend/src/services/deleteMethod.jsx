@@ -1,5 +1,6 @@
 import axios from 'axios';
 import CustomAlert from '../components/modals/CustomerAlert';
+axios.defaults.withCredentials = true;
 
 export const delete_data = async (id,route) => {
     const confirmDelete = window.confirm("Are you sure you want to delete?");

@@ -1,14 +1,14 @@
 // src/pages/admin/AdminLayout.jsx
-import React, { useEffect }  from "react";
+import React from "react";
 import { Outlet } from "react-router-dom";
 import AdminSidebar from "../components/admin/SideBar";
 import AdminHeader from "../components/admin/AdminHeader";
 import NotificationBar from "../components/admin/NotificationBar";
 import { NotificationProvider } from "../contexts/RequestsContext";
-import { get_data } from "../services/getMethod";
 import { useAdminPageProtection } from '../hooks/protectHooks';
 
 export default function AdminLayout() {
+  useAdminPageProtection();
   const [notificationOpen, setNotificationOpen] = React.useState(false);
 
   return (

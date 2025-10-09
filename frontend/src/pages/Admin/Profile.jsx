@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { TextField, Button } from '@mui/material';
 import CustomAlert from '../../components/modals/CustomerAlert';
 import { update_data } from '../../services/putMethod';
+import { useUser } from '../../hooks/protectHooks';
+import { useAuth } from '../../contexts/UserContext';
 
 const AdminProfile = () => {
-  const admin = localStorage.getItem('admin');
-  const parsed = admin ? JSON.parse(admin) : null;
-  console.log(parsed);
+  const { user, setUser} = useAuth();
 
   const [profile, setProfile] = useState({
     id: '',
@@ -28,10 +28,10 @@ const AdminProfile = () => {
   useEffect(() => {
     try {
       setProfile({
-        full_name: parsed.full_name || '',
-        email: parsed.email || '',
-        role: parsed.role || '',
-        status: parsed.status || '',
+        full_name: user.full_name || '',
+        email: user.email || '',
+        role: user.role || '',
+        status: user.status || '',
       });
     } catch (e) {
       console.error('Invalid admin JSON', e);
@@ -50,12 +50,10 @@ const AdminProfile = () => {
     e.preventDefault();
 
     const payload = {
-      id: parsed?._id,
+      id: user?._id,
       email: profile?.email,
       full_name: profile?.full_name,
     };
-
-    console.log(profile);
 
     try {
       const response = await update_data('/update-account', payload);
@@ -63,12 +61,12 @@ const AdminProfile = () => {
 
       if (response) {
         const updateAdminInfo = {
-          ...parsed,
+          ...user,
           full_name: response.admin?.full_name,
           email: response.admin?.email,
         };
 
-        localStorage.setItem('admin', JSON.stringify(updateAdminInfo));
+        setUser(updateAdminInfo);
         setShowEditProfile(false);
       }
     } catch (err) {
@@ -86,7 +84,7 @@ const AdminProfile = () => {
     }
 
     const payload = {
-      id: parsed?._id,
+      id: admin?._id,
       email: profile?.email,
       full_name: profile?.full_name,
       password: passwords?.new_password,

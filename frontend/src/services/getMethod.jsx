@@ -5,7 +5,7 @@ export const get_data = async (route, page) => {
     try {
         const response = await axios.get(`/api${route}`, {
             params: { page: page},
-            withCredentials: true, // This is required to include cookies like the JWT
+            withCredentials: true,
         });
         
         if (response.status === 200) {

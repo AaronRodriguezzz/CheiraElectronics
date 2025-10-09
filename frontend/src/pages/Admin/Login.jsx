@@ -3,8 +3,12 @@ import {useNavigate} from 'react-router-dom';
 import TextField from "@mui/material/TextField";
 import { Wrench, ShieldCheck, UserCog } from "lucide-react";
 import { post_data } from "../../services/postMethod";
+import { useUserProtection } from '../../hooks/protectHooks';
+import { useAuth } from "../../contexts/UserContext";
 
 export default function Login() {
+  useUserProtection();
+  const { setUser } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", password: "" });
 
@@ -17,8 +21,8 @@ export default function Login() {
       const response = await post_data('/login/admin', form);
 
       if(response){
-        localStorage.setItem('admin', JSON.stringify(response?.account));
-        navigate('/admin')
+        setUser(response.account);
+        navigate("/admin", { replace: true });
       }
       
     }catch(err){

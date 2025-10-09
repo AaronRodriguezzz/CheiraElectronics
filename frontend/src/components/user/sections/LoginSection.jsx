@@ -36,7 +36,7 @@ const LoginSection = ({ setRegistration }) => {
             className="bg-white px-10 py-12 rounded-2xl shadow-xl w-[28rem] space-y-8"
         >
             <h2 className="text-3xl font-bold text-center text-orange-600">
-                Admin Login
+                LOGIN
             </h2>
 
             <input
