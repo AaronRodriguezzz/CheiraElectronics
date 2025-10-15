@@ -56,6 +56,7 @@ export default function TechnicianAssign() {
             size="small" 
             sx={{bgcolor: 'green', fontSize: 12 }}
             onClick={() => {
+              console.log(params.row)
               setRequestToUpdate(params.row)
               setIsFinished(true)
             }}          

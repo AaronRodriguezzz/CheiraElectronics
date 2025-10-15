@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { update_data } from '../../services/putMethod';
+import { useAuth } from '../../contexts/UserContext';
 
 const UpdateRequestModal = ({ onCancel, requestData, updatedData, newStatus }) => {
-  const admin = JSON.parse(localStorage.getItem('admin'))
+  const { user } = useAuth();
   const [reason, setReason] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -19,7 +20,7 @@ const UpdateRequestModal = ({ onCancel, requestData, updatedData, newStatus }) =
         serviceType: requestData?.serviceType,
         status: newStatus,
         remarks: reason,
-        updatedBy: admin?._id
+        updatedBy: user?._id
       };
 
       const response = await update_data('/update-request',  payload);

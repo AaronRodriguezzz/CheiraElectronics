@@ -121,7 +121,7 @@ export default function Dashboard() {
       <div className="flex gap-4 h-[600px]">
         {/* Line Chart */}
         <div className="flex-[2] bg-white p-4 rounded-xl shadow">
-          <h2 className="font-semibold mb-2">Monthly Completed Services</h2>
+          <h2 className="font-semibold mb-2">Daily Sales</h2>
           <div className="h-[95%] w-full">
             <Line data={lineData} options={{ maintainAspectRatio: false }} />
           </div>

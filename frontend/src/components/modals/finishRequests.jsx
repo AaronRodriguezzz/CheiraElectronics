@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { update_data } from '../../services/putMethod';
+import { useAuth } from "../../contexts/UserContext";
 
 const FinishRequestModal = ({ onCancel, requestData, updatedData }) => {
-    const admin = JSON.parse(localStorage.getItem('admin'))
+    const { user } = useAuth();
     const [servicePrice, setServicePrice] = useState('');
     const [remarks, setRemarks] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    
-    console.log(admin);
+
+    console.log(requestData);
     const handleFinish = async (e) => {
         e.preventDefault();
-        console.log('request', requestData);
         
         if (!servicePrice || isNaN(servicePrice)) return alert("Price must be a number.");
 
@@ -24,7 +24,7 @@ const FinishRequestModal = ({ onCancel, requestData, updatedData }) => {
                 status: 'Completed',
                 remarks: remarks,
                 servicePrice: Number(servicePrice),
-                updatedBy: admin?._id
+                updatedBy: user?._id
             };
 
             console.log(payload);
@@ -53,8 +53,11 @@ const FinishRequestModal = ({ onCancel, requestData, updatedData }) => {
                 <p className="text-sm mb-1 text-gray-700">
                     <strong>Service:</strong> {requestData?.serviceType}
                 </p>
+                <p className="text-sm mb-1 text-gray-700">
+                    <strong>Customer:</strong> {requestData?.customer}
+                </p>
                 <p className="text-sm mb-4 text-gray-700">
-                    <strong>Customer:</strong> {requestData?.customer?.full_name}
+                    <strong>Device Type:</strong> {requestData?.deviceType}
                 </p>
 
                 <label className="block text-sm mb-1 font-medium">Service Price (₱)</label>
