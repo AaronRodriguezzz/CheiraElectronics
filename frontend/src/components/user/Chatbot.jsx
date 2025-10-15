@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Bot, User, MessageCircle, X } from 'lucide-react';
 import axios from 'axios';
 import { motion, AnimatePresence } from "framer-motion";
+import DOMPurify from "dompurify";
 
 const Chatbot = () => {
   const [open, setOpen] = useState(false);
@@ -80,22 +81,30 @@ const Chatbot = () => {
                 <div
                   key={index}
                   className={`flex items-center gap-2 ${
-                    msg.sender === 'user' ? 'justify-end' : 'justify-start'
+                    msg.sender === "user" ? "justify-end" : "justify-start"
                   }`}
                 >
-                  {msg.sender === 'bot' && <Bot className="w-8 h-8 text-orange-500" />}
+                  {msg.sender === "bot" && (
+                    <Bot className="w-8 h-8 text-orange-500 flex-shrink-0" />
+                  )}
+
                   <div
                     className={`p-2 rounded-lg max-w-[75%] text-sm ${
-                      msg.sender === 'user'
-                        ? 'bg-orange-100 text-right'
-                        : 'bg-orange-500 text-left text-white border'
+                      msg.sender === "user"
+                        ? "bg-orange-100 text-right text-black"
+                        : "bg-orange-500 text-left text-white border border-orange-600"
                     }`}
-                  >
-                    {msg.text}
-                  </div>
-                  {msg.sender === 'user' && <User className="w-8 h-8 text-orange-500" />}
+                    dangerouslySetInnerHTML={{
+                      __html: DOMPurify.sanitize(msg.text),
+                    }}
+                  />
+
+                  {msg.sender === "user" && (
+                    <User className="w-8 h-8 text-orange-500 flex-shrink-0" />
+                  )}
                 </div>
               ))}
+
               <div ref={messagesEndRef} />
             </div>
 
