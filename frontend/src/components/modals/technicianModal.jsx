@@ -97,7 +97,6 @@ const TechnicianForm = ({ onCancel, route, updatedData, technicianData = null })
           >
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
-            <option value="Removed">Removed</option>
           </select>
         </div>
 

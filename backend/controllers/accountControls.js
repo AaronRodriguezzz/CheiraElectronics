@@ -1,6 +1,6 @@
 import Admin from "../models/AdminAccount.js";
 import bcrypt from "bcryptjs";
-
+import jwt from 'jsonwebtoken';
 // Create a new admin
 export const addAdmin = async (req, res) => {
   
@@ -87,6 +87,80 @@ export const updateAdmin = async (req, res) => {
     // Omit password from the response
     const { password: _, ...adminData } = updatedAdmin.toObject();
 
+    const token = jwt.sign(
+      { adminData },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    );  
+    
+    res.cookie('user', token, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production' // Only secure in production
+    });
+
+    return res.status(200).json({
+      message: 'Admin updated successfully.',
+      admin: adminData,
+    });
+
+  } catch (error) {
+    console.error('Update Admin Error:', error);
+    return res.status(500).json({ message: 'Error updating admin', error });
+  }
+};
+
+
+export const updateAccount = async (req, res) => {
+  try {
+    const { id, email, full_name, password, status } = req.body.newData;
+
+    console.log('hello', req.body.newData)
+
+    if (!id) {
+      return res.status(400).json({ message: 'Admin ID is required' });
+    }
+
+    // Check if email is already used by another admin
+    if (email) {
+      const existing = await Admin.findOne({ email, _id: { $ne: id } });
+      if (existing) {
+        return res.status(400).json({ message: 'Email already taken by another account.' });
+      }
+    }
+
+    const updatedData = { full_name, email, status };
+
+    // If new password is being set, validate the current one
+    if (password) {
+      const user = await Admin.findById(id).select('+password');
+
+      if (!user) {
+        return res.status(404).json({ message: 'Admin not found.' });
+      }
+
+      const matched = await bcrypt.compare(currentPassword, user.password);
+      if (!matched) {
+        return res.status(400).json({ message: 'Current password is incorrect.' });
+      }
+
+      updatedData.password = await bcrypt.hash(password, 10);
+    }
+
+
+    // Update the admin document
+    const updatedAdmin = await Admin.findByIdAndUpdate(id, updatedData, {
+      new: true,
+    });
+
+    if (!updatedAdmin) {
+      return res.status(404).json({ message: 'Admin not found.' });
+    }
+
+    // Omit password from the response
+    const { password: _, ...adminData } = updatedAdmin.toObject();
+    
     return res.status(200).json({
       message: 'Admin updated successfully.',
       admin: adminData,
@@ -138,6 +212,7 @@ export const getAllAdmins = async (req, res) => {
 export default {
     addAdmin,
     updateAdmin,
+    updateAccount,
     removeAdmin,
     getAllAdmins
 }

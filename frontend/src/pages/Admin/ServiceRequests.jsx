@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { update_data } from '../../services/putMethod';
+import { update_data } from "../../services/putMethod";
 import { get_data } from "../../services/getMethod";
 import { statusColorMap } from "../../data/StatusColor";
 import Button from "@mui/material/Button";
 import AssignTechnicianForm from "../../components/modals/requestAcceptanceModal";
 import UpdateRequestModal from "../../components/modals/statusUpdateModal";
+import ViewServiceRequestModal from "../../components/modals/viewRequestModal";
 
 export default function ServiceRequests() {
   const [requests, setRequests] = useState(null);
   const [isAccepting, setIsAccepting] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
+  const [isViewing, setIsViewing] = useState(false);
+  const [requestToView, setRequestToView] = useState(null);
   const [requestToUpdate, setRequestToUpdate] = useState(null);
   const [loading, setLoading] = useState(null);
 
@@ -19,27 +22,28 @@ export default function ServiceRequests() {
     { field: "contactNumber", headerName: "Contact Number", flex: 1 },
     { field: "email", headerName: "Email", flex: 1 },
     { field: "serviceType", headerName: "Service", flex: 1 },
-    { 
-      field: "submittedAt", 
-      headerName: "Date Requested", 
+    {
+      field: "submittedAt",
+      headerName: "Date Requested",
       width: 120,
       renderCell: (params) => {
-        return <span>{params.value.split('T')[0]}</span>
-      }
+        return <span>{params.value.split("T")[0]}</span>;
+      },
     },
-    { 
-      field: "status", 
-      headerName: "Status", 
-      width:100,
+    {
+      field: "status",
+      headerName: "Status",
+      width: 100,
       renderCell: (params) => {
-        console.log('statusColorMap', statusColorMap, params.value);
-        return <span 
-          className={`p-2 rounded-full text-white`}
-          style={{ backgroundColor: statusColorMap[params.value] }}
-        >
-          {params.value}
-        </span>
-      } 
+        return (
+          <span
+            className="p-2 rounded-full text-white text-md font-medium"
+            style={{ backgroundColor: statusColorMap[params.value] }}
+          >
+            {params.value}
+          </span>
+        );
+      },
     },
     {
       field: "actions",
@@ -52,10 +56,10 @@ export default function ServiceRequests() {
             size="small"
             color="success"
             onClick={() => {
-              setRequestToUpdate(params.row)
-              setIsAccepting(true)
+              setRequestToUpdate(params.row);
+              setIsAccepting(true);
             }}
-            sx={{fontSize: 12}}
+            sx={{ fontSize: 12 }}
           >
             Accept
           </Button>
@@ -64,18 +68,21 @@ export default function ServiceRequests() {
             size="small"
             color="error"
             onClick={() => {
-              setRequestToUpdate(params.row)
-              setIsRejecting(true)
-            }}            
-            sx={{fontSize: 12}}
+              setRequestToUpdate(params.row);
+              setIsRejecting(true);
+            }}
+            sx={{ fontSize: 12 }}
           >
             Reject
           </Button>
           <Button
             variant="contained"
             size="small"
-            onClick={() => updateStatus("Rejected", params.row._id)}
-            sx={{fontSize: 12}}
+            onClick={() => {
+              setRequestToView(params.row);
+              setIsViewing(true);
+            }}
+            sx={{ fontSize: 12 }}
           >
             View
           </Button>
@@ -84,47 +91,47 @@ export default function ServiceRequests() {
     },
   ];
 
-  const updateStatus = async (newStatus, id) => {
-    try {
-      const updateResponse = await update_data(`/update-status/${id}`, { status: newStatus });
+  // const updateStatus = async (newStatus, id) => {
+  //   try {
+  //     const updateResponse = await update_data(`/update-status/${id}`, {
+  //       status: newStatus,
+  //     });
 
-      if (updateResponse) {
-        setRequests(prev => prev.filter(req => req._id !== updateResponse._id ))
-      }
-
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  //     if (updateResponse) {
+  //       setRequests((prev) =>
+  //         prev.filter((req) => req._id !== updateResponse._id)
+  //       );
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   useEffect(() => {
     const getAllRequests = async () => {
       setLoading(true);
-      try{
-        const requests = await get_data('/all-requests');
+      try {
+        const requests = await get_data("/all-requests");
 
-        if(requests){
-
-          console.log('requests', requests);
-            const formatted = requests.map((req) => ({
-            ...req, 
+        if (requests) {
+          const formatted = requests.map((req) => ({
+            ...req,
             customer: req.customer?.full_name,
             email: req.customer?.email,
             serviceType: req.serviceType?.name,
-            contactNumber: req.customer?.contact_number
+            contactNumber: req.customer?.contact_number,
           }));
           setRequests(formatted);
         }
 
         setLoading(false);
-
-      }catch(err){
+      } catch (err) {
         console.log(err);
       }
-    }
+    };
 
     getAllRequests();
-  },[])
+  }, []);
 
   if (loading) {
     return (
@@ -133,7 +140,7 @@ export default function ServiceRequests() {
       </div>
     );
   }
- 
+
   return (
     <div>
       <div className="w-full p-4 bg-white shadow my-4 rounded-md">
@@ -145,9 +152,9 @@ export default function ServiceRequests() {
       </div>
 
       <div className="w-full overflow-x-auto">
-        <div style={{ minWidth: "1350px"}}>
+        <div style={{ minWidth: "1350px" }}>
           <DataGrid
-            rows={requests}
+            rows={requests || []}
             columns={serviceRequestsCols}
             getRowId={(row) => row._id}
             pagination
@@ -156,20 +163,33 @@ export default function ServiceRequests() {
         </div>
       </div>
 
-      {isAccepting && <AssignTechnicianForm 
-        onCancel={setIsAccepting}
-        requestData={requestToUpdate}
-        updatedData={setRequests}
-      />}
+      {/* Accept Technician Modal */}
+      {isAccepting && (
+        <AssignTechnicianForm
+          onCancel={setIsAccepting}
+          requestData={requestToUpdate}
+          updatedData={setRequests}
+        />
+      )}
 
-      {isRejecting && <UpdateRequestModal 
-        onCancel={setIsRejecting}
-        requestData={requestToUpdate}
-        updatedData={setRequests}
-        newStatus={'Rejected'}
-      />}
+      {/* Reject Modal */}
+      {isRejecting && (
+        <UpdateRequestModal
+          onCancel={setIsRejecting}
+          requestData={requestToUpdate}
+          updatedData={setRequests}
+          newStatus={"Rejected"}
+        />
+      )}
 
+      {/* View Modal ✅ */}
+      {isViewing && (
+        <ViewServiceRequestModal
+          isOpen={isViewing}
+          onClose={() => setIsViewing(false)}
+          request={requestToView}
+        />
+      )}
     </div>
   );
 }
-  

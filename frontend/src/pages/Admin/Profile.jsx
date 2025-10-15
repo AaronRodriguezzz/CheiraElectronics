@@ -6,7 +6,7 @@ import { useUser } from '../../hooks/protectHooks';
 import { useAuth } from '../../contexts/UserContext';
 
 const AdminProfile = () => {
-  const { user, setUser} = useAuth();
+  const { user, setUser, loading} = useAuth();
 
   const [profile, setProfile] = useState({
     id: '',
@@ -36,7 +36,7 @@ const AdminProfile = () => {
     } catch (e) {
       console.error('Invalid admin JSON', e);
     }
-  }, []);
+  }, [loading]);
 
   const handleProfileChange = (e) => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
@@ -108,6 +108,7 @@ const AdminProfile = () => {
     }
   };
 
+  if(loading) return
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <div className="bg-white shadow-md rounded-2xl p-6 space-y-6">

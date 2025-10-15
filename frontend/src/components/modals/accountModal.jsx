@@ -106,16 +106,15 @@ const AdminForm = ({ onCancel, route, updatedData, adminData = null }) => {
             </>
           )}
 
-          <label className="mt-2">Role</label>
-          <select
+          <label className="mt-2" htmlFor='role'>Role</label>
+          <input
+            type="role"
             value={admin.role}
-            onChange={(e) => setAdmin({ ...admin, role: e.target.value })}
             className="border border-gray-200 px-3 py-2 rounded-md focus:border-gray-300"
-          >
-            <option value="Admin">Admin</option>
-            <option value="Super Admin">Super Admin</option>
-            <option value="Support">Support</option>
-          </select>
+            disabled
+            required
+          />
+
 
           <label className="mt-2">Status</label>
           <select

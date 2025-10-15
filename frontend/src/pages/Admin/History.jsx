@@ -29,7 +29,7 @@ export default function History() {
       headerName: "Status", 
       width: 120,
       renderCell: (params) => {
-        return <span className={`text-${statusColorMap[params.value]}`}>{params.value}</span>
+        return <span style={{ color: `${statusColorMap[params.value]}` }}>{params.value}</span>
       } 
     },    
     {
