@@ -132,11 +132,14 @@ export default function TechnicianAssign() {
   return (
     <div>
 
-      <div className="w-full p-4 bg-white shadow my-4 rounded-md">
+      <div className="w-full p-4 flex gap-2 bg-white shadow my-4 rounded-md">
         <input 
           type="text" 
           placeholder="Search name,service type, date, etc."
-          className="w-full bg-gray-100 px-4 py-2 rounded-lg outline-gray-300"/>
+          className="w-full bg-gray-100 px-4 py-2 rounded-lg outline-gray-300"
+        />
+
+        <button className="w-[140px] bg-orange-500 text-white rounded-lg">NEW REQUEST</button>
       </div>
 
       <div className="w-full overflow-x-auto">

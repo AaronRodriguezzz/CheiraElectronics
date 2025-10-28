@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import jwt from 'jsonwebtoken';
 
 import ServiceRoutes from './routes/serviceRoutes.js';
+import WalkInRoutes from './routes/walkInRoutes.js';
 import TechnicianRoutes from './routes/technicianRoutes.js';
 import AccountsRoutes from './routes/accountsRoutes.js';
 import AccountAuth from './routes/authRoutes.js';
@@ -25,6 +26,7 @@ app.use(cors({ origin: process.env.CLIENT_URL, credentials: true}));
 
 app.use(AccountAuth);
 app.use(ServiceRoutes);
+app.use(WalkInRoutes);
 app.use(TechnicianRoutes);
 app.use(AccountsRoutes);
 

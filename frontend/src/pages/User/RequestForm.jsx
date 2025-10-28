@@ -1,7 +1,7 @@
 // src/pages/SubmitRequest.jsx
 import React, { useEffect, useState } from "react";
 import { Wrench, MessageSquareText } from "lucide-react";
-import { post_data } from "../../services/postMethod";
+import { post_data } from "../../services/PostMethod";
 import { get_data } from "../../services/getMethod";
 import { motion } from "framer-motion";
 import { usePageProtection } from "../../hooks/protectHooks";

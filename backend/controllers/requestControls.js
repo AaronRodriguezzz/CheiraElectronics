@@ -89,17 +89,20 @@ export const updateServiceRequestStatus = async (req, res) => {
 };
 
 export const acceptRequests = async (req, res) => {
+
+  const { id, email, serviceType, status, technician, servicePrice } = req.body.newData;
+
+  console.log(req.body.newData)
+
+  if (!id || !status || !technician) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
   try {
-    const { id, email, serviceType, status, technician } = req.body.newData;
-
-    if (!id || !status || !technician) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
-
     const updated = await ServiceRequest.findByIdAndUpdate(
       id,
-      { status, technician },
-      { new: true }
+      { status, technician, servicePrice },
+      { new: true } 
     ).populate('technician customer'); // Optional: return full technician & customer data
 
     if (!updated) {
@@ -117,28 +120,27 @@ export const acceptRequests = async (req, res) => {
 };
 
 export const updateRequest = async (req, res) => {
+
+  const { id, email, status, remarks, updatedBy} = req.body.newData;
+
+  if (!id || !status || !remarks || !updatedBy) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
   try {
-    const { id, email, serviceType, status, remarks, updatedBy, servicePrice} = req.body.newData;
-
-    if (!id || !status || !remarks || !updatedBy) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
-
     const updated = await ServiceRequest.findByIdAndUpdate(
       id,
       { 
         status, 
         remarks, 
         updatedBy,
-        ...(servicePrice != null && { servicePrice })
       },
       { new: true }
-    ).populate('customer serviceType'); // Optional: return full technician & customer data
+    ).populate('customer serviceType');
 
     if (!updated) {
       return res.status(404).json({ error: "Request not found" });
     }
-
 
     await send_request_update(id,email,updated.serviceType,status,remarks)
 

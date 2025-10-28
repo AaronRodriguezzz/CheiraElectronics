@@ -4,16 +4,12 @@ import { useAuth } from "../../contexts/UserContext";
 
 const FinishRequestModal = ({ onCancel, requestData, updatedData }) => {
     const { user } = useAuth();
-    const [servicePrice, setServicePrice] = useState('');
     const [remarks, setRemarks] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-    console.log(requestData);
     const handleFinish = async (e) => {
         e.preventDefault();
         
-        if (!servicePrice || isNaN(servicePrice)) return alert("Price must be a number.");
-
         setIsLoading(true);
 
         try {
@@ -23,7 +19,6 @@ const FinishRequestModal = ({ onCancel, requestData, updatedData }) => {
                 serviceType: requestData?.serviceType,
                 status: 'Completed',
                 remarks: remarks,
-                servicePrice: Number(servicePrice),
                 updatedBy: user?._id
             };
 
@@ -59,17 +54,6 @@ const FinishRequestModal = ({ onCancel, requestData, updatedData }) => {
                 <p className="text-sm mb-4 text-gray-700">
                     <strong>Device Type:</strong> {requestData?.deviceType}
                 </p>
-
-                <label className="block text-sm mb-1 font-medium">Service Price (₱)</label>
-                <input
-                    type="number"
-                    min="0"
-                    value={servicePrice}
-                    onChange={(e) => setServicePrice(e.target.value)}
-                    className="w-full border px-3 py-2 rounded mb-3"
-                    placeholder="Enter final service price"
-                    required
-                />
 
                 <label className="block text-sm mb-1 font-medium">Remarks</label>
                 <textarea

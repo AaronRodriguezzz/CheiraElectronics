@@ -4,11 +4,10 @@ import { get_data } from '../../services/getMethod';
 
 const AssignTechnicianForm = ({ onCancel, requestData, updatedData }) => {
   const [technicians, setTechnicians] = useState([]);
-  const [technicianId, setTechnicianId] = useState(requestData?.technicianId || '');
+  const [technicianId, setTechnicianId] = useState('');
+  const [servicePrice, setServicePrice] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-
-  console.log('request', requestData)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -23,6 +22,7 @@ const AssignTechnicianForm = ({ onCancel, requestData, updatedData }) => {
         serviceType: requestData?.serviceType,
         status: 'In Progress',
         technician: technicianId, 
+        servicePrice: servicePrice
       };
 
       const response = await update_data('/accept-request', payload);
@@ -100,13 +100,21 @@ const AssignTechnicianForm = ({ onCancel, requestData, updatedData }) => {
           onChange={(e) => setTechnicianId(e.target.value)}
           className="w-full border px-3 py-2 rounded"
         >
-          <option value="">Select Technician</option>
+          <option value=''>Select Technician</option>
           {technicians.map((tech) => (
             <option key={tech._id} value={tech._id}>
               {tech.full_name}
             </option>
           ))}
         </select>
+
+        <input 
+          type="number" 
+          className='w-full border px-3 py-2 rounded placeholder:text-black mt-2' 
+          placeholder='Input Price'
+          onChange={(e) => setServicePrice(e.target.value)}
+          value={servicePrice}
+        />
 
         <div className="flex justify-end gap-2 mt-5">
           <button
@@ -118,7 +126,7 @@ const AssignTechnicianForm = ({ onCancel, requestData, updatedData }) => {
           </button>
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || technicianId === ''}
             className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
           >
             {isLoading ? 'Assigning...' : 'Assign'}
