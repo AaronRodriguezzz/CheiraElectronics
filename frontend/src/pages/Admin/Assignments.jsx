@@ -8,11 +8,13 @@ import { statusColorMap } from "../../data/StatusColor";
 import UpdateRequestModal from "../../components/modals/statusUpdateModal";
 import AssignTechnicianForm from "../../components/modals/requestAcceptanceModal";
 import FinishRequestModal from "../../components/modals/finishRequests";
+import WalkInRequestModal from "../../components/modals/walkInRequestModal";
 
 export default function TechnicianAssign() {
   const [isReassigning, setIsReassigning] = useState(false);
   const [isFailing, setIsFailing] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
   const [requests, setRequests] = useState(null);
   const [requestToUpdate, setRequestToUpdate] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -20,9 +22,10 @@ export default function TechnicianAssign() {
   const columns = [
     { field: "customer", headerName: "Customer Name", flex: 1 },
     { field: "contactNumber", headerName: "Contact Number", flex: 1 },
-    { field: "serviceType", headerName: "Service", flex: 1 },
+    { field: "serviceCategory", headerName: "Category", flex: 1 },
     { field: "technician", headerName: "Technician", flex: 1 },
     { field: "technicianId", headerName: "Technician", hide: true},
+    { field: "remarks", headerName: "Remarks", hide: true},
     { field: "email", headerName: "Email", hide: true},
     { 
       field: "submittedAt", 
@@ -31,6 +34,18 @@ export default function TechnicianAssign() {
       renderCell: (params) => {
         return <span>{params.value.split('T')[0]}</span>
       }
+    },
+    { 
+      field: "type", 
+      headerName: "Type", 
+      width: 120,
+      renderCell: (params) => {
+        return <span 
+          className={`${params.value === 'Walk-In' ? 'text-blue-500' : 'text-green-500'}`}
+        >
+          {params.value}
+        </span>
+      } 
     },
     { 
       field: "status", 
@@ -93,29 +108,47 @@ export default function TechnicianAssign() {
   ];
 
   useEffect(() => {
-      const getAllRequests = async () => {
+    const getAllRequests = async () => {
         setLoading(true);
-        try{
-          const requests = await get_data('/progress-requests');
+        try {
+          const [requests, walkIns] = await Promise.all([
+            get_data('/progress-requests'),
+            get_data('/progress-walkins'),
+          ]);
 
-          if(requests){
-            const formatted = requests.map((req) => ({
-              ...req, 
-              customer: req.customer?.full_name,
-              email: req.customer?.email,
-              serviceType: req.serviceType?.name || 'N/A',
-              contactNumber: req.customer?.contact_number,
-              technician: req.technician?.full_name,
-              technicianId: req.technician?._id
+          if (requests || walkIns) {
+            const formattedRequests = (requests || []).map((req) => ({
+              ...req,
+              customer: req.customer?.full_name || "N/A",
+              email: req.customer?.email || "N/A",
+              serviceCategory: req.serviceCategory || "N/A",
+              contactNumber: req.customer?.contact_number || "N/A",
+              technician: req.technician?.full_name || "Unassigned",
+              technicianId: req.technician?._id || null,
+              type: "Appointment",
             }));
-            setRequests(formatted);
+
+            const formattedWalkIns = (walkIns || []).map((req) => ({
+              ...req,
+              customer: req.customer || "N/A",
+              email: req.email || "N/A",
+              serviceCategory: req.serviceCategory || "N/A",
+              contactNumber: req.contactNumber || "N/A",
+              technician: req.technician?.full_name || "Unassigned",
+              technicianId: req.technician?._id || null,
+              type: "Walk-In",
+            }));
+
+            // ✅ Merge both arrays into one unified list
+            setRequests([...formattedRequests, ...formattedWalkIns]);
+            console.log(requests);
           }
-  
-        setLoading(false);
-  
-      }catch(err){
-        console.log(err);
-      }
+
+          setLoading(false);
+        } catch (err) {
+          console.error("Error fetching requests:", err);
+          setLoading(false);
+        }
     }
   
     getAllRequests();
@@ -139,7 +172,7 @@ export default function TechnicianAssign() {
           className="w-full bg-gray-100 px-4 py-2 rounded-lg outline-gray-300"
         />
 
-        <button className="w-[140px] bg-orange-500 text-white rounded-lg">NEW REQUEST</button>
+        <button className="w-[140px] bg-orange-500 text-white rounded-lg" onClick={() => setIsAdding(true)}>NEW REQUEST</button>
       </div>
 
       <div className="w-full overflow-x-auto">
@@ -176,6 +209,11 @@ export default function TechnicianAssign() {
       {isFinished && <FinishRequestModal 
         onCancel={setIsFinished}
         requestData={requestToUpdate}
+        updatedData={setRequests}
+      />}
+
+      {isAdding && <WalkInRequestModal 
+        onCancel={() =>  setIsAdding(false)}
         updatedData={setRequests}
       />}
 

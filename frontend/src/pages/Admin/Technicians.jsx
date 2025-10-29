@@ -90,15 +90,14 @@ export default function Technicians() {
           placeholder="Search name,service type, date, etc."
           className="w-[90%] bg-gray-100 px-4 py-2 rounded-lg outline-gray-300"
         />
-      
-        <Button 
-          variant="contained" 
-          className="mb-4" 
-          sx={{flex: 1, fontSize: {md: '10px', lg: '12px'}}}
+
+        <button
+          className="w-[160px] rounded-lg text-white bg-orange-500 hover:bg-orange-600"
           onClick={() => setIsAdding(true)}
         >
-          Add Technician
-        </Button>
+          NEW TECHNICIAN
+        </button>
+
       </div>
 
       <div className="w-full overflow-x-auto">

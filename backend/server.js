@@ -38,13 +38,6 @@ function sendRequestNotification(data) {
 global.sendRequestNotification = sendRequestNotification;
 
 
-
-  
-  
-  // Helper function for emitting notifications
-  
-
-
 // Now you can use dirname
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(dirname, "/frontend/dist")));

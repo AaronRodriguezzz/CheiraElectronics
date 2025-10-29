@@ -45,11 +45,13 @@ const UpdateRequestModal = ({ onCancel, requestData, updatedData, newStatus }) =
         className="w-[90%] max-w-[400px] bg-white p-6 rounded shadow"
       >
         <h2 className="text-xl font-semibold mb-4 text-red-600">Updating Request</h2>
-
-        <p className="mb-2 text-sm text-gray-700">
-          <strong>Service:</strong> {requestData?.serviceType}
+        <p className="mb-2 text-md text-gray-700">
+          <strong>Category:</strong> {requestData?.customer}
         </p>
-        <p className="mb-4 text-sm text-gray-700">
+        <p className="mb-2 text-md text-gray-700">
+          <strong>Category:</strong> {requestData?.serviceCategory}
+        </p>
+        <p className="mb-4 text-md text-gray-700">
           <strong>Date:</strong> {requestData?.submittedAt?.split('T')[0]}
         </p>
 
@@ -59,7 +61,7 @@ const UpdateRequestModal = ({ onCancel, requestData, updatedData, newStatus }) =
           onChange={(e) => setReason(e.target.value)}
           className="w-full border px-3 py-2 rounded"
           rows={4}
-          placeholder="Please provide a remarks"
+          placeholder="Please provide a reason"
           required
         />
 

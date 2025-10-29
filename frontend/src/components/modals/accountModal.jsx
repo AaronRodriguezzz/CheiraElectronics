@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import debounce from 'lodash.debounce';
-import { post_data } from '../../services/postMethod';
+import { post_data } from '../../services/PostMethod';
 import { update_data } from '../../services/putMethod';
 
 const AdminForm = ({ onCancel, route, updatedData, adminData = null }) => {

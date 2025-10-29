@@ -5,15 +5,19 @@ const ServiceRequestSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    contactNumber: {
+        type: String,
+        required: true,
+    },
+    email: {
+        type: String,
+        required: true,
+    },
     technician: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Technician",    
     },
-    serviceType: { 
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Service",
-    },
-    model: {
+    serviceCategory: { 
         type: String,
         required: true,
     },
@@ -21,7 +25,10 @@ const ServiceRequestSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    description: String,
+    model: {
+        type: String,
+        required: true,
+    },
     servicePrice: {
         type: Number,
         default: 0,
@@ -29,7 +36,7 @@ const ServiceRequestSchema = new mongoose.Schema({
     status: {
         type: String,       
         enum: ["Pending", "In Progress", "Completed", "Reopened", "Rejected"],
-        default: "Pending", 
+        default: "In Progress", 
     },
     updatedBy: {
         type: mongoose.Schema.Types.ObjectId,
@@ -40,8 +47,12 @@ const ServiceRequestSchema = new mongoose.Schema({
         type: Date, 
         default: Date.now 
     },
+    type: {
+        type: String,
+        default: 'Walk-In'
+    },
     completedAt: Date,
 
 }, { timestamps: true });
 
-export default mongoose.model("ServiceRequest", ServiceRequestSchema);
+export default mongoose.model("WalkInRequests", ServiceRequestSchema);

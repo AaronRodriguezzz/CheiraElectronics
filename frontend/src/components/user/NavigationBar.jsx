@@ -20,13 +20,13 @@ export default function Navbar({ setSideBarOpen }) {
 
   return (
     <>
-      <nav className="fixed w-full top-0 left-0 bg-black shadow-md shadow-orange-800 p-4 flex justify-between items-center z-20">
+      <nav className="fixed w-full top-0 left-0 bg-black shadow-md shadow-orange-800 p-8 flex justify-between items-center z-20">
         <button className="visible md:hidden" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <X size={24} /> : <Menu size={24} color="orange"/>}
         </button>
-        <h1 className="text-2xl font-bold text-orange-500 tracking-tighter">Cheira Electronics</h1>
+        <h1 className="text-3xl font-bold text-orange-500 tracking-tighter">Cheira Electronics</h1>
 
-        <div className="space-x-4 hidden text-white flex-row items-center md:flex">
+        <div className="space-x-4 hidden text-white text-lg flex-row items-center md:flex">
           {["Home", "About Us", "Contacts", "Services"].map((text) => (
               <li
                 key={text}

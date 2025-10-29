@@ -22,9 +22,7 @@ const FinishRequestModal = ({ onCancel, requestData, updatedData }) => {
                 updatedBy: user?._id
             };
 
-            console.log(payload);
-
-            const response = await update_data('/update-request', payload);
+            const response = await update_data(requestData.type === 'Online-Requests' ? '/update-request' : '/update-walkin', payload);
 
             if (response) {
                 updatedData(prev => prev.filter(r => r._id !== response._id))
@@ -45,17 +43,17 @@ const FinishRequestModal = ({ onCancel, requestData, updatedData }) => {
             >
                 <h2 className="text-xl font-semibold mb-4 text-green-700">Finish Request</h2>
 
-                <p className="text-sm mb-1 text-gray-700">
-                    <strong>Service:</strong> {requestData?.serviceType}
+                <p className="text-md mb-1 text-gray-700">
+                    <strong>Service:</strong> {requestData?.serviceCategory}
                 </p>
-                <p className="text-sm mb-1 text-gray-700">
+                <p className="text-md mb-1 text-gray-700">
                     <strong>Customer:</strong> {requestData?.customer}
                 </p>
-                <p className="text-sm mb-4 text-gray-700">
+                <p className="text-md mb-4 text-gray-700">
                     <strong>Device Type:</strong> {requestData?.deviceType}
                 </p>
 
-                <label className="block text-sm mb-1 font-medium">Remarks</label>
+                <label className="block text-md mb-1 font-medium">Remarks</label>
                 <textarea
                     value={remarks}
                     onChange={(e) => setRemarks(e.target.value)}

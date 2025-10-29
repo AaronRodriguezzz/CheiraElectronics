@@ -9,19 +9,27 @@ const ServiceRequestSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Technician",    
     },
-    serviceType: { 
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Service",
-    },
-    model: {
+    serviceCategory: { 
         type: String,
+        required: true
+    },
+    serviceType: {
+        type: String, 
         required: true,
+        enum: ['HOME SERVICE', 'DEVICE DROPOFF']
     },
     deviceType: {
         type: String,
         required: true,
     },
-    description: String,
+    model: {
+        type: String,
+        required: true,
+    },
+    description: {
+        type: String,
+        required: true,
+    },
     servicePrice: {
         type: Number,
         default: 0,
@@ -46,6 +54,10 @@ const ServiceRequestSchema = new mongoose.Schema({
         min: 1, 
         max: 5,
     },
+    type: {
+        type: String,
+        default: 'Online-Requests'
+    }
 }, { timestamps: true });
 
 export default mongoose.model("ServiceRequest", ServiceRequestSchema);

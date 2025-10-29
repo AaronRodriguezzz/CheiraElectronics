@@ -1,18 +1,21 @@
 import Service from "../models/Service.js";
 
-// Add new service
+/**
+ * Add a new service
+ */
 export const addService = async (req, res) => {
   try {
-    const { name, description, price, duration, isActive } = req.body;
+    const { serviceCategory, description, price, duration, isActive } = req.body;
 
-    const existing = await Service.findOne({ name });
+    // Prevent duplicate entries based on category + description
+    const existing = await Service.findOne({ serviceCategory, description });
 
     if (existing) {
-      return res.status(400).json({ message: "Service already exists" });
+      return res.status(400).json({ added: false, message: "Service already exists" });
     }
 
     const newService = new Service({
-      name,
+      serviceCategory,
       description,
       price,
       duration,
@@ -28,15 +31,24 @@ export const addService = async (req, res) => {
   }
 };
 
-// Update service
+/**
+ * Update an existing service
+ */
 export const updateService = async (req, res) => {
   try {
     const updatedData = req.body.newData;
 
+    console.log(req.body)
 
-    const updatedService = await Service.findByIdAndUpdate(updatedData.id, updatedData, {
-      new: true,
-    });
+    if (!updatedData?.id) {
+      return res.status(400).json({ updated: false, message: "Missing service ID" });
+    }
+
+    const updatedService = await Service.findByIdAndUpdate(
+      updatedData.id,
+      { $set: updatedData },
+      { new: true }
+    );
 
     if (!updatedService) {
       return res.status(404).json({ updated: false, message: "Service not found" });
@@ -49,39 +61,51 @@ export const updateService = async (req, res) => {
   }
 };
 
-// Delete service
+/**
+ * "Delete" a service — Soft delete (set isActive = false)
+ */
 export const deleteService = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const deleted = await Service.findByIdAndDelete(id);
-
-    if (!deleted) {
+    const service = await Service.findById(id);
+    if (!service) {
       return res.status(404).json({ deleted: false, message: "Service not found" });
     }
 
-    res.status(200).json({ deleted: true, service: deleted });
+    // Instead of deleting, mark as inactive
+    service.isActive = false;
+    await service.save();
+
+    res.status(200).json({ deleted: true, service });
   } catch (err) {
-    console.error("Error deleting service:", err);
+    console.error("Error deactivating service:", err);
     res.status(500).json({ deleted: false, message: "Internal server error" });
   }
 };
 
+/**
+ * Get all services
+ */
 export const getServices = async (req, res) => {
   try {
-    const services = await Service.find().sort({ createdAt: -1 }); // newest first
+    const { showInactive } = req.query;
+
+    // If showInactive=true, include all; otherwise, only active
+    const filter = showInactive === "true" ? {} : { isActive: true };
+
+    const services = await Service.find(filter).sort({ createdAt: -1 });
 
     return res.status(200).json(services);
-
   } catch (error) {
-    console.error('Failed to fetch services:', error);
-    res.status(500).json({ message: 'Server Error: Failed to fetch services' });
+    console.error("Failed to fetch services:", error);
+    res.status(500).json({ message: "Server Error: Failed to fetch services" });
   }
 };
 
-export default { 
-    addService, 
-    updateService,
-    deleteService,
-    getServices
-}
+export default {
+  addService,
+  updateService,
+  deleteService,
+  getServices,
+};

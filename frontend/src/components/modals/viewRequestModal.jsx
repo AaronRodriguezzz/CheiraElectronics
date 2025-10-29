@@ -5,7 +5,7 @@ const ViewServiceRequestModal = ({ isOpen, onClose, request }) => {
   if (!isOpen || !request) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="h-screen w-screen fixed top-0 left-0 z-50 bg-black/30 flex items-center justify-center">
       <div className="bg-white rounded-lg shadow-lg w-[90%] max-w-md p-6 relative">
         {/* Exit Button */}
         <button
@@ -23,38 +23,30 @@ const ViewServiceRequestModal = ({ isOpen, onClose, request }) => {
         {/* Content */}
         <div className="space-y-3 text-sm">
           <div>
-            <span className="font-medium text-gray-600">Service:</span>
+            <span className="text-lg text-gray-600">Category:</span>
             <p className="text-gray-800">
-              {request.serviceType?.name || "N/A"}
+              {request.serviceCategory || "N/A"}
             </p>
           </div>
 
           <div>
-            <span className="font-medium text-gray-600">Model:</span>
-            <p className="text-gray-800">{request.model}</p>
+            <span className="text-lg text-gray-600">Model:</span>
+            <p className="text-gray-800">
+              {request.model || "N/A"}
+            </p>
           </div>
 
           <div>
-            <span className="font-medium text-gray-600">Device Type:</span>
+            <span className="text-lg text-gray-600">Device Type:</span>
             <p className="text-gray-800">{request.deviceType}</p>
           </div>
 
           <div>
-            <span className="font-medium text-gray-600">Description:</span>
+            <span className="text-lg text-gray-600">Description:</span>
             <p className="text-gray-800 whitespace-pre-wrap">
-              {request.description || "No description provided."}
+              {request.remarks || "No remarks provided."}
             </p>
           </div>
-        </div>
-
-        {/* Close Button */}
-        <div className="flex justify-end mt-5">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-800 transition"
-          >
-            Close
-          </button>
         </div>
       </div>
     </div>

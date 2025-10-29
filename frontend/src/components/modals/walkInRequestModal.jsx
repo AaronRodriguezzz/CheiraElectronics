@@ -1,77 +1,84 @@
 import React, { useEffect, useState } from "react";
 import { post_data } from "../../services/PostMethod";
 import { get_data } from "../../services/getMethod";
+import { serviceCategories } from "../../data/ServiceCategory";
+import { deviceBrands } from "../../data/DeviceBrands";
 
 const AddWalkInCustomerModal = ({ onCancel, updatedData }) => {
   const [technicians, setTechnicians] = useState([]);
-  const [services, setServices] = useState([]);
-  const [formData, setFormData] = useState({
-    customer: "",
-    technician: "",
-    serviceType: "",
-    model: "",
-    deviceType: "",
-    description: "",
-    servicePrice: "",
-  });
   const [isLoading, setIsLoading] = useState(false);
 
-  // fetch services and technicians
+  const [formData, setFormData] = useState({
+    customer: "",
+    contactNumber: "",
+    email: "",
+    technician: "",
+    model: "",
+    serviceCategory: "",
+    remarks: "",
+    servicePrice: "",
+  });
+
+  // ✅ Fetch available technicians
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchTechnicians = async () => {
       try {
-        const [techs, servs] = await Promise.all([
-          get_data("/technicians"),
-          get_data("/services"),
-        ]);
+        const techs = await get_data("/technicians");
         setTechnicians(techs || []);
-        setServices(servs || []);
       } catch (err) {
-        console.error("Error loading data:", err);
+        console.error("Error loading technicians:", err);
       }
     };
-
-    fetchData();
+    fetchTechnicians();
   }, []);
 
+  // ✅ Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Reset device type when service category changes
+    if (name === "serviceCategory") {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+        deviceType: "",
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
+  // ✅ Handle submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.customer || !formData.model || !formData.deviceType || !formData.serviceType)
-      return;
+
+    const { customer, deviceType, model } = formData;
+    if (!customer || !deviceType || !model) return;
 
     setIsLoading(true);
 
     try {
-        const payload = {
-            ...formData,
-            status: "Pending",
-        };
+      const payload = {
+        ...formData,
+        status: "In Progress",
+      };
 
-        const response = await post_data("/create-walkin-request", payload);
+      const response = await post_data("/walkin", payload);
 
-        if (response) {
-            updatedData((prev) => [
-            {
-                ...response,
-                customer: response.customer,
-                technician: response.technician?.full_name,
-                technicianId: response.technician?._id,
-                serviceType: response.serviceType?.service_name,
-            },
-            ...prev,
-            ]);
-
-            onCancel(false);
-        }
+      if (response) {
+        updatedData((prev) => [
+          {
+            ...response,
+            technicianName: response.technician?.full_name,
+          },
+          ...prev,
+        ]);
+        onCancel(false);
+      }
     } catch (err) {
-        console.error("Error creating walk-in request:", err);
+      console.error("Error creating walk-in request:", err);
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -81,9 +88,12 @@ const AddWalkInCustomerModal = ({ onCancel, updatedData }) => {
         onSubmit={handleSubmit}
         className="w-[90%] max-w-[450px] bg-white p-6 rounded shadow"
       >
-        <h2 className="text-xl font-semibold mb-4">New Walk-In Customer</h2>
+        <h2 className="text-2xl text-orange-500 font-semibold mb-6">
+          New Walk-In Request
+        </h2>
 
         <div className="space-y-3">
+          {/* Customer name */}
           <input
             type="text"
             name="customer"
@@ -94,16 +104,64 @@ const AddWalkInCustomerModal = ({ onCancel, updatedData }) => {
             className="w-full border px-3 py-2 rounded placeholder:text-black"
           />
 
+          {/* Contact number */}
           <input
             type="text"
-            name="deviceType"
-            placeholder="Device Type (e.g., Laptop, Phone)"
-            value={formData.deviceType}
+            name="contactNumber"
+            placeholder="Contact Number"
+            value={formData.contactNumber}
             onChange={handleChange}
-            required
             className="w-full border px-3 py-2 rounded placeholder:text-black"
           />
 
+          {/* Email */}
+          <input
+            type="email"
+            name="email"
+            placeholder="Email Address"
+            value={formData.email}
+            onChange={handleChange}
+            className="w-full border px-3 py-2 rounded placeholder:text-black"
+          />
+
+          {/* Category & Device Type */}
+          <div className="flex gap-x-2">
+            <select
+              name="serviceCategory"
+              value={formData.serviceCategory}
+              onChange={handleChange}
+              required
+              className="w-full border px-3 py-2 rounded bg-white"
+            >
+              <option value="">Select Category</option>
+              {serviceCategories.map((category, index) => (
+                <option key={index} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+
+            <select
+              name="deviceType"
+              onChange={handleChange}
+              value={formData.deviceType}
+              disabled={!formData.serviceCategory}
+              className="w-full border px-3 py-2 rounded bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+              required
+            >
+              <option value="">Select Device Type</option>
+              {formData.serviceCategory &&
+                (deviceBrands[formData.serviceCategory] || []).map(
+                  (brand, index) => (
+                    <option key={index} value={brand}>
+                      {brand}
+                    </option>
+                  )
+                )}
+            </select>
+          </div>
+
+          {/* Model */}
           <input
             type="text"
             name="model"
@@ -114,28 +172,14 @@ const AddWalkInCustomerModal = ({ onCancel, updatedData }) => {
             className="w-full border px-3 py-2 rounded placeholder:text-black"
           />
 
-          <select
-            name="serviceType"
-            value={formData.serviceType}
-            onChange={handleChange}
-            required
-            className="w-full border px-3 py-2 rounded"
-          >
-            <option value="">Select Service Type</option>
-            {services.map((service) => (
-              <option key={service._id} value={service._id}>
-                {service.service_name}
-              </option>
-            ))}
-          </select>
-
+          {/* Technician (optional) */}
           <select
             name="technician"
             value={formData.technician}
             onChange={handleChange}
-            className="w-full border px-3 py-2 rounded"
+            className="w-full border px-3 py-2 rounded bg-white"
           >
-            <option value="">Assign Technician (optional)</option>
+            <option value="">Assign Technician</option>
             {technicians.map((tech) => (
               <option key={tech._id} value={tech._id}>
                 {tech.full_name}
@@ -143,24 +187,29 @@ const AddWalkInCustomerModal = ({ onCancel, updatedData }) => {
             ))}
           </select>
 
-          <textarea
-            name="description"
-            placeholder="Service Description (optional)"
-            value={formData.description}
-            onChange={handleChange}
-            className="w-full border px-3 py-2 rounded placeholder:text-black"
-          />
-
+          {/* Price */}
           <input
             type="number"
             name="servicePrice"
-            placeholder="Service Price (optional)"
+            placeholder="Service Price"
             value={formData.servicePrice}
             onChange={handleChange}
+            min="0"
+            className="w-full border px-3 py-2 rounded placeholder:text-black"
+          />
+
+          {/* Remarks */}
+          <textarea
+            name="remarks"
+            placeholder="Remarks"
+            value={formData.remarks}
+            onChange={handleChange}
+            rows={3}
             className="w-full border px-3 py-2 rounded placeholder:text-black"
           />
         </div>
 
+        {/* Buttons */}
         <div className="flex justify-end gap-2 mt-5">
           <button
             type="button"

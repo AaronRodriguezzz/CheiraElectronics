@@ -6,12 +6,13 @@ const AssignTechnicianForm = ({ onCancel, requestData, updatedData }) => {
   const [technicians, setTechnicians] = useState([]);
   const [technicianId, setTechnicianId] = useState('');
   const [servicePrice, setServicePrice] = useState('');
+  const [remarks, setRemarks] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!technicianId) return;
+    if (!technicianId || !servicePrice || !remarks) return;
 
     setIsLoading(true);
 
@@ -22,7 +23,8 @@ const AssignTechnicianForm = ({ onCancel, requestData, updatedData }) => {
         serviceType: requestData?.serviceType,
         status: 'In Progress',
         technician: technicianId, 
-        servicePrice: servicePrice
+        servicePrice: servicePrice,
+        remarks: remarks
       };
 
       const response = await update_data('/accept-request', payload);
@@ -49,7 +51,7 @@ const AssignTechnicianForm = ({ onCancel, requestData, updatedData }) => {
         });
       
         onCancel(false);
-      }
+      } 
       
     } catch (err) {
       console.error('Error updating request:', err);
@@ -80,16 +82,16 @@ const AssignTechnicianForm = ({ onCancel, requestData, updatedData }) => {
         className="w-[90%] max-w-[400px] bg-white p-6 rounded shadow"
       >
         <h2 className="text-xl font-semibold mb-4">Assign Technician</h2>
-        <p className="mb-2 text-sm">
+        <p className="mb-2 text-md">
           <strong>Customer:</strong> {requestData?.customer}
         </p>
-        <p className="mb-2 text-sm">
+        <p className="mb-2 text-md">
           <strong>Contact:</strong> {requestData?.contactNumber}
         </p>
-        <p className="mb-2 text-sm">
-          <strong>Service:</strong> {requestData?.serviceType}
+        <p className="mb-2 text-md">
+          <strong>Category:</strong> {requestData?.serviceCategory}
         </p>
-        <p className="mb-4 text-sm">
+        <p className="mb-4 text-md">
           <strong>Request Date:</strong> {requestData?.submittedAt?.split('T')[0]}
         </p>
 
@@ -114,6 +116,15 @@ const AssignTechnicianForm = ({ onCancel, requestData, updatedData }) => {
           placeholder='Input Price'
           onChange={(e) => setServicePrice(e.target.value)}
           value={servicePrice}
+        />
+
+        <textarea
+          placeholder="Remarks (optional)"
+          value={remarks} 
+          onChange={(e) => setRemarks(e.target.value)}
+          type="text" 
+          rows={4}
+          className='w-full border px-3 py-2 rounded placeholder:text-black mt-2' 
         />
 
         <div className="flex justify-end gap-2 mt-5">

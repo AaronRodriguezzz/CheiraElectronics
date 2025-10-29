@@ -4,18 +4,21 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
 import { get_data } from "../../services/getMethod";
 import { statusColorMap } from "../../data/StatusColor";
+import ViewServiceRequestModal from "../../components/modals/viewRequestModal";
 
 export default function History() {
   const [requests, setRequests] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isViewing, setIsViewing] = useState(false);
+  const [requestToView, setRequestToView] = useState(null);
 
   const columns = [
-    { field: "customerName", headerName: "Customer Name", flex: 1 },
+    { field: "customer", headerName: "Customer Name", flex: 1 },
     { field: "contactNumber", headerName: "Contact", flex: 1 },
-    { field: "serviceType", headerName: "Service", flex: 1 },
+    { field: "email", headerName: "Email", flex: 1 },
     { field: "technician", headerName: "Technician", flex: 1 },
     { field: "updatedBy", headerName: "Updated By", flex: 1 },
-    { field: "rejectionReason", headerName: "Remarks", flex: 1 },
+    { field: "servicePrice", headerName: "Price", flex: 1 },
     { 
       field: "updatedAt", 
       headerName: "Date Updated", 
@@ -24,6 +27,18 @@ export default function History() {
         return <span>{params.value.split('T')[0]}</span>
       }
     },    
+    { 
+      field: "type", 
+      headerName: "Type", 
+      width: 120,
+      renderCell: (params) => {
+        return <span 
+          className={`${params.value === 'Walk-In' ? 'text-blue-500' : 'text-green-500'}`}
+        >
+          {params.value}
+        </span>
+      } 
+    },
     { 
       field: "status", 
       headerName: "Status", 
@@ -36,44 +51,72 @@ export default function History() {
       field: "actions",
       headerName: "Actions",
       flex: 1,
-      renderCell: () => (
-        <Button variant="contained" size="small">Reopen</Button>
-      ),
+      renderCell: (params) => {
+        return (
+          <div className="h-full w-auto flex md:flex-row flex-col items-center gap-2">
+            <Button variant="contained" size="small">Reopen</Button>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() => {
+                setRequestToView(params.row);
+                setIsViewing(true);
+              }}
+              sx={{ fontSize: 12 }}
+            >
+              View
+            </Button>
+          </div>
+        );
+      },
     },
+    
+    
   ];
 
 
   useEffect(() => {
     const getAllRequests = async () => {
       setLoading(true);
-      try{
-        const requests = await get_data('/requests-history');
+      try {
+        const [requests, walkIns] = await Promise.all([
+          get_data('/requests-history'),
+          get_data('/finished-walkins'),
+        ]);
 
-        if(requests){
-
-          console.log('requests', requests);
-          const formatted = requests.map((req) => ({
-            ...req, 
-            customerName: req.customer?.full_name,
+        if (requests && walkIns) {
+          const formattedRequests = requests.map((req) => ({
+            ...req,
+            customer: req.customer?.full_name,
+            email: req.customer?.email,
             contactNumber: req.customer?.contact_number,
-            technician: req.technician?.full_name || 'N/A',
-            serviceType: req.serviceType?.name || 'N/A',
-            updatedBy: req?.updatedBy?.full_name || 'N/A',
-            rejectionReason: req?.remarks || 'N/A'
+            technician: req.technician?.full_name,
+            updatedBy: req?.updatedBy?.full_name,
+            servicePrice: `₱${req.servicePrice}`
           }));
 
-          setRequests(formatted);
+          const formattedWalkIns = walkIns.map((req) => ({
+            ...req,
+            customer: req.customer,
+            email: req.email,
+            contactNumber: req.contactNumber,
+            technician: req.technician?.full_name,
+            updatedBy: req.updatedBy?.full_name,
+            servicePrice: `₱${req.servicePrice}`
+          }));
+
+          // Combine both arrays
+          setRequests([...formattedRequests, ...formattedWalkIns]);
         }
-
+      } catch (err) {
+        console.error("Error fetching requests:", err);
+      } finally {
         setLoading(false);
-
-      }catch(err){
-        console.log(err);
       }
-    }
+    };
 
     getAllRequests();
-  },[])
+  }, []);
 
   if (loading) {
     return (
@@ -109,6 +152,14 @@ export default function History() {
       <div className="w-full flex justify-end mt-4">
         <Button variant="contained" className="mb-4">Export</Button>
       </div>
+
+      {isViewing && (
+        <ViewServiceRequestModal
+          isOpen={isViewing}
+          onClose={() => setIsViewing(false)}
+          request={requestToView}
+        />
+      )}
     </div>
   );
 }

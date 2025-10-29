@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
 import { get_data } from "../../services/getMethod";
+import { update_data } from "../../services/putMethod";
 import ServiceForm from "../../components/modals/serviceModal";
 
 export default function ServiceCatalog() {
@@ -10,60 +11,86 @@ export default function ServiceCatalog() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [dataToUpdate, setDataToUpdate] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [services, setServices] = useState(null);
+  const [services, setServices] = useState([]);
+
+  const handleDeactivate = async (row) => {
+    try {
+      const payload = { ...row, id: row._id, isActive: false };
+      const response = await update_data("/update-service", payload);
+
+      if (response.updated) {
+        setServices((prev) =>
+          prev.map((item) =>
+            item._id === response.service._id ? response.service : item
+          )
+        );
+      }
+    } catch (err) {
+      console.error("Failed to deactivate service:", err);
+    }
+  };
 
   const columns = [
-    { field: "_id", headerName: "Service Id", flex: 1 },
-    { field: "name", headerName: "Service Name", flex: 1 },
+    { field: "serviceCategory", headerName: "Category", flex: 1 },
+    { field: "description", headerName: "Service Description", flex: 1 },
     { field: "price", headerName: "Price (₱)", flex: 1 },
     { field: "duration", headerName: "Duration", flex: 1 },
     { field: "createdAt", headerName: "Date Added", flex: 1 },
-    { 
-      field: "isActive", 
-      headerName: "Status", 
+    {
+      field: "isActive",
+      headerName: "Status",
       flex: 1,
-      renderCell: (params) => {
-        console.log(params.value);
-        return  <span className={`p-2 rounded-full ${params.value ? 'text-green-500' : 'text-red-500'}`}>
-                  {params.value ? 'Active' : 'Inactive'}
-                </span>
-      } 
+      renderCell: (params) => (
+        <span
+          className={`p-2 rounded-full text-sm font-medium ${
+            params.value ? "text-green-600" : "text-red-500"
+          }`}
+        >
+          {params.value ? "Active" : "Inactive"}
+        </span>
+      ),
     },
     {
       field: "actions",
       headerName: "Actions",
-      flex: 1,
+      flex: 1.2,
       renderCell: (params) => (
-        <div className="h-full flex items-center gap-2">
-          <Button 
-            variant="contained" 
-            size="small"  
+        <div className="flex items-center gap-2">
+          <Button
+            variant="contained"
+            size="small"
             onClick={() => {
               setIsUpdating(true);
-              setDataToUpdate(params.row)
+              setDataToUpdate(params.row);
             }}
           >
             Update
           </Button>
-          <Button variant="outlined" size="small" color="error">Delete</Button>
-        </div>  
+
+          <Button
+            variant="outlined"
+            size="small"
+            color="error"
+            onClick={() => handleDeactivate(params.row)}
+            disabled={!params.row.isActive}
+          >
+            {params.row.isActive ? "Deactivate" : "Inactive"}
+          </Button>
+        </div>
       ),
     },
-  ];  
+  ];
 
   useEffect(() => {
-    const getServices = async () => {
-      const services = await get_data('/services');
-
-      if (services) {
-        setServices(services);
-        console.log(services);
+    const fetchServices = async () => {
+      const response = await get_data("/services");
+      if (response) {
+        setServices(response);
       }
-
       setLoading(false);
     };
 
-    getServices();
+    fetchServices();
   }, []);
 
   if (loading) {
@@ -76,33 +103,52 @@ export default function ServiceCatalog() {
 
   return (
     <div>
+      {/* Header Bar */}
       <div className="w-full flex p-4 gap-x-4 bg-white shadow my-4 rounded-md">
-        <input 
-          type="text" 
-          placeholder="Search name,service type, date, etc."
-          className="w-[90%] bg-gray-100 px-4 py-2 rounded-lg outline-gray-300"
+        <input
+          type="text"
+          placeholder="Search service name, category, or date..."
+          className="w-full bg-gray-100 px-4 py-2 rounded-lg outline-gray-300"
         />
-
-        <Button variant="contained" className="w-[10%] min-w-[300px] mb-4" onClick={() => setIsAdding(true)}>Add Service</Button>
+        <button
+          className="w-[160px] rounded-lg text-white bg-orange-500 hover:bg-orange-600"
+          onClick={() => setIsAdding(true)}
+        >
+          NEW SERVICE
+        </button>
       </div>
 
+      {/* Data Grid */}
       <div className="w-full overflow-x-auto">
-        <div style={{ minWidth: "1350px"}}>
-          <DataGrid rows={services} columns={columns} getRowId={(row) => row._id} pagination />
+        <div style={{ minWidth: "1350px" }}>
+          <DataGrid
+            rows={services}
+            columns={columns}
+            getRowId={(row) => row._id}
+            pagination
+            disableRowSelectionOnClick
+          />
         </div>
       </div>
 
-      {isAdding && <ServiceForm 
-        onCancel={setIsAdding}
-        route={'/new-service'}
-      />}
+      {/* Add Modal */}
+      {isAdding && (
+        <ServiceForm
+          onCancel={setIsAdding}
+          route={"/new-service"}
+          updatedData={setServices}
+        />
+      )}
 
-      {isUpdating && <ServiceForm 
-        onCancel={setIsUpdating}
-        route={'/update-service'}
-        serviceData={dataToUpdate}
-        updatedData={setServices}
-      />}
+      {/* Edit Modal */}
+      {isUpdating && (
+        <ServiceForm
+          onCancel={setIsUpdating}
+          route={"/update-service"}
+          serviceData={dataToUpdate}
+          updatedData={setServices}
+        />
+      )}
     </div>
   );
 }

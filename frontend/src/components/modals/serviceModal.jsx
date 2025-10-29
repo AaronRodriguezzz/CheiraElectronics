@@ -1,61 +1,75 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import debounce from 'lodash.debounce';
-import { post_data } from '../../services/postMethod';
+import { post_data } from '../../services/PostMethod';
 import { update_data } from '../../services/putMethod';
-import { get_data } from '../../services/getMethod';
-
+import { serviceCategories } from '../../data/ServiceCategory';
 
 const ServiceForm = ({ onCancel, route, updatedData, serviceData = null }) => {
   const isEdit = Boolean(serviceData);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const [service, setService] = useState({
     id: '',
-    name: '',
+    serviceCategory: '',
     description: '',
     price: '',
     duration: '',
     isActive: true,
   });
 
+  // preload if editing
   useEffect(() => {
-    if (isEdit) {
+    if (isEdit && serviceData) {
       setService({
-        id: serviceData?._id,
-        name: serviceData?.name || '',
-        description: serviceData?.description || '',
-        price: serviceData?.price || '',
-        duration: serviceData?.duration || '',
-        isActive: serviceData?.isActive ?? true,
+        id: serviceData._id || '',
+        serviceCategory: serviceData.serviceCategory || '',
+        description: serviceData.description || '',
+        price: serviceData.price || '',
+        duration: serviceData.duration || '',
+        isActive: serviceData.isActive ?? true,
       });
     }
-  }, [serviceData]);
+  }, [serviceData, isEdit]);
 
+  // submit (debounced)
   const debouncedSubmit = useCallback(
     debounce(async (formData) => {
-      setIsLoading(true)
+      setIsLoading(true);
 
-      const response = isEdit
-        ? await update_data(route, formData)
-        : await post_data(route, formData);
-
-      if (response.updated || response.added) {
-        updatedData((prev) => prev.map((service) => service._id === response.service._id ? response.service : service ))
-        onCancel(false);
-        setIsLoading(false)
+      let response;
+      if (isEdit) {
+        response = await update_data('/update-service', formData);
+      } else {
+        response = await post_data('/new-service', formData);
       }
-      
+
+      if (response?.added || response?.updated) {
+        updatedData((prev) => {
+          if (isEdit) {
+            // update existing service in the list
+            return prev.map((s) =>
+              s._id === response.service._id ? response.service : s
+            );
+          } else {
+            // add new service to the list
+            return [response.service, ...prev];
+          }
+        });
+        onCancel(false);
+      }
+
+      setIsLoading(false);
     }, 500),
-    [route, onCancel, isEdit, serviceData]
+    [route, onCancel, isEdit, updatedData]
   );
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     debouncedSubmit(service);
   };
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center bg-transparent fixed top-0 left-0 z-50">
+    <div className="h-screen w-screen fixed top-0 left-0 z-50 bg-black/30 flex items-center justify-center">
       <form
         className="w-[90%] max-w-[400px] bg-white rounded-lg shadow-sm p-5 shadow-gray-200"
         onSubmit={handleSubmit}
@@ -65,43 +79,60 @@ const ServiceForm = ({ onCancel, route, updatedData, serviceData = null }) => {
         </h1>
 
         <div className="flex flex-col tracking-tighter">
-          <label className="mt-2">Service Name</label>
-          <input
-            value={service.name}
-            onChange={(e) => setService({ ...service, name: e.target.value })}
-            className="border border-gray-200 px-3 py-2 rounded-md focus:border-gray-300"
+          {/* Service Category */}
+          <label className="mb-1">Service Category</label>
+          <select
+            onChange={(e) => setService({ ...service, serviceCategory: e.target.value })}
+            value={service.serviceCategory}
             required
-          />
+            className="border border-gray-200 px-3 py-2 rounded-md focus:border-gray-300"
+          >
+            <option value="" disabled>
+              Select Service Category
+            </option>
+            {serviceCategories.map((category, index) => (
+              <option key={index} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
 
+          {/* Description */}
           <label className="mt-2">Description</label>
           <textarea
             value={service.description}
             onChange={(e) => setService({ ...service, description: e.target.value })}
             className="border border-gray-200 px-3 py-2 rounded-md focus:border-gray-300"
             rows={3}
+            required
           />
 
+          {/* Price */}
           <label className="mt-2">Price (₱)</label>
           <input
-            type="number"
-            min="0"
+            type="text"
             value={service.price}
             onChange={(e) => setService({ ...service, price: e.target.value })}
             className="border border-gray-200 px-3 py-2 rounded-md focus:border-gray-300"
             required
           />
 
+          {/* Duration */}
           <label className="mt-2">Duration (e.g. 30 mins)</label>
           <input
             value={service.duration}
             onChange={(e) => setService({ ...service, duration: e.target.value })}
             className="border border-gray-200 px-3 py-2 rounded-md focus:border-gray-300"
+            required
           />
 
+          {/* Status */}
           <label className="mt-2">Status</label>
           <select
             value={service.isActive ? 'true' : 'false'}
-            onChange={(e) => setService({ ...service, isActive: e.target.value === 'true' })}
+            onChange={(e) =>
+              setService({ ...service, isActive: e.target.value === 'true' })
+            }
             className="border border-gray-200 px-3 py-2 rounded-md focus:border-gray-300"
           >
             <option value="true">Active</option>
@@ -123,7 +154,7 @@ const ServiceForm = ({ onCancel, route, updatedData, serviceData = null }) => {
             disabled={isLoading}
             className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition"
           >
-            {isEdit ? 'Update' : 'Finish'}
+            {isLoading ? 'Saving...' : isEdit ? 'Update' : 'Finish'}
           </button>
         </div>
       </form>

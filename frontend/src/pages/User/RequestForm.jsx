@@ -4,20 +4,22 @@ import { Wrench, MessageSquareText } from "lucide-react";
 import { post_data } from "../../services/PostMethod";
 import { get_data } from "../../services/getMethod";
 import { motion } from "framer-motion";
+import { serviceCategories } from "../../data/ServiceCategory";
+import { deviceBrands } from '../../data/DeviceBrands';
 import { usePageProtection } from "../../hooks/protectHooks";
 import { useUser } from "../../hooks/protectHooks";
 
 export default function SubmitRequest() {
 
   usePageProtection();
-
+  
   const user = useUser();
-  const [services, setServices] = useState(null);
   const [formData, setFormData] = useState({
-    serviceType: "",
+    serviceCategory: "",
     deviceType: "",
-    model: "",
     description: "",
+    serviceType: "",
+    model: "",
   });
 
   const handleChange = (e) => {
@@ -32,37 +34,16 @@ export default function SubmitRequest() {
       const response = await post_data("/new-request", finalForm);
       if (response) {
         setFormData({
-          serviceType: "",
+          serviceCategory: "",
           description: "",
           deviceType: "",
-          model: "",
+          serviceType: ""
         });
       }
     } catch (err) {
       console.log(err);
-      alert("❌ Something went wrong, please try again.");
     }
   };
-
-  useEffect(() => {
-    const getServices = async () => {
-      const services = await get_data("/services");
-      if (services) {
-        setServices(services);
-      }
-    };
-    getServices();
-  }, []);
-
-  if (!services) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center bg-gray-950">
-        <p className="text-lg font-semibold text-gray-200 animate-pulse">
-          Loading services...
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen pt-24 px-4 sm:px-8 bg-black relative">
@@ -92,45 +73,88 @@ export default function SubmitRequest() {
           <div className="relative">
             <Wrench className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400 w-5 h-5" />
             <select
-              name="serviceType"
+              name="serviceCategory"
               onChange={handleChange}
-              value={formData.serviceType}
+              value={formData.serviceCategory}
               required
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm 
-              focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
+              className="w-full pl-10 pr-4 py-3 bg-black text-white border border-gray-300 rounded-lg shadow-sm 
+                        focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 
+                        transition appearance-none"
+            >
+              <option value="" disabled className="bg-black text-white">
+                Select Service Category
+              </option>
+              {serviceCategories.map((category, index) => (
+                <option
+                  key={index}
+                  value={category}
+                  className="bg-black text-white hover:bg-gray-900"
+                >
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          <div className="relative">
+            <Wrench className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <select
+              name="deviceType"
+              onChange={handleChange}
+              value={formData.deviceType}
+              disabled={formData.serviceCategory === ''}
+              className="w-full pl-10 pr-4 py-3 bg-black text-white border border-gray-300 rounded-lg shadow-sm 
+                        focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 
+                        transition disabled:opacity-60 appearance-none"
+              required
             >
               <option value="" className="bg-black text-white" disabled>
-                Select a Service
+                Select a Device Type
               </option>
-              {services.map(
-                (service) =>
-                  service.isActive && (
-                    <option key={service._id} value={service._id} className="bg-black text-white">
-                      {service.name}
-                    </option>
-                  )
-              )}
-              <option value="N/A" className="bg-black text-white">Not in the option</option>
+              {formData.serviceCategory &&
+                deviceBrands[formData.serviceCategory].map((brand, index) => (
+                  <option key={index} value={brand} className="bg-black text-white">
+                    {brand}
+                  </option>
+                ))}
             </select>
           </div>
 
-          <input type="text"  
-                  name="deviceType"
-                  onChange={handleChange}
-                  value={formData.deviceType}
-                  placeholder="Model/Brand"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm 
-                              focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
-          />
-          <input type="text"  
-                  name="model"
-                  onChange={handleChange}
-                  value={formData.model}
-                  placeholder="Device Type"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm 
-                              focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
+          <div className="relative">
+            <Wrench className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <select
+              name="serviceType"
+              onChange={handleChange}
+              value={formData.serviceType}
+              className="w-full pl-10 pr-4 py-3 bg-black text-white border border-gray-300 rounded-lg shadow-sm 
+                        focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 
+                        transition"
+              required
+            >
+              <option value="" className="bg-black text-white" disabled>
+                Select Service Type
+              </option>
+              <option value="HOME SERVICE" className="bg-black text-white">
+                HOME SERVICE
+              </option>
+              <option value="DEVICE DROPOFF" className="bg-black text-white">
+                DEVICE DROPOFF
+              </option>
+            </select>
+          </div>
+          
+          <input 
+            name="model"
+            type="text"  
+            placeholder="Device Model (N/A if unknown)"
+            value={formData.model}
+            handleChange={handleChange}
+            className="w-full pl-10 pr-4 py-3 bg-black text-white border border-gray-300 rounded-lg shadow-sm 
+                        focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 
+                        transition" 
           />
 
+                
 
           {/* Message Field */}
           <div className="relative">
@@ -150,9 +174,10 @@ export default function SubmitRequest() {
           {/* Submit Button */}
           <motion.button
             type="submit"
+            disabled={formData.category === '' || !formData.deviceType === '' || !formData.description === ''}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg shadow-md transition"
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg shadow-md transition disabled:bg-orange-500/70 disabled:cursor-not-allowed"
           >
             Submit Request
           </motion.button>

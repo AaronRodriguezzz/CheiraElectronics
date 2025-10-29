@@ -21,7 +21,8 @@ export default function ServiceRequests() {
     { field: "customer", headerName: "Customer Name", flex: 1 },
     { field: "contactNumber", headerName: "Contact Number", flex: 1 },
     { field: "email", headerName: "Email", flex: 1 },
-    { field: "serviceType", headerName: "Service", flex: 1 },
+    { field: "serviceCategory", headerName: "Category", flex: 1 },
+    { field: "model", headerName: "Model", flex: 1 },
     {
       field: "submittedAt",
       headerName: "Date Requested",
@@ -91,22 +92,6 @@ export default function ServiceRequests() {
     },
   ];
 
-  // const updateStatus = async (newStatus, id) => {
-  //   try {
-  //     const updateResponse = await update_data(`/update-status/${id}`, {
-  //       status: newStatus,
-  //     });
-
-  //     if (updateResponse) {
-  //       setRequests((prev) =>
-  //         prev.filter((req) => req._id !== updateResponse._id)
-  //       );
-  //     }
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
-
   useEffect(() => {
     const getAllRequests = async () => {
       setLoading(true);
@@ -158,7 +143,6 @@ export default function ServiceRequests() {
             columns={serviceRequestsCols}
             getRowId={(row) => row._id}
             pagination
-            autoHeight
           />
         </div>
       </div>

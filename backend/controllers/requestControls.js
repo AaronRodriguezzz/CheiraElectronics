@@ -1,19 +1,20 @@
-import Service from "../models/Service.js";
 import ServiceRequest from "../models/ServiceRequest.js";
+import WalkInRequests from "../models/WalkInCustomer.js";
+import Technician from "../models/Technician.js";
 import { send_request_update } from "../utils/sendEmail.js";
 
 // ✅ Create a new service request
 export const createServiceRequest = async (req, res) => {
-
+    
   const { 
     customerId, 
-    serviceType, 
-    model, 
-    deviceType, 
-    description 
+    serviceCategory,
+    deviceType,
+    description,
+    serviceType
   } = req.body;
 
-  if(!customerId || !serviceType || !model || !deviceType || !description){
+  if(!customerId || !serviceCategory || !deviceType || !description || !serviceType){
     return res.status(400).json({ message: 'All fields are required'})
   }
 
@@ -38,14 +39,12 @@ export const createServiceRequest = async (req, res) => {
       return res.status(400).json({ message: 'You already requested 3 times in a day'})
     }
 
-    const service = serviceType === 'N/A' ? undefined : serviceType
-
     const newRequest = new ServiceRequest({
-      customer: customerId,
-      serviceType: service,
-      model, 
+      customer: customerId, 
+      serviceCategory,
       deviceType,
       description,
+      serviceType
     });
 
     const savedRequest = await newRequest.save();
@@ -90,20 +89,20 @@ export const updateServiceRequestStatus = async (req, res) => {
 
 export const acceptRequests = async (req, res) => {
 
-  const { id, email, serviceType, status, technician, servicePrice } = req.body.newData;
+  const { id, email, serviceType, status, technician, servicePrice, remarks } = req.body.newData;
 
   console.log(req.body.newData)
 
-  if (!id || !status || !technician) {
+  if (!id || !status || !technician || !remarks) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
   try {
     const updated = await ServiceRequest.findByIdAndUpdate(
       id,
-      { status, technician, servicePrice },
+      { status, technician, servicePrice, remarks},
       { new: true } 
-    ).populate('technician customer'); // Optional: return full technician & customer data
+    ).populate('technician customer');
 
     if (!updated) {
       return res.status(404).json({ error: "Request not found" });
@@ -232,6 +231,8 @@ export const requestsHistory = async (req, res) => {
 
     const request = [...finishedRequest, ...rejectedRequest];
 
+    console.log('Online', request)
+
     
     return res.status(200).json(request);
   } catch (err) {
@@ -241,80 +242,210 @@ export const requestsHistory = async (req, res) => {
 };
 
 
-export const dashboardRecord = async (req,res) => {
-  try{
-    const [
-      pendingRequests,
-      inProgressRequests,
-      completedRequests,
-      reOpenedRequests
-    ] = await Promise.all([
-      ServiceRequest.countDocuments({ status: 'Pending' }),
-      ServiceRequest.countDocuments({ status: 'In Progress' }),
-      ServiceRequest.countDocuments({ status: 'Completed' }),
-      ServiceRequest.countDocuments({ status: 'Reopened' })
+export const dashboardRecord = async (req, res) => {
+  try {
+    const { filter = "daily" } = req.query;
+
+    // 🧩 Date Range Handling
+    const now = new Date();
+    let startDate;
+
+    if (filter === "yearly") {
+      startDate = new Date(now.getFullYear(), 0, 1);
+    } else if (filter === "monthly") {
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    } else {
+      // daily
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+
+    // 🧩 Combine both ServiceRequest and WalkInRequests collections
+    const combinedRequests = await Promise.all([
+      ServiceRequest.find({ createdAt: { $gte: startDate } }),
+      WalkInRequests.find({ createdAt: { $gte: startDate } })
     ]);
 
-    const serviceAvailsSummary  = await ServiceRequest.aggregate([
+    const allRequests = [...combinedRequests[0], ...combinedRequests[1]];
+
+    // 🧮 Status summary
+    const statusCounts = {
+      Pending: 0,
+      "In Progress": 0,
+      Completed: 0,
+      Reopened: 0,
+    };
+
+    allRequests.forEach((req) => {
+      if (statusCounts[req.status] !== undefined) {
+        statusCounts[req.status]++;
+      }
+    });
+
+    const statusSummaryData = Object.entries(statusCounts).map(([label, count]) => ({
+      label,
+      count,
+    }));
+
+    // 🧮 Service Availed Summary (Top Services)
+    const serviceAvailsSummary = await ServiceRequest.aggregate([
+      {
+        $match: { createdAt: { $gte: startDate } },
+      },
       {
         $group: {
-          _id: "$serviceType",        // Group by status
-          count: { $sum: 1 }     // Count documents per status
-        }
-      },
-      {
-        $lookup: {
-          from: "services",           // The collection to join
-          localField: "_id",          // Field from the input documents
-          foreignField: "_id",        // Field from the documents of the "from" collection
-          as: "serviceDetails"        // Output array field
-        }
-      },
-      {
-        $unwind: "$serviceDetails"    // Deconstructs the array field to get object
+          _id: "$serviceCategory",
+          count: { $sum: 1 },
+        },
       },
       {
         $project: {
           _id: 0,
-          serviceName: "$serviceDetails.name", // Project desired fields
-          count: 1
-        }
-      }
+          serviceName: "$_id",
+          count: 1,
+        },
+      },
+      { $sort: { count: -1 } },
+      { $limit: 10 },
     ]);
 
-    const salesSummary  = await ServiceRequest.aggregate([
-      {
-        $match: { status: "Completed" } // Only consider completed requests
-      },
+    // 🧮 Sales Summary (Line Chart)
+    const formatBy =
+      filter === "yearly"
+        ? "%Y-%m"
+        : filter === "monthly"
+        ? "%Y-%m-%d"
+        : "%Y-%m-%dT%H:00:00Z";
+
+    const onlineSales = await ServiceRequest.aggregate([
+      { $match: { status: "Completed", createdAt: { $gte: startDate } } },
       {
         $group: {
-         _id: {
-            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
-          },   
-          totalRevenue: { $sum: "$servicePrice"} 
-        }
-      }
+          _id: {
+            $dateToString: { format: formatBy, date: "$createdAt" },
+          },
+          totalRevenue: { $sum: "$servicePrice" },
+        },
+      },
+      { $sort: { _id: 1 } },
     ]);
 
-    const statusSummaryData = [
-      { label: "Pending", count: pendingRequests },
-      { label: "In Progress", count: inProgressRequests },
-      { label: "Completed", count: completedRequests },
-      { label: "Re-opened", count: reOpenedRequests },
-    ]
+    const walkInSales = await WalkInRequests.aggregate([
+      { $match: { status: "Completed", createdAt: { $gte: startDate } } },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: formatBy, date: "$createdAt" },
+          },
+          totalRevenue: { $sum: "$servicePrice" },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
 
-    console.log('hello', serviceAvailsSummary);
+    // Combine online and walk-in sales data
+    const salesSummaryMap = new Map();
+
+    [...onlineSales, ...walkInSales].forEach((entry) => {
+      if (!salesSummaryMap.has(entry._id)) {
+        salesSummaryMap.set(entry._id, 0);
+      }
+      salesSummaryMap.set(entry._id, salesSummaryMap.get(entry._id) + entry.totalRevenue);
+    });
+
+    const salesSummary = Array.from(salesSummaryMap, ([key, value]) => ({
+      _id: key,
+      totalRevenue: value,
+    }));
+
+    // 🧮 Walk-in vs Online Requests
+    const walkInCount = await WalkInRequests.countDocuments({
+      createdAt: { $gte: startDate },
+    });
+    const onlineCount = await ServiceRequest.countDocuments({
+      createdAt: { $gte: startDate },
+    });
+
+    const requestComparison = [
+      { label: "Walk-In", count: walkInCount },
+      { label: "Online", count: onlineCount },
+    ];
+
+    // 🧮 Technician Performance
+    const technicianPerformance = await Technician.aggregate([
+      {
+        $lookup: {
+          from: "servicerequests",
+          localField: "_id",
+          foreignField: "technician",
+          as: "onlineRequests",
+        },
+      },
+      {
+        $lookup: {
+          from: "walkinrequests",
+          localField: "_id",
+          foreignField: "technician",
+          as: "walkInRequests",
+        },
+      },
+      {
+        $project: {
+          full_name: 1,
+          totalCompleted: {
+            $size: {
+              $filter: {
+                input: { $concatArrays: ["$onlineRequests", "$walkInRequests"] },
+                as: "req",
+                cond: { $eq: ["$$req.status", "Completed"] },
+              },
+            },
+          },
+          totalFailed: {
+            $size: {
+              $filter: {
+                input: { $concatArrays: ["$onlineRequests", "$walkInRequests"] },
+                as: "req",
+                cond: { $eq: ["$$req.status", "Rejected"] },
+              },
+            },
+          },
+        },
+      },
+    ]);
+
+    // 🧮 Average Feedback Rating
+    const feedbackRatings = await ServiceRequest.aggregate([
+      { $match: { feedbackRating: { $exists: true, $ne: null } } },
+      {
+        $group: {
+          _id: null,
+          avgRating: { $avg: "$feedbackRating" },
+        },
+      },
+    ]);
+
+    const averageRating = feedbackRatings[0]?.avgRating?.toFixed(1) || 0;
+
+    // ✅ Final Response
     return res.status(200).json({
       statusSummaryData,
       serviceAvailsSummary,
-      salesSummary
+      salesSummary,
+      requestComparison,
+      technicianPerformance: technicianPerformance.map((t) => ({
+        technician: t.full_name,
+        completed: t.totalCompleted,
+        failed: t.totalFailed,
+      })),
+      averageRating,
     });
-
-  }catch(err){
-    console.error("Error getting requests:", err);
-    res.status(500).json({ error: "Failed to retrieve requests" });
+  } catch (err) {
+    console.error("Error in dashboardRecord:", err);
+    res.status(500).json({ error: "Failed to retrieve dashboard data" });
   }
-}
+};
+
+
 
 export default {
   createServiceRequest,
