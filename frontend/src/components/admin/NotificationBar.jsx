@@ -16,7 +16,7 @@ const NotificationBar = ({isOpen}) => {
                     <div className='flex justify-between text-white bg-orange-600 text-sm mb-2 p-2 rounded' key={index}>
                         <div>
                             <h2 className='text-md font-semibold text-green-400'>{notif.customer?.full_name}</h2>
-                            <p>{notif?.serviceType?.name}</p>
+                            <p>{notif?.serviceCategory.charAt(0) + notif.serviceCategory.slice(1).toLowerCase()} Job</p>
                             <p>{notif?.status}</p>
                         </div>
 
