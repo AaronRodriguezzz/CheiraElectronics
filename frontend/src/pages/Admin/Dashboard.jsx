@@ -33,7 +33,7 @@ export default function Dashboard() {
   const [pieData, setPieData] = useState(null);
   const [requestComparisonData, setRequestComparisonData] = useState(null);
   const [technicianPerformanceData, setTechnicianPerformanceData] = useState(null);
-  const [filter, setFilter] = useState("daily");
+  const [filter, setFilter] = useState("monthly");
   const [averageRating, setAverageRating] = useState(0);
   const [loading, setLoading] = useState(true);
 
