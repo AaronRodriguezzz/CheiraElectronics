@@ -5,13 +5,13 @@ import {
   getInProgressWalkIns,
   getFinishedWalkIns
 } from "../controllers/walkInControls.js";
-import { verifyToken } from "../middleware/tokenVerification.js";
+import { verifyAdminToken } from "../middleware/tokenVerification.js";
 
 const router = express.Router();
 
-router.post("/api/walkin", verifyToken, createWalkInRequest);
-router.put("/api/update-walkin", verifyToken, updateWalkInRequest);
-router.get("/api/finished-walkins", verifyToken, getFinishedWalkIns);
-router.get("/api/progress-walkins", verifyToken, getInProgressWalkIns);
+router.post("/api/walkin", verifyAdminToken, createWalkInRequest);
+router.put("/api/update-walkin", verifyAdminToken, updateWalkInRequest);
+router.get("/api/finished-walkins", verifyAdminToken, getFinishedWalkIns);
+router.get("/api/progress-walkins", verifyAdminToken, getInProgressWalkIns);
 
 export default router;

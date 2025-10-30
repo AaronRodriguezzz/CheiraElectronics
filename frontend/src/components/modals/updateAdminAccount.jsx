@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { update_data } from "../../services/putMethod";
 
 const AdminUpdateModal = ({ adminData, onClose, onUpdated }) => {
+    
     const [admin, setAdmin] = useState({
         id: "",
         full_name: "",
@@ -31,7 +32,7 @@ const AdminUpdateModal = ({ adminData, onClose, onUpdated }) => {
 
         try {
 
-            const response = await update_data(`/update-admin-account`, admin);
+            const response = await update_data(`/update-account`, admin);
 
             if (response) {
                 console.log(response);

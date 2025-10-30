@@ -66,7 +66,7 @@ const ProfileSidebar = ({ open }) => {
                     <button 
                         className='h-3 w-3 text-orange-500 hover:text-red-500' 
                         onClick={() => {
-                            logout()
+                            logout('user_token')
                             navigate('/login')
                         }}
                     >
@@ -117,7 +117,7 @@ const ProfileSidebar = ({ open }) => {
                             {requests && requests.map((req) => (
                                 <div
                                     key={req._id}
-                                    className='relative pl-6 p-2 text-sm bg-orange-500 rounded shadow text-white'
+                                    className='relative pl-6 p-2 text-sm bg-black/40 rounded shadow shadow-white/20 text-white'
                                 >
                                     <div
                                         className={`absolute h-full left-0 top-0 w-[10px] rounded-l-lg`}

@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import debounce from 'lodash.debounce';
+import React, { useEffect, useState } from 'react';
 import { post_data } from '../../services/PostMethod';
 import { update_data } from '../../services/putMethod';
+import { useUser } from '../../hooks/protectHooks';
 
 const AdminForm = ({ onCancel, route, updatedData, adminData = null }) => {
+  const updatedBy = useUser();
   const isEdit = Boolean(adminData);
   const [isLoading, setIsLoading] = useState(false);
-
   const [admin, setAdmin] = useState({
     id: '',
     full_name: '',
@@ -14,6 +14,7 @@ const AdminForm = ({ onCancel, route, updatedData, adminData = null }) => {
     password: '',
     role: 'Admin',
     status: 'Active',
+    updatedBy,
   });
 
   useEffect(() => {
@@ -22,44 +23,42 @@ const AdminForm = ({ onCancel, route, updatedData, adminData = null }) => {
         id: adminData?._id,
         full_name: adminData?.full_name || '',
         email: adminData?.email || '',
-        password: '', // Leave empty for security. Can require it if desired.
+        password: '', // Leave blank for security
         role: adminData?.role || 'Admin',
         status: adminData?.status || 'Active',
+        updatedBy,
       });
     }
-  }, [adminData]);
+  }, [adminData, isEdit, updatedBy]);
 
-  const debouncedSubmit = useCallback(
-    debounce(async (formData) => {
-        setIsLoading(true);
-
-        const payload = { ...formData };
-        if (isEdit && !payload.password) delete payload.password; 
-        if(!isEdit) delete payload.id;
-
-        const response = isEdit
-            ? await update_data(route, payload)
-            : await post_data(route, payload);
-
-        if (response.added || response.updated) {
-            updatedData((prev) =>
-            isEdit
-                ? prev.map((admin) =>
-                    admin._id === response.admin._id ? response.admin : admin
-                )
-                : [response.admin, ...prev]
-            );
-            onCancel(false);
-        }
-        
-    }, 500),
-    [route, onCancel, isEdit]
-  );
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    debouncedSubmit(admin);
-    setIsLoading(false);
+    setIsLoading(true);
+
+    try {
+      const payload = { ...admin };
+      if (isEdit && !payload.password) delete payload.password;
+      if (!isEdit) delete payload.id;
+
+      const response = isEdit
+        ? await update_data(route, payload)
+        : await post_data(route, payload);
+
+      if (response) {
+        updatedData((prev) =>
+          isEdit
+            ? prev.map((item) =>
+                item._id === response.admin._id ? response.admin : item
+              )
+            : [response.admin, ...prev]
+        );
+        onCancel(false);
+      }
+    } catch (err) {
+      console.error('Error submitting admin form:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -101,20 +100,20 @@ const AdminForm = ({ onCancel, route, updatedData, adminData = null }) => {
                   setAdmin({ ...admin, password: e.target.value })
                 }
                 className="border border-gray-200 px-3 py-2 rounded-md focus:border-gray-300"
-                required={!isEdit}
+                required
               />
             </>
           )}
 
-          <label className="mt-2" htmlFor='role'>Role</label>
+          <label className="mt-2" htmlFor="role">
+            Role
+          </label>
           <input
-            type="role"
+            type="text"
             value={admin.role}
             className="border border-gray-200 px-3 py-2 rounded-md focus:border-gray-300"
             disabled
-            required
           />
-
 
           <label className="mt-2">Status</label>
           <select
@@ -140,9 +139,17 @@ const AdminForm = ({ onCancel, route, updatedData, adminData = null }) => {
           <button
             type="submit"
             disabled={isLoading}
-            className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition"
+            className={`px-4 py-2 rounded text-white transition ${
+              isLoading
+                ? 'bg-blue-400 cursor-not-allowed'
+                : 'bg-blue-600 hover:bg-blue-700'
+            }`}
           >
-            {isEdit ? 'Update' : 'Finish'}
+            {isLoading
+              ? 'Saving...'
+              : isEdit
+              ? 'Update'
+              : 'Finish'}
           </button>
         </div>
       </form>

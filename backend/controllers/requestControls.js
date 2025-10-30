@@ -11,10 +11,11 @@ export const createServiceRequest = async (req, res) => {
     serviceCategory,
     deviceType,
     description,
-    serviceType
+    serviceType,
+    model
   } = req.body;
 
-  if(!customerId || !serviceCategory || !deviceType || !description || !serviceType){
+  if(!customerId || !serviceCategory || !deviceType || !description || !serviceType || !model){
     return res.status(400).json({ message: 'All fields are required'})
   }
 
@@ -44,7 +45,8 @@ export const createServiceRequest = async (req, res) => {
       serviceCategory,
       deviceType,
       description,
-      serviceType
+      serviceType,
+      model
     });
 
     const savedRequest = await newRequest.save();

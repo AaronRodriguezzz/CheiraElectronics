@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 export const addAdmin = async (req, res) => {
   
   try {
-    const { full_name, email, password, role, status } = req.body;
+    const { full_name, email, password, role, status, updatedBy } = req.body;
     // Check required fields
     if (!full_name || !email || !password) {
       return res.status(400).json({ message: "Missing required fields." });
@@ -26,6 +26,7 @@ export const addAdmin = async (req, res) => {
       password: hashedPassword,
       role: role || "Admin",
       status: status || "Active",
+      updatedBy
     });
 
     const savedAdmin = await newAdmin.save();
@@ -42,7 +43,7 @@ export const addAdmin = async (req, res) => {
 
 export const updateAdmin = async (req, res) => {
   try {
-    const { id, email, full_name, password, currentPassword } = req.body.newData;
+    const { id, email, full_name, password, currentPassword, updatedBy } = req.body.newData;
 
     if (!id) {
       return res.status(400).json({ message: 'Admin ID is required' });
@@ -56,7 +57,7 @@ export const updateAdmin = async (req, res) => {
       }
     }
 
-    const updatedData = { full_name, email };
+    const updatedData = { full_name, email, updatedBy};
 
     // If new password is being set, validate the current one
     if (password) {
@@ -88,12 +89,12 @@ export const updateAdmin = async (req, res) => {
     const { password: _, ...adminData } = updatedAdmin.toObject();
 
     const token = jwt.sign(
-      { adminData },
+      adminData,
       process.env.JWT_SECRET,
       { expiresIn: '1d' }
     );  
     
-    res.cookie('user', token, {
+    res.cookie('admin_token', token, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 1 day
       sameSite: 'lax',
@@ -112,75 +113,16 @@ export const updateAdmin = async (req, res) => {
 };
 
 
-export const updateAccount = async (req, res) => {
-  try {
-    const { id, email, full_name, password, status } = req.body.newData;
-
-    console.log('hello', req.body.newData)
-
-    if (!id) {
-      return res.status(400).json({ message: 'Admin ID is required' });
-    }
-
-    // Check if email is already used by another admin
-    if (email) {
-      const existing = await Admin.findOne({ email, _id: { $ne: id } });
-      if (existing) {
-        return res.status(400).json({ message: 'Email already taken by another account.' });
-      }
-    }
-
-    const updatedData = { full_name, email, status };
-
-    // If new password is being set, validate the current one
-    if (password) {
-      const user = await Admin.findById(id).select('+password');
-
-      if (!user) {
-        return res.status(404).json({ message: 'Admin not found.' });
-      }
-
-      const matched = await bcrypt.compare(currentPassword, user.password);
-      if (!matched) {
-        return res.status(400).json({ message: 'Current password is incorrect.' });
-      }
-
-      updatedData.password = await bcrypt.hash(password, 10);
-    }
-
-
-    // Update the admin document
-    const updatedAdmin = await Admin.findByIdAndUpdate(id, updatedData, {
-      new: true,
-    });
-
-    if (!updatedAdmin) {
-      return res.status(404).json({ message: 'Admin not found.' });
-    }
-
-    // Omit password from the response
-    const { password: _, ...adminData } = updatedAdmin.toObject();
-    
-    return res.status(200).json({
-      message: 'Admin updated successfully.',
-      admin: adminData,
-    });
-
-  } catch (error) {
-    console.error('Update Admin Error:', error);
-    return res.status(500).json({ message: 'Error updating admin', error });
-  }
-};
-
 
 // Mark admin as Removed
-export const removeAdmin = async (req, res) => {
+export const deactivateAccount = async (req, res) => {
   try {
     const adminId = req.params.id;
+    const updatedBy = req.body.newData.updatedBy;
 
     const removedAdmin = await Admin.findByIdAndUpdate(
       adminId,
-      { status: "Removed" },
+      { status: "Inactive", updatedBy },
       { new: true }
     );
 
@@ -202,7 +144,7 @@ export const removeAdmin = async (req, res) => {
 export const getAllAdmins = async (req, res) => {
   try {
     const admins = await Admin.find().sort({ createdAt: -1 });
-    res.json(admins);
+    res.status(200).json(admins);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch admins", error });
   }
@@ -212,7 +154,6 @@ export const getAllAdmins = async (req, res) => {
 export default {
     addAdmin,
     updateAdmin,
-    updateAccount,
-    removeAdmin,
+    deactivateAccount,
     getAllAdmins
 }

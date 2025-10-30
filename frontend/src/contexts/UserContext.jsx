@@ -12,6 +12,7 @@ export const AuthProvider = ({children}) => {
             try {
                 setLoading(true)
                 const res = await axios.get('/api/protected', { withCredentials: true });
+                console.log(res.data);
                 setUser(res.data.user);
             } catch (err) {
                 console.log('hello', err)
@@ -24,8 +25,8 @@ export const AuthProvider = ({children}) => {
     }, []);
     
 
-    const logout = async () => {
-        const response = await axios.post('/api/logout', {}, { withCredentials: true });
+    const logout = async (type) => {
+        const response = await axios.post(`/api/logout/${type}`, {}, { withCredentials: true });
         
         if(response.status === 200){
             setUser(null);

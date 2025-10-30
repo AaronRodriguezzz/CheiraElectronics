@@ -46,7 +46,7 @@ export default function AdminSidebar(){
             <button 
                 className="absolute bottom-0 left-0 w-full flex items-center gap-3 p-3 rounded-lg hover:bg-red-600 transition"
                 onClick={() => {
-                    logout();
+                    logout('admin_token')
                     navigate('/admin/login')
                 }} 
             >   

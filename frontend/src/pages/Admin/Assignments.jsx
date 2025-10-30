@@ -1,20 +1,25 @@
 // src/pages/admin/TechnicianAssign.jsx
 import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Button } from "@mui/material";
-import { update_data } from "../../services/putMethod";
+import { Button, Tooltip } from "@mui/material";
 import { get_data } from "../../services/getMethod";
 import { statusColorMap } from "../../data/StatusColor";
 import UpdateRequestModal from "../../components/modals/statusUpdateModal";
 import AssignTechnicianForm from "../../components/modals/requestAcceptanceModal";
 import FinishRequestModal from "../../components/modals/finishRequests";
 import WalkInRequestModal from "../../components/modals/walkInRequestModal";
+import ViewServiceRequestModal from "../../components/modals/viewRequestModal";
+
+// 🧩 Import icons
+import { FaCheckCircle, FaTimesCircle, FaSyncAlt, FaEye } from "react-icons/fa";
 
 export default function TechnicianAssign() {
   const [isReassigning, setIsReassigning] = useState(false);
   const [isFailing, setIsFailing] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
+  const [isViewing, setIsViewing] = useState(false);
+  const [requestToView, setRequestToView] = useState(null);
   const [requests, setRequests] = useState(null);
   const [requestToUpdate, setRequestToUpdate] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -24,135 +29,172 @@ export default function TechnicianAssign() {
     { field: "contactNumber", headerName: "Contact Number", flex: 1 },
     { field: "serviceCategory", headerName: "Category", flex: 1 },
     { field: "technician", headerName: "Technician", flex: 1 },
-    { field: "technicianId", headerName: "Technician", hide: true},
-    { field: "remarks", headerName: "Remarks", hide: true},
-    { field: "email", headerName: "Email", hide: true},
-    { 
-      field: "submittedAt", 
-      headerName: "Date Requested", 
+    { field: "technicianId", headerName: "Technician", hide: true },
+    { field: "remarks", headerName: "Remarks", hide: true },
+    { field: "email", headerName: "Email", hide: true },
+    {
+      field: "submittedAt",
+      headerName: "Date Requested",
       width: 150,
-      renderCell: (params) => {
-        return <span>{params.value.split('T')[0]}</span>
-      }
+      renderCell: (params) => <span>{params.value.split("T")[0]}</span>,
     },
-    { 
-      field: "type", 
-      headerName: "Type", 
+    {
+      field: "type",
+      headerName: "Type",
       width: 120,
-      renderCell: (params) => {
-        return <span 
-          className={`${params.value === 'Walk-In' ? 'text-blue-500' : 'text-green-500'}`}
+      renderCell: (params) => (
+        <span
+          className={`${
+            params.value === "Walk-In" ? "text-blue-500" : "text-green-500"
+          }`}
         >
           {params.value}
         </span>
-      } 
+      ),
     },
-    { 
-      field: "status", 
-      headerName: "Status", 
+    {
+      field: "status",
+      headerName: "Status",
       width: 120,
-      renderCell: (params) => {
-        return <span 
-          className={`p-2 rounded-full text-white bg-${statusColorMap[params.value]}`}
+      renderCell: (params) => (
+        <span
+          className="p-2 rounded-full text-white"
           style={{ backgroundColor: statusColorMap[params.value] }}
         >
           {params.value}
         </span>
-      } 
+      ),
     },
     {
       field: "actions",
       headerName: "Actions",
-      flex: 1,
+      flex: 1.2,
       renderCell: (params) => (
-        <div className="h-full flex items-center gap-1">
-          <Button 
-            variant="contained" 
-            size="small" 
-            sx={{bgcolor: 'green', fontSize: 12 }}
-            onClick={() => {
-              console.log(params.row)
-              setRequestToUpdate(params.row)
-              setIsFinished(true)
-            }}          
-          >
-            Finish
-          </Button>
-          <Button 
-            variant="outlined" 
-            size="small" 
-            color="error"
-            onClick={() => {
-              setRequestToUpdate(params.row)
-              setIsFailing(true)
-            }}
-            sx={{fontSize: 12}}
-          >
-            Failed
-          </Button>
-          <Button
-            variant="contained"
-            size="small"
-            onClick={() => {
-              setRequestToUpdate(params.row);
-              setIsReassigning(true);
-            }}
-            sx={{fontSize: 12}}
-          >
-            <span className="hidden 2xl:inline">Reassigned</span>
-            <span className="inline 2xl:hidden">↻</span> {/* icon or short text */}
-          </Button>
-        </div>      
+        <div className="h-full flex items-center justify-center gap-2">
+          <Tooltip title="View Request">
+            <Button
+              variant="contained"
+              size="medium"
+              sx={{
+                bgcolor: "#3B82F6",
+                color: "white",
+                minWidth: 42,
+                "&:hover": { bgcolor: "#2563EB" },
+              }}
+              onClick={() => {
+                setRequestToView(params.row);
+                setIsViewing(true);
+              }}
+            >
+              <FaEye size={16} />
+            </Button>
+          </Tooltip>
+
+          <Tooltip title="Finish Request">
+            <Button
+              variant="contained"
+              size="medium"
+              sx={{
+                bgcolor: "green",
+                color: "white",
+                minWidth: 42,
+                "&:hover": { bgcolor: "#065F46" },
+              }}
+              onClick={() => {
+                setRequestToUpdate(params.row);
+                setIsFinished(true);
+              }}
+            >
+              <FaCheckCircle size={16} />
+            </Button>
+          </Tooltip>
+
+          <Tooltip title="Mark as Failed">
+            <Button
+              variant="contained"
+              size="medium"
+              sx={{
+                bgcolor: "#EF4444",
+                color: "white",
+                minWidth: 42,
+                "&:hover": { bgcolor: "#DC2626" },
+              }}
+              onClick={() => {
+                setRequestToUpdate(params.row);
+                setIsFailing(true);
+              }}
+            >
+              <FaTimesCircle size={16} />
+            </Button>
+          </Tooltip>
+
+          <Tooltip title="Reassign Technician">
+            <Button
+              variant="contained"
+              size="medium"
+              sx={{
+                bgcolor: "#F97316",
+                color: "white",
+                minWidth: 42,
+                "&:hover": { bgcolor: "#EA580C" },
+              }}
+              onClick={() => {
+                setRequestToUpdate(params.row);
+                setIsReassigning(true);
+              }}
+            >
+              <FaSyncAlt size={16} />
+            </Button>
+          </Tooltip>
+        </div>
       ),
     },
   ];
 
   useEffect(() => {
     const getAllRequests = async () => {
-        setLoading(true);
-        try {
-          const [requests, walkIns] = await Promise.all([
-            get_data('/progress-requests'),
-            get_data('/progress-walkins'),
-          ]);
+      setLoading(true);
+      try {
+        const [requests, walkIns] = await Promise.all([
+          get_data("/progress-requests"),
+          get_data("/progress-walkins"),
+        ]);
 
-          if (requests || walkIns) {
-            const formattedRequests = (requests || []).map((req) => ({
-              ...req,
-              customer: req.customer?.full_name || "N/A",
-              email: req.customer?.email || "N/A",
-              serviceCategory: req.serviceCategory || "N/A",
-              contactNumber: req.customer?.contact_number || "N/A",
-              technician: req.technician?.full_name || "Unassigned",
-              technicianId: req.technician?._id || null,
-              type: "Appointment",
-            }));
+        if (requests || walkIns) {
+          const formattedRequests = (requests || []).map((req) => ({
+            ...req,
+            customer: req.customer?.full_name || "N/A",
+            email: req.customer?.email || "N/A",
+            serviceCategory: req.serviceCategory || "N/A",
+            contactNumber: req.customer?.contact_number || "N/A",
+            technician: req.technician?.full_name || "Unassigned",
+            technicianId: req.technician?._id || null,
+            type: "Appointment",
+          }));
 
-            const formattedWalkIns = (walkIns || []).map((req) => ({
-              ...req,
-              customer: req.customer || "N/A",
-              email: req.email || "N/A",
-              serviceCategory: req.serviceCategory || "N/A",
-              contactNumber: req.contactNumber || "N/A",
-              technician: req.technician?.full_name || "Unassigned",
-              technicianId: req.technician?._id || null,
-              type: "Walk-In",
-            }));
+          const formattedWalkIns = (walkIns || []).map((req) => ({
+            ...req,
+            customer: req.customer || "N/A",
+            email: req.email || "N/A",
+            serviceCategory: req.serviceCategory || "N/A",
+            contactNumber: req.contactNumber || "N/A",
+            technician: req.technician?.full_name || "Unassigned",
+            technicianId: req.technician?._id || null,
+            type: "Walk-In",
+          }));
 
-            // ✅ Merge both arrays into one unified list
-            setRequests([...formattedRequests, ...formattedWalkIns]);
-            console.log(requests);
-          }
-
-          setLoading(false);
-        } catch (err) {
-          console.error("Error fetching requests:", err);
-          setLoading(false);
+          setRequests([...formattedRequests, ...formattedWalkIns]);
         }
-    }
-  
+
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching requests:", err);
+        setLoading(false);
+      }
+    };
+
     getAllRequests();
-  },[])
+  }, []);
 
   if (loading) {
     return (
@@ -164,60 +206,76 @@ export default function TechnicianAssign() {
 
   return (
     <div>
-
       <div className="w-full p-4 flex gap-2 bg-white shadow my-4 rounded-md">
-        <input 
-          type="text" 
-          placeholder="Search name,service type, date, etc."
+        <input
+          type="text"
+          placeholder="Search name, service type, date, etc."
           className="w-full bg-gray-100 px-4 py-2 rounded-lg outline-gray-300"
         />
-
-        <button className="w-[140px] bg-orange-500 text-white rounded-lg" onClick={() => setIsAdding(true)}>NEW REQUEST</button>
+        <button
+          className="w-[160px] bg-orange-500 hover:bg-orange-600 text-white rounded-lg py-2 font-semibold"
+          onClick={() => setIsAdding(true)}
+        >
+          NEW REQUEST
+        </button>
       </div>
 
       <div className="w-full overflow-x-auto">
-        <div style={{ minWidth: "1350px"}}>
-          <DataGrid 
-            rows={requests} 
+        <div style={{ minWidth: "1350px" }}>
+          <DataGrid
+            rows={requests || []}
             columns={columns}
-            getRowId={(row) => row._id} 
+            getRowId={(row) => row._id}
             columnVisibilityModel={{
               email: false,
               technicianId: false,
             }}
-            pagination 
+            pagination
             autoHeight
           />
         </div>
       </div>
 
-      {isFailing && <UpdateRequestModal 
-        onCancel={setIsFailing}
-        requestData={requestToUpdate}
-        updatedData={setRequests}
-        newStatus={'Failed'}
-      />}
+      {/* Modals */}
+      {isFailing && (
+        <UpdateRequestModal
+          onCancel={setIsFailing}
+          requestData={requestToUpdate}
+          updatedData={setRequests}
+          newStatus={"Failed"}
+        />
+      )}
 
-      {isReassigning && <AssignTechnicianForm 
-        onCancel={setIsReassigning}
-        requestData={requestToUpdate}
-        updatedData={setRequests}
-        
-      />}
-      
+      {isReassigning && (
+        <AssignTechnicianForm
+          onCancel={setIsReassigning}
+          requestData={requestToUpdate}
+          updatedData={setRequests}
+        />
+      )}
 
-      {isFinished && <FinishRequestModal 
-        onCancel={setIsFinished}
-        requestData={requestToUpdate}
-        updatedData={setRequests}
-      />}
+      {isFinished && (
+        <FinishRequestModal
+          onCancel={setIsFinished}
+          requestData={requestToUpdate}
+          updatedData={setRequests}
+        />
+      )}
 
-      {isAdding && <WalkInRequestModal 
-        onCancel={() =>  setIsAdding(false)}
-        updatedData={setRequests}
-      />}
+      {isAdding && (
+        <WalkInRequestModal
+          onCancel={() => setIsAdding(false)}
+          updatedData={setRequests}
+        />
+      )}
 
-      
+      {isViewing && (
+        <ViewServiceRequestModal
+          isOpen={isViewing}
+          onClose={() => setIsViewing(false)}
+          request={requestToView}
+        />
+      )}
     </div>
   );
 }

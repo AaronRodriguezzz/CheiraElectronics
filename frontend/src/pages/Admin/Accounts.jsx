@@ -4,10 +4,13 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
 import { get_data } from "../../services/getMethod";
 import AccountForm from "../../components/modals/accountModal"; // existing modal for new admin
-import AdminUpdateModal from "../../components/modals/updateAdminAccount";
+import AdminUpdateModal from "../../components/modals/accountModal";
 import { statusColorMap } from "../../data/StatusColor";
+import { update_data } from "../../services/putMethod";
+import { useUser } from "../../hooks/protectHooks";
 
 export default function ServiceCatalog() {
+  const user = useUser();
   const [isAdding, setIsAdding] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false); // 🔹 controls update modal visibility
   const [selectedAdmin, setSelectedAdmin] = useState(null); // 🔹 stores admin to edit
@@ -44,20 +47,29 @@ export default function ServiceCatalog() {
           <Button
             variant="contained"
             size="small"
-            onClick={() => handleUpdateClick(params.row)} // 🔹 triggers update modal
+            onClick={() => {
+              setSelectedAdmin(params.row);
+              setIsUpdating(true);
+            }} 
           >
             Update
+          </Button>
+
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => {
+              handleDeactivate(params.row._id);
+            }} // 🔹 triggers update modal
+            sx={{ backgroundColor: 'transparent', color: 'red', border: '1px solid red', opacity: params.row.status === 'Inactive' ? 0.5 : 1 }}
+          >
+            DEACTIVATE
           </Button>
         </div>
       ),
     },
   ];
 
-  // 🔹 Handles opening update modal
-  const handleUpdateClick = (admin) => {
-    setSelectedAdmin(admin);
-    setIsUpdating(true);
-  };
 
   const filteredRows =
     accounts &&
@@ -66,6 +78,24 @@ export default function ServiceCatalog() {
         String(value).toLowerCase().includes(searchTxt.toLowerCase())
       )
     );
+
+  const handleDeactivate = async (adminId) => {
+    try{
+      const response = await update_data(`/deactivate-account/${adminId}` , { updatedBy: user?._id });
+
+      if(response){
+        setAccounts((prevAccounts) =>
+          prevAccounts.map((account) =>
+            account._id === adminId
+              ? { ...account, status: "Inactive" }
+              : account
+          )
+        );
+      }
+    }catch(err){
+      console.log(err);
+    }
+  }
 
   useEffect(() => {
     const fetchAccounts = async () => {
@@ -131,9 +161,10 @@ export default function ServiceCatalog() {
       {/* 🟡 Update Admin Modal */}
       {isUpdating && (
         <AdminUpdateModal
-          adminData={selectedAdmin}
-          onClose={() => setIsUpdating(false)}
-          onUpdated={setAccounts}
+          onCancel={setIsUpdating}
+          route={'/update-account'}
+          updatedData={setAccounts}
+          adminData={selectedAdmin} 
         />
       )}
     </div>

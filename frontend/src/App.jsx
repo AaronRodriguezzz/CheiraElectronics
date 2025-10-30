@@ -6,6 +6,7 @@ import HomePage from "./pages/User/HomePage";
 import Feedback from "./pages/User/Feedback";
 import Login from "./pages/User/Login";
 import RequestForm from "./pages/User/RequestForm";
+import ServiceCatalog from "./pages/User/ServiceCatalog";
 
 //Pages under /Admin
 import Dashboard from "./pages/Admin/Dashboard";
@@ -32,6 +33,7 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/feedback" element={<Feedback />} />
           <Route path="/request-form" element={<RequestForm />} />
+          <Route path="/service-catalog" element={<ServiceCatalog />} />
         </Route>
 
         <Route path="/admin" element={<AdminLayout />}>

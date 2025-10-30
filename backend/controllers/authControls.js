@@ -43,12 +43,12 @@ export const login = async (req, res) => {
 
         // Generate JWT
         const token = jwt.sign(
-            { account },
+            account,
             process.env.JWT_SECRET,
             { expiresIn: '1d' }
         );  
 
-        res.cookie('user', token, {
+        res.cookie(accountType === 'user' ? 'user_token' : 'admin_token', token, {
             httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000, // 1 day
             sameSite: 'lax',
@@ -68,25 +68,32 @@ export const login = async (req, res) => {
 };
 
 export const tokenProtection =  async (req, res) => {
-    const token = req.cookies.user; 
-        
-    if (!token) {
+    const userToken = req.cookies?.user_token ; 
+    const adminToken = req.cookies?.admin_token
+
+    if (!userToken && !adminToken) {
       return res.status(401).json({ message: 'No token found' });
     }
 
+    const token = userToken || adminToken;
+    
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        
-        res.status(200).json({ user: decoded.account });
+        res.status(200).json({ user: decoded });
     } catch (err) {
         res.status(403).json({ message: err.message });
     }
 };
 
 export const admin_logout = (req, res) => {
+    const tokenType = req.params.type;
+
+    if(!tokenType){
+        res.status(400).json({ message: 'Account Type Invalid'})
+    }
     try {
         // Clear the jwt cookie
-        res.clearCookie("user", {
+        res.clearCookie(tokenType, {
             httpOnly: true,
             sameSite: "lax",
             secure: process.env.NODE_ENV === "production",

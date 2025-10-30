@@ -29,6 +29,11 @@ const AdminSchema = new mongoose.Schema({
     enum: ['Active', 'Inactive'],
     default: 'Active',
   },
+  updatedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Admin',
+    required: true
+  },
 }, {
   timestamps: true // adds createdAt and updatedAt
 });
