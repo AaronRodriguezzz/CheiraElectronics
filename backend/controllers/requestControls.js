@@ -89,6 +89,34 @@ export const updateServiceRequestStatus = async (req, res) => {
   }
 };
 
+export const updateFeedback = async (req, res) => {
+  try {
+    const { requestId, rating, feedback } = req.body.newData;
+    
+
+    const request = await ServiceRequest.findById(requestId);
+
+    if(request.status !== 'Completed'){
+      return res.status(400).json({ error: "Cannot leave feedback on incomplete request" });
+    }
+
+    const updated = await ServiceRequest.findByIdAndUpdate(
+      requestId,
+      { feedbackRating: rating, feedbackMessage: feedback },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ error: "Request not found" });
+    }
+
+    return res.status(200).json(updated);
+  } catch (err) {
+    console.error("Error updating feedback:", err);
+    res.status(500).json({ error: "Failed to update feedback" });
+  }
+};
+
 export const acceptRequests = async (req, res) => {
 
   const { id, email, serviceType, status, technician, servicePrice, remarks } = req.body.newData;
@@ -174,32 +202,6 @@ export const cancelServiceRequest = async (req, res) => {
   }
 };
 
-// ✅ (Optional) Get all requests for a customer
-export const getRequestsByCustomer = async (req, res) => {
-  try {
-    const { customerId } = req.params;
-    const requests = await ServiceRequest.find({ customer: customerId }).sort({ createdAt: -1 });
-
-    return res.status(200).json(requests);
-  } catch (err) {
-    console.error("Error getting requests:", err);
-    res.status(500).json({ error: "Failed to retrieve requests" });
-  }
-};  
-
-export const getAllRequests = async (req,res) => {
-  try{
-    const requests = await ServiceRequest.find({status: 'Pending'}).sort({ createdAt: -1 })
-      .populate('customer serviceType');    
-    
-    return res.status(200).json(requests);
-
-  }catch(err){
-    console.error("Error getting requests:", err);
-    res.status(500).json({ error: "Failed to retrieve requests" });
-  }
-}
-
 export const requestToAssign = async (req, res) => {
   try {
     const requests = await ServiceRequest.find({ 
@@ -238,6 +240,49 @@ export const requestsHistory = async (req, res) => {
     
     return res.status(200).json(request);
   } catch (err) {
+    console.error("Error getting requests:", err);
+    res.status(500).json({ error: "Failed to retrieve requests" });
+  }
+};
+
+
+// ✅ (Optional) Get all requests for a customer
+export const getRequestsByCustomer = async (req, res) => {
+  try {
+    const { customerId } = req.params;
+    const requests = await ServiceRequest.find({ customer: customerId }).sort({ createdAt: -1 });
+
+    return res.status(200).json(requests);
+  } catch (err) {
+    console.error("Error getting requests:", err);
+    res.status(500).json({ error: "Failed to retrieve requests" });
+  }
+};  
+
+export const getAllRequests = async (req,res) => {
+  try{
+    const requests = await ServiceRequest.find({status: 'Pending'}).sort({ createdAt: -1 })
+      .populate('customer serviceType');    
+    
+    return res.status(200).json(requests);
+
+  }catch(err){
+    console.error("Error getting requests:", err);
+    res.status(500).json({ error: "Failed to retrieve requests" });
+  }
+}
+
+export const getFeedbacks = async (req, res) => {
+  try {
+    const feedbacks = await ServiceRequest.find({
+      feedbackRating: { $ne: 0 }
+    })
+      .populate('customer')
+      .sort({ createdAt: -1 });
+    
+      console.log(feedbacks);
+    res.status(200).json(feedbacks);
+  }catch(err){
     console.error("Error getting requests:", err);
     res.status(500).json({ error: "Failed to retrieve requests" });
   }
@@ -417,7 +462,7 @@ export const dashboardRecord = async (req, res) => {
 
     // 🧮 Average Feedback Rating
     const feedbackRatings = await ServiceRequest.aggregate([
-      { $match: { feedbackRating: { $exists: true, $ne: null } } },
+      { $match: { feedbackRating: { $exists: true, $ne: null }, status: 'Completed' } },
       {
         $group: {
           _id: null,

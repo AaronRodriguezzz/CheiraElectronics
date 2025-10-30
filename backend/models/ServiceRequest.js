@@ -49,10 +49,12 @@ const ServiceRequestSchema = new mongoose.Schema({
         default: Date.now 
     },
     completedAt: Date,
+    feedbackMessage: String,
     feedbackRating: { 
         type: Number, 
         min: 1, 
         max: 5,
+        default: 0
     },
     type: {
         type: String,

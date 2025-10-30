@@ -1,5 +1,5 @@
 import React, { useState, useEffect} from 'react'
-import { ArrowLeft, PencilLine, Lock, Wrench, Power, ChevronRight, ChevronDown } from "lucide-react"
+import { ArrowLeft, PencilLine, Lock, Wrench, Power, ChevronRight, ChevronDown, MessageSquareText } from "lucide-react"
 import { statusColorMap } from '../../data/StatusColor';
 import { get_data } from '../../services/getMethod';
 import ChangePasswordModal from '../modals/ChangePasswordModal';
@@ -119,17 +119,37 @@ const ProfileSidebar = ({ open }) => {
                                     key={req._id}
                                     className='relative pl-6 p-2 text-sm bg-black/40 rounded shadow shadow-white/20 text-white'
                                 >
+                                    {/* Colored side bar */}
                                     <div
                                         className={`absolute h-full left-0 top-0 w-[10px] rounded-l-lg`}
-                                        style={{backgroundColor: statusColorMap[req?.status]}}
+                                        style={{ backgroundColor: statusColorMap[req?.status] }}
                                     />
 
+                                    {/* Review icon */}
+                                    {req.feedbackRating === 0 && req.status === 'Completed' && 
+                                        <button
+                                            onClick={() => {
+                                                navigate(`/feedback-form/${req._id}`)
+                                                open(false)
+                                            }}
+                                            className='absolute top-2 right-2 text-white/70 hover:text-white transition'
+                                            title='Leave a review'
+                                        >
+                                            <MessageSquareText size={18} />
+                                        </button>
+                                    }
+
+                                    {/* Request info */}
                                     <h1 className='max-w-[250px] text-lg tracking-tighter font-semibold truncate'>
-                                        {req?.serviceType || 'Not on the option'}
+                                        {req?.serviceCategory || 'Not on the option'}
                                     </h1>
+                                    <p>{req?.serviceType}</p>
                                     <p>{req?.submittedAt.split('T')[0]}</p>
-                                    <p style={{color: statusColorMap[req?.status]}}>{req?.status}</p>
+                                    <p style={{ color: statusColorMap[req?.status] }}>
+                                        {req?.status === 'Completed' && req?.feedbackRating !== 0 ? 'Reviewed' : req?.status}
+                                    </p>
                                 </div>
+
                             ))}
                         </div>}
                     </>
