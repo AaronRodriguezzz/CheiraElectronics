@@ -119,7 +119,7 @@ export const updateFeedback = async (req, res) => {
 
 export const acceptRequests = async (req, res) => {
 
-  const { id, email, serviceType, status, technician, servicePrice, remarks } = req.body.newData;
+  const { id, email, serviceType, status, technician, servicePrice, remarks, downPayment } = req.body.newData;
 
   console.log(req.body.newData)
 
@@ -130,14 +130,13 @@ export const acceptRequests = async (req, res) => {
   try {
     const updated = await ServiceRequest.findByIdAndUpdate(
       id,
-      { status, technician, servicePrice, remarks},
+      { status, technician, downPayment, servicePrice, remarks},
       { new: true } 
     ).populate('technician customer');
 
     if (!updated) {
       return res.status(404).json({ error: "Request not found" });
     }
-
 
     await send_request_update(id,email,serviceType,status)
 
@@ -150,7 +149,9 @@ export const acceptRequests = async (req, res) => {
 
 export const updateRequest = async (req, res) => {
 
-  const { id, email, status, remarks, updatedBy} = req.body.newData;
+  const { id, status, remarks, updatedBy} = req.body.newData;
+
+  console.log(req.body.newData)
 
   if (!id || !status || !remarks || !updatedBy) {
     return res.status(400).json({ error: "Missing required fields" });
@@ -171,7 +172,7 @@ export const updateRequest = async (req, res) => {
       return res.status(404).json({ error: "Request not found" });
     }
 
-    await send_request_update(id,email,updated.serviceType,status,remarks)
+    await send_request_update(id, updated.customer?.email, updated.serviceType,status,remarks)
 
     return res.status(200).json(updated);
   } catch (err) {
@@ -244,6 +245,24 @@ export const requestsHistory = async (req, res) => {
     res.status(500).json({ error: "Failed to retrieve requests" });
   }
 };
+
+export const getRequest_ForPickUp = async (req, res) => {
+  try {
+
+    const [onlineRequests, walkIns] = await Promise.all([
+      ServiceRequest.find({ status: 'For Pick-Up' }).sort({ createdAt: -1 })
+        .populate('customer')
+        .populate('updatedBy'),
+      WalkInRequests.find({ status: 'For Pick-Up' }).sort({ createdAt: -1 })
+        .populate('updatedBy'),
+    ])
+     
+    return res.status(200).json({ onlineRequests, walkIns});
+  } catch (err) {
+    console.error("Error getting requests:", err);
+    res.status(500).json({ error: "Failed to retrieve requests" });
+  }
+};  
 
 
 // ✅ (Optional) Get all requests for a customer

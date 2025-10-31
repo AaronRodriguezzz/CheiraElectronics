@@ -1,4 +1,4 @@
-import { Home, List, Users, ClipboardList, FileText, Star, Settings, LogOut } from "lucide-react";
+import { Home, List, Users, ClipboardList, FileText, Star, Settings, LogOut, CheckCircle  } from "lucide-react";
 import { NavLink, useNavigate} from "react-router-dom";
 import { useAuth } from "../../contexts/UserContext";
 
@@ -6,6 +6,7 @@ const navItems = [
     { name: "Dashboard", path: "/admin", icon: <Home size={20} /> },
     { name: "Service Requests", path: "/admin/requests", icon: <List size={20} /> },
     { name: "Assignments", path: "/admin/assign", icon: <ClipboardList size={20} /> },
+    { name: "Completed", path: "/admin/completed", icon: <CheckCircle  size={20} /> },
     { name: "Service Catalog", path: "/admin/catalog", icon: <Settings size={20} /> },
     { name: "Technicians", path: "/admin/technicians", icon: <Users size={20} /> },
     { name: "Customer Feedback", path: "/admin/feedback", icon: <Star size={20} /> },

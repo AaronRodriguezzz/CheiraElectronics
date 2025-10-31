@@ -30,7 +30,6 @@ export default function TechnicianAssign() {
     { field: "serviceCategory", headerName: "Category", flex: 1 },
     { field: "technician", headerName: "Technician", flex: 1 },
     { field: "technicianId", headerName: "Technician", hide: true },
-    { field: "remarks", headerName: "Remarks", hide: true },
     { field: "email", headerName: "Email", hide: true },
     {
       field: "submittedAt",
@@ -169,7 +168,6 @@ export default function TechnicianAssign() {
             contactNumber: req.customer?.contact_number || "N/A",
             technician: req.technician?.full_name || "Unassigned",
             technicianId: req.technician?._id || null,
-            type: "Appointment",
           }));
 
           const formattedWalkIns = (walkIns || []).map((req) => ({
@@ -180,7 +178,6 @@ export default function TechnicianAssign() {
             contactNumber: req.contactNumber || "N/A",
             technician: req.technician?.full_name || "Unassigned",
             technicianId: req.technician?._id || null,
-            type: "Walk-In",
           }));
 
           setRequests([...formattedRequests, ...formattedWalkIns]);

@@ -14,6 +14,7 @@ import Dashboard from "./pages/Admin/Dashboard";
 import AdminLogin from "./pages/Admin/Login";
 import ServiceRequests from "./pages/Admin/ServiceRequests";
 import TechnicianAssign from "./pages/Admin/Assignments";
+import CompletedRequests from "./pages/Admin/Completed";
 import AdminServices from "./pages/Admin/Services";
 import Technicians from "./pages/Admin/Technicians";
 import AdminFeedback from "./pages/Admin/Feedback";
@@ -36,13 +37,13 @@ export default function App() {
           <Route path="/feedback-form/:requestId" element={<FeedbackForm />} />
           <Route path="/request-form" element={<RequestForm />} />
           <Route path="/service-catalog" element={<ServiceCatalog />} />
-
         </Route>
 
         <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="requests" element={<ServiceRequests />} />
             <Route path="assign" element={<TechnicianAssign />} />
+            <Route path="completed" element={<CompletedRequests />} />
             <Route path="catalog" element={<AdminServices />} />
             <Route path="technicians" element={<Technicians />} />
             <Route path="feedback" element={<AdminFeedback />} />

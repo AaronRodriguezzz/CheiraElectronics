@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { update_data } from '../../services/putMethod';
 import { useAuth } from "../../contexts/UserContext";
 
-const FinishRequestModal = ({ onCancel, requestData, updatedData }) => {
+const PickUpModal = ({ onCancel, requestData, updatedData }) => {
     const { user } = useAuth();
-    const [remarks, setRemarks] = useState('');
+    const [remarks, setRemarks] = useState(requestData.remarks);
     const [isLoading, setIsLoading] = useState(false);
 
+    console.log(requestData);
     const handleFinish = async (e) => {
         e.preventDefault();
         
@@ -17,7 +18,7 @@ const FinishRequestModal = ({ onCancel, requestData, updatedData }) => {
                 id: requestData?._id,
                 email: requestData?.email,
                 serviceType: requestData?.serviceType,
-                status: 'For Pick-Up',
+                status: 'Completed',
                 remarks: remarks,
                 updatedBy: user?._id
             };
@@ -44,13 +45,16 @@ const FinishRequestModal = ({ onCancel, requestData, updatedData }) => {
                 <h2 className="text-xl font-semibold mb-4 text-green-700">Finish Request</h2>
 
                 <p className="text-md mb-1 text-gray-700">
-                    <strong>Service:</strong> {requestData?.serviceCategory}
+                    <strong>Category:</strong> {requestData?.serviceCategory}
                 </p>
                 <p className="text-md mb-1 text-gray-700">
                     <strong>Customer:</strong> {requestData?.customer}
                 </p>
-                <p className="text-md mb-4 text-gray-700">
+                <p className="text-md mb-1 text-gray-700">
                     <strong>Device Type:</strong> {requestData?.deviceType}
+                </p>
+                <p className="text-md mb-4 text-gray-700">
+                    <strong>Amount To Pay:</strong> ₱{Number(requestData?.servicePrice.slice(1) || 0) - Number(requestData?.downPayment.slice(1) || 0) }
                 </p>
 
                 <label className="block text-md mb-1 font-medium">Remarks</label>
@@ -83,4 +87,4 @@ const FinishRequestModal = ({ onCancel, requestData, updatedData }) => {
     );
 };
 
-export default FinishRequestModal;
+export default PickUpModal;

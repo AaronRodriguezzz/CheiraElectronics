@@ -5,6 +5,7 @@ import { get_data } from '../../services/getMethod';
 const AssignTechnicianForm = ({ onCancel, requestData, updatedData }) => {
   const [technicians, setTechnicians] = useState([]);
   const [technicianId, setTechnicianId] = useState('');
+  const [downPayment, setDownPayment] = useState('')
   const [servicePrice, setServicePrice] = useState('');
   const [remarks, setRemarks] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +23,8 @@ const AssignTechnicianForm = ({ onCancel, requestData, updatedData }) => {
         email: requestData?.email,
         serviceType: requestData?.serviceType,
         status: 'In Progress',
-        technician: technicianId, 
+        downPayment: downPayment,
+        technician: technicianId,   
         servicePrice: servicePrice,
         remarks: remarks
       };
@@ -113,7 +115,15 @@ const AssignTechnicianForm = ({ onCancel, requestData, updatedData }) => {
         <input 
           type="number" 
           className='w-full border px-3 py-2 rounded placeholder:text-black mt-2' 
-          placeholder='Input Price'
+          placeholder='Down Payment'
+          onChange={(e) => setDownPayment(e.target.value)}
+          value={downPayment}
+        />
+
+        <input 
+          type="number" 
+          className='w-full border px-3 py-2 rounded placeholder:text-black mt-2' 
+          placeholder='Total Price'
           onChange={(e) => setServicePrice(e.target.value)}
           value={servicePrice}
         />

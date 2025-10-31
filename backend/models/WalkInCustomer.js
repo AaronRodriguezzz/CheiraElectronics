@@ -29,13 +29,17 @@ const ServiceRequestSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    downPayment: {
+        type: Number,
+        default: 0,
+    },
     servicePrice: {
         type: Number,
         default: 0,
     },
     status: {
         type: String,       
-        enum: ["Pending", "In Progress", "Completed", "Reopened", "Rejected"],
+        enum: ["Pending", "In Progress", "Completed", "For Pick-Up", "Reopened", "Rejected"],
         default: "In Progress", 
     },
     updatedBy: {
