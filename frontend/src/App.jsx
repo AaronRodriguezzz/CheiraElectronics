@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // Pages under /User
 import HomePage from "./pages/User/HomePage";
-import Feedback from "./pages/User/Feedback";
 import Login from "./pages/User/Login";
 import RequestForm from "./pages/User/RequestForm";
 import ServiceCatalog from "./pages/User/ServiceCatalog";
@@ -33,7 +32,6 @@ export default function App() {
 
         <Route element={<UserLayout />}>
           <Route path="/" element={<HomePage />} />
-          <Route path="/feedbacks" element={<Feedback />} />
           <Route path="/feedback-form/:requestId" element={<FeedbackForm />} />
           <Route path="/request-form" element={<RequestForm />} />
           <Route path="/service-catalog" element={<ServiceCatalog />} />
