@@ -1,4 +1,3 @@
-// src/pages/admin/TechnicianAssign.jsx
 import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Button, Tooltip } from "@mui/material";
@@ -9,18 +8,19 @@ import AssignTechnicianForm from "../../components/modals/requestAcceptanceModal
 import FinishRequestModal from "../../components/modals/finishRequests";
 import WalkInRequestModal from "../../components/modals/walkInRequestModal";
 import ViewServiceRequestModal from "../../components/modals/viewRequestModal";
-
-// 🧩 Import icons
 import { FaCheckCircle, FaTimesCircle, FaSyncAlt, FaEye } from "react-icons/fa";
 
 export default function TechnicianAssign() {
+  const [requests, setRequests] = useState(null);
+  const [filteredRequests, setFilteredRequests] = useState(null);
+  const [search, setSearch] = useState("");
+
   const [isReassigning, setIsReassigning] = useState(false);
   const [isFailing, setIsFailing] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [isViewing, setIsViewing] = useState(false);
   const [requestToView, setRequestToView] = useState(null);
-  const [requests, setRequests] = useState(null);
   const [requestToUpdate, setRequestToUpdate] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -42,11 +42,7 @@ export default function TechnicianAssign() {
       headerName: "Type",
       width: 120,
       renderCell: (params) => (
-        <span
-          className={`${
-            params.value === "Walk-In" ? "text-blue-500" : "text-green-500"
-          }`}
-        >
+        <span className={params.value === "Walk-In" ? "text-blue-500" : "text-green-500"}>
           {params.value}
         </span>
       ),
@@ -180,7 +176,9 @@ export default function TechnicianAssign() {
             technicianId: req.technician?._id || null,
           }));
 
-          setRequests([...formattedRequests, ...formattedWalkIns]);
+          const merged = [...formattedRequests, ...formattedWalkIns];
+          setRequests(merged);
+          setFilteredRequests(merged);
         }
 
         setLoading(false);
@@ -192,6 +190,30 @@ export default function TechnicianAssign() {
 
     getAllRequests();
   }, []);
+
+  // 🔍 Search Filter Function
+  useEffect(() => {
+    if (!requests) return;
+
+    const query = search.toLowerCase().trim();
+
+    const filtered = requests.filter((r) =>
+      [
+        r.customer,
+        r.email,
+        r.serviceCategory,
+        r.model,
+        r.status,
+        r.technician,
+        r.contactNumber,
+        r.submittedAt?.split("T")[0],
+      ]
+        .filter(Boolean)
+        .some((field) => field.toString().toLowerCase().includes(query))
+    );
+
+    setFilteredRequests(filtered);
+  }, [search, requests]);
 
   if (loading) {
     return (
@@ -206,7 +228,9 @@ export default function TechnicianAssign() {
       <div className="w-full p-4 flex gap-2 bg-white shadow my-4 rounded-md">
         <input
           type="text"
-          placeholder="Search name, service type, date, etc."
+          placeholder="Search name, technician, date, etc."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
           className="w-full bg-gray-100 px-4 py-2 rounded-lg outline-gray-300"
         />
         <button
@@ -220,7 +244,7 @@ export default function TechnicianAssign() {
       <div className="w-full overflow-x-auto">
         <div style={{ minWidth: "1350px" }}>
           <DataGrid
-            rows={requests || []}
+            rows={filteredRequests || []}
             columns={columns}
             getRowId={(row) => row._id}
             columnVisibilityModel={{

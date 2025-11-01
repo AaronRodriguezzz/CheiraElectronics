@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Button, Tooltip } from "@mui/material";
+import { FaTruckPickup, FaSearch, FaEye, FaTimes } from "react-icons/fa";
 import { get_data } from "../../services/getMethod";
-import { FaTruckPickup, FaSearch, FaEye } from "react-icons/fa";
 import PickUpModal from "../../components/modals/pickUpModal";
+import ViewServiceRequestModal from "../../components/modals/viewRequestModal";
 
 export default function CompletedRequests() {
 
   const [requests, setRequests] = useState([]);
+  const [filteredRequests, setFilteredRequests] = useState([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [showClaim, setShowClaim] = useState(false);
   const [isViewing, setIsViewing] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState(null); 
+  const [selectedRequest, setSelectedRequest] = useState(null);
 
   const columns = [
     { field: "customer", headerName: "Customer Name", flex: 1 },
@@ -23,7 +25,7 @@ export default function CompletedRequests() {
     {
       field: "type",
       headerName: "Type",
-      width: 160,
+      width: 150,
       renderCell: (params) => (
         <span
           className={`${
@@ -37,10 +39,10 @@ export default function CompletedRequests() {
     {
       field: "actions",
       headerName: "Actions",
-      width:200,
+      width: 200,
       renderCell: (params) => (
-        <div className="h-full flex items-center  gap-2">
-          {/* ✅ View Button */}
+        <div className="h-full flex items-center gap-2">
+
           <Tooltip title="View Details">
             <Button
               variant="contained"
@@ -51,13 +53,15 @@ export default function CompletedRequests() {
                 minWidth: 42,
                 "&:hover": { bgcolor: "#1E40AF" },
               }}
-            //   onClick={() => handleView(params.row)}
+              onClick={() => {
+                setSelectedRequest(params.row);
+                setIsViewing(true);
+              }}
             >
               <FaEye size={16} />
             </Button>
           </Tooltip>
 
-          {/* ✅ Mark as Picked Up Button */}
           <Tooltip title="Mark as Picked-Up">
             <Button
               variant="contained"
@@ -106,8 +110,9 @@ export default function CompletedRequests() {
           servicePrice: `₱${req.servicePrice}`,
         }));
 
-        // ✅ Combine both lists correctly
-        setRequests([...(formattedRequests || []), ...(formattedWalkIns || [])]);
+        const combined = [...(formattedRequests || []), ...(formattedWalkIns || [])];
+        setRequests(combined);
+        setFilteredRequests(combined);
       } catch (err) {
         console.error("Error fetching pickup requests:", err);
       } finally {
@@ -118,12 +123,26 @@ export default function CompletedRequests() {
     fetchRequests();
   }, []);
 
-  const filteredRequests = requests.filter(
-    (r) =>
-      r.customer?.toLowerCase().includes(search.toLowerCase()) ||
-      r.serviceCategory?.toLowerCase().includes(search.toLowerCase()) ||
-      r.contactNumber?.includes(search)
-  );
+  // ✅ Search Handler
+  const handleSearch = (text) => {
+    setSearch(text);
+    if (!text.trim()) {
+      setFilteredRequests(requests);
+      return;
+    }
+
+    const lower = text.toLowerCase();
+    const filtered = requests.filter(
+      (r) =>
+        r.customer?.toLowerCase().includes(lower) ||
+        r.serviceCategory?.toLowerCase().includes(lower) ||
+        r.contactNumber?.includes(lower) ||
+        r.servicePrice?.toLowerCase().includes(lower) ||
+        r.downPayment?.toLowerCase().includes(lower)
+    );
+
+    setFilteredRequests(filtered);
+  };
 
   if (loading) {
     return (
@@ -141,11 +160,17 @@ export default function CompletedRequests() {
           <FaSearch className="absolute left-3 top-3 text-gray-500" />
           <input
             type="text"
-            placeholder="Search by name, category, or contact..."
-            className="w-full bg-gray-100 pl-10 pr-4 py-2 rounded-lg outline-gray-300"
+            placeholder="Search by name, category, price, etc..."
+            className="w-full bg-gray-100 pl-10 pr-10 py-2 rounded-lg outline-gray-300"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => handleSearch(e.target.value)}
           />
+          {search && (
+            <FaTimes
+              className="absolute right-3 top-3 text-gray-500 cursor-pointer"
+              onClick={() => handleSearch("")}
+            />
+          )}
         </div>
       </div>
 
@@ -162,11 +187,21 @@ export default function CompletedRequests() {
         </div>
       </div>
 
-      {showClaim && <PickUpModal 
-        onCancel={setShowClaim}
-        requestData={selectedRequest}
-        updatedData={setRequests}
-      />}
+      {showClaim && (
+        <PickUpModal
+          onCancel={setShowClaim}
+          requestData={selectedRequest}
+          updatedData={setRequests}
+        />
+      )}
+
+      {isViewing && (
+        <ViewServiceRequestModal
+          isOpen={isViewing}
+          onClose={() => setIsViewing(false)}
+          request={selectedRequest}
+        />
+      )}
     </div>
   );
 }

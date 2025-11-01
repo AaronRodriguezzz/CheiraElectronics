@@ -136,9 +136,11 @@ export const acceptRequests = async (req, res) => {
 
     if (!updated) {
       return res.status(404).json({ error: "Request not found" });
-    }
+    } 
 
-    await send_request_update(id,email,serviceType,status)
+    console.log(updated);
+
+    await send_request_update(id,updated.customer.email,serviceType,status);
 
     return res.status(200).json(updated);
   } catch (err) {

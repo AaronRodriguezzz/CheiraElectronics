@@ -2,10 +2,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaPhone, FaMapMarkerAlt, FaEnvelope } from "react-icons/fa";
-import Rating from "@mui/material/Rating";
 import { motion } from "framer-motion";
 import { feedbacks, services } from "../../data/HomePageTxt";
+import { serviceCategories } from "../../data/ServiceCategory";
 import AnimatedSection from "../../components/user/AnimationContainer";
+import Rating from "@mui/material/Rating";
 
 export default function Home() {
   return (
@@ -79,28 +80,75 @@ export default function Home() {
             affordable solutions you can trust.
           </p>
 
-          {/* Services Grid */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: i * 0.2 }}
-                className="bg-black/60 backdrop-blur-md shadow-md hover:shadow-orange-500/50 
-                           rounded-lg p-6 flex flex-col items-center text-center transition"
-              >
-                {/* Service Icon */}
-                {service.icon}
-                <h3 className="font-bold text-2xl mt-4 mb-2 text-orange-400">
-                  {service.title}
-                </h3>
-                <p className="text-sm text-gray-300">{service.desc}</p>
-              </motion.div>
-            ))}
+          {/* Scroll Container */}
+          <div className="relative group w-full overflow-hidden">
+
+            {/* Left Button */}
+            <button
+              onClick={() =>
+                document
+                  .getElementById("serviceScroll")
+                  .scrollBy({ left: -300, behavior: "smooth" })
+              }
+              className="hidden group-hover:flex absolute left-0 top-1/2 -translate-y-1/2 
+                        bg-orange-500 text-white p-3 rounded-full shadow-lg 
+                        hover:bg-orange-600 transition z-50"
+            >
+              ‹
+            </button>
+
+            {/* Right Button */}
+            <button
+              onClick={() =>
+                document
+                  .getElementById("serviceScroll")
+                  .scrollBy({ left: 300, behavior: "smooth" })
+              }
+              className="hidden group-hover:flex absolute right-0 top-1/2 -translate-y-1/2 
+                        bg-orange-500 text-white p-3 rounded-full shadow-lg 
+                        hover:bg-orange-600 transition z-50"
+            >
+              ›
+            </button>
+
+            {/* Scrollable Cards */}
+            <div
+              id="serviceScroll"
+              className="flex gap-4 overflow-x-auto scroll-smooth hide-scrollbar py-4"
+            >
+              {serviceCategories.map((category, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: i * 0.5 }}
+                  className="relative min-w-[350px] h-[300px] bg-cover bg-center rounded-lg shadow-md cursor-pointer group/card"
+                  style={{ backgroundImage: `url(/img/${category.img})` }}
+                >
+                  {/* Dark Overlay */}
+                  <div className="absolute inset-0 bg-black/40 group-hover/card:bg-black/70 transition-all"></div>
+
+                  {/* Text */}
+                  <h3 className="absolute bottom-16 left-1/2 -translate-x-1/2 text-white font-bold text-xl text-center drop-shadow-lg">
+                    {category.name}
+                  </h3>
+
+                  {/* Button on Hover */}
+                  <button
+                    className="absolute bottom-6 left-1/2 -translate-x-1/2 px-5 py-2 text-sm rounded-lg 
+                              bg-orange-500 text-white font-semibold shadow-md opacity-0 
+                              group-hover/card:opacity-100 transition"
+                  >
+                    VIEW
+                  </button>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </AnimatedSection>
+
 
       {/* ================= CONTACT SECTION ================= */}
       {/* Contact details and embedded Google map */}
@@ -151,7 +199,7 @@ export default function Home() {
             {/* Google Maps Embed */}
             <div className="w-[300px] md:w-[40%] h-[400px] bg-black/50 rounded-lg shadow-md overflow-hidden border border-orange-500/20">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18..."
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3862.753884152862!2d121.06051797407824!3d14.498813179562632!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397cf43c3838829%3A0xab5b6b5483be0fc5!2sPurok%203%2C%20216%20M.%20L.%20Quezon%20Ave%2C%20New%20Lower%20Bicutan%2C%20Taguig%2C%201632%20Metro%20Manila!5e0!3m2!1sen!2sph!4v1762008845592!5m2!1sen!2sph"
                 className="w-full h-full"
                 style={{ border: 0 }}
                 allowFullScreen

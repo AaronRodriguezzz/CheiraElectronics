@@ -4,10 +4,10 @@ import { get_data } from '../../services/getMethod';
 
 const AssignTechnicianForm = ({ onCancel, requestData, updatedData }) => {
   const [technicians, setTechnicians] = useState([]);
-  const [technicianId, setTechnicianId] = useState('');
+  const [technicianId, setTechnicianId] = useState(requestData.technicianId || '');
   const [downPayment, setDownPayment] = useState('')
-  const [servicePrice, setServicePrice] = useState('');
-  const [remarks, setRemarks] = useState('');
+  const [servicePrice, setServicePrice] = useState(requestData.servicePrice || 0);
+  const [remarks, setRemarks] = useState(requestData.remarks || '');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -104,7 +104,7 @@ const AssignTechnicianForm = ({ onCancel, requestData, updatedData }) => {
           onChange={(e) => setTechnicianId(e.target.value)}
           className="w-full border px-3 py-2 rounded"
         >
-          <option value=''>Select Technician</option>
+          <option value='' disabled>Select Technician</option>
           {technicians.map((tech) => (
             <option key={tech._id} value={tech._id}>
               {tech.full_name}
@@ -112,30 +112,34 @@ const AssignTechnicianForm = ({ onCancel, requestData, updatedData }) => {
           ))}
         </select>
 
-        <input 
-          type="number" 
-          className='w-full border px-3 py-2 rounded placeholder:text-black mt-2' 
-          placeholder='Down Payment'
-          onChange={(e) => setDownPayment(e.target.value)}
-          value={downPayment}
-        />
+        {!requestData?.technician && (
+          <>
+            <input 
+              type="number" 
+              className='w-full border px-3 py-2 rounded placeholder:text-black mt-2' 
+              placeholder='Down Payment'
+              onChange={(e) => setDownPayment(e.target.value)}
+              value={downPayment}
+            />
 
-        <input 
-          type="number" 
-          className='w-full border px-3 py-2 rounded placeholder:text-black mt-2' 
-          placeholder='Total Price'
-          onChange={(e) => setServicePrice(e.target.value)}
-          value={servicePrice}
-        />
+            <input 
+              type="number" 
+              className='w-full border px-3 py-2 rounded placeholder:text-black mt-2' 
+              placeholder='Total Price'
+              onChange={(e) => setServicePrice(e.target.value)}
+              value={servicePrice}
+            />
+          </>
+        )}
 
         <textarea
           placeholder="Remarks (optional)"
           value={remarks} 
           onChange={(e) => setRemarks(e.target.value)}
-          type="text" 
           rows={4}
-          className='w-full border px-3 py-2 rounded placeholder:text-black mt-2' 
+          className='w-full border px-3 py-2 rounded placeholder:text-black mt-2'
         />
+
 
         <div className="flex justify-end gap-2 mt-5">
           <button
