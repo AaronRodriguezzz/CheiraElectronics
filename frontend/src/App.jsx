@@ -7,6 +7,7 @@ import Login from "./pages/User/Login";
 import RequestForm from "./pages/User/RequestForm";
 import ServiceCatalog from "./pages/User/ServiceCatalog";
 import FeedbackForm from "./pages/User/FeedbackForm";
+import AllFeedbacks from "./pages/User/AllFeedback";
 
 //Pages under /Admin
 import Dashboard from "./pages/Admin/Dashboard";
@@ -35,6 +36,7 @@ export default function App() {
           <Route path="/feedback-form/:requestId" element={<FeedbackForm />} />
           <Route path="/request-form" element={<RequestForm />} />
           <Route path="/service-catalog" element={<ServiceCatalog />} />
+          <Route path="/feedbacks" element={<AllFeedbacks />} />
         </Route>
 
         <Route path="/admin" element={<AdminLayout />}>

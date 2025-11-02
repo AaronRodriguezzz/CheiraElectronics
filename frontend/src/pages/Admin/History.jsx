@@ -6,13 +6,15 @@ import { Button } from "@mui/material";
 import { get_data } from "../../services/getMethod";
 import { statusColorMap } from "../../data/StatusColor";
 import ViewServiceRequestModal from "../../components/modals/viewRequestModal";
+import ReopenRequestModal from "../../components/modals/reAssignModal";
 
 export default function History() {
   const [allRequests, setAllRequests] = useState([]); // full data
   const [requests, setRequests] = useState([]); // filtered list
   const [loading, setLoading] = useState(false);
   const [isViewing, setIsViewing] = useState(false);
-  const [requestToView, setRequestToView] = useState(null);
+  const [isReAssigning, setIsReAssigning] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState(null);
   const [search, setSearch] = useState("");
 
   const columns = [
@@ -52,12 +54,21 @@ export default function History() {
       flex: 1,
       renderCell: (params) => (
         <div className="h-full w-auto flex md:flex-row flex-col items-center gap-2">
-          <Button variant="contained" size="small">Reopen</Button>
+          <Button 
+            variant="contained" 
+            size="small"
+            onClick={() => {
+              setSelectedRequest(params.row);
+              setIsReAssigning(true);
+            }}
+          >
+              Reopen
+          </Button>
           <Button
             variant="contained"
             size="small"
             onClick={() => {
-              setRequestToView(params.row);
+              setSelectedRequest(params.row);
               setIsViewing(true);
             }}
             sx={{ fontSize: 12 }}
@@ -176,9 +187,15 @@ export default function History() {
         <ViewServiceRequestModal
           isOpen={isViewing}
           onClose={() => setIsViewing(false)}
-          request={requestToView}
+          request={selectedRequest}
         />
       )}
+
+      {isReAssigning && <ReopenRequestModal 
+        onCancel={setIsViewing}
+        requestData={selectedRequest}
+        updatedData={setAllRequests}
+      />}
     </div>
   );
 }

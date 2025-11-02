@@ -77,9 +77,9 @@ export const getFinishedWalkIns = async (req, res) => {
  */
 export const getInProgressWalkIns = async (req, res) => {
   try {
-    const walkIns = await WalkInRequest.find({ status: 'In Progress'})
+    const walkIns = await WalkInRequest.find({ status: { $in: ['In Progress', 'Reopened'] }})
       .populate("technician")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 }); 
 
     console.log(walkIns)
 
