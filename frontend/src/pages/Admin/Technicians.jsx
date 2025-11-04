@@ -1,4 +1,3 @@
-// src/pages/admin/Technicians.jsx
 import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
@@ -12,7 +11,9 @@ export default function Technicians() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [dataToUpdate, setDataToUpdate] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [technician, setTechnician] = useState(null);
+  const [technician, setTechnician] = useState([]);
+  const [filteredTechnicians, setFilteredTechnicians] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const columns = [
     { field: "_id", headerName: "Technician Id", flex: 1 },
@@ -24,12 +25,14 @@ export default function Technicians() {
       headerName: "Status", 
       width: 120,
       renderCell: (params) => {
-        return <span 
-          className={`p-2 rounded-full text-white bg-${statusColorMap[params.value]}`}
-          style={{ backgroundColor: statusColorMap[params.value] }}
-        >
-          {params.value}
-        </span>
+        return (
+          <span 
+            className="p-2 rounded-full text-white"
+            style={{ backgroundColor: statusColorMap[params.value] }}
+          >
+            {params.value}
+          </span>
+        );
       } 
     },
     {
@@ -60,19 +63,36 @@ export default function Technicians() {
     },
   ];
 
+  // Fetch technicians
   useEffect(() => {
     const getTechnicians = async () => {
       const technicians = await get_data('/technicians');
 
-      if(technicians){
+      if (technicians) {
         setTechnician(technicians);
+        setFilteredTechnicians(technicians); // ✅ default full list
       }
 
-      setLoading(false)
-    }
+      setLoading(false);
+    };
 
     getTechnicians();
-  },[])
+  }, []);
+
+  // Search filter effect
+  useEffect(() => {
+    const filtered = technician.filter((item) => {
+      const search = searchQuery.toLowerCase();
+      return (
+        item.full_name.toLowerCase().includes(search) ||
+        item.email.toLowerCase().includes(search) ||
+        item.contact_number.toLowerCase().includes(search) ||
+        item.status.toLowerCase().includes(search)
+      );
+    });
+
+    setFilteredTechnicians(filtered);
+  }, [searchQuery, technician]);
 
   if (loading) {
     return (
@@ -87,8 +107,10 @@ export default function Technicians() {
       <div className="w-full flex p-4 gap-x-4 bg-white shadow my-4 rounded-md">
         <input 
           type="text" 
-          placeholder="Search name,service type, date, etc."
+          placeholder="Search name, email, status, etc."
           className="w-[90%] bg-gray-100 px-4 py-2 rounded-lg outline-gray-300"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
 
         <button
@@ -97,31 +119,34 @@ export default function Technicians() {
         >
           NEW TECHNICIAN
         </button>
-
       </div>
 
       <div className="w-full overflow-x-auto">
         <div style={{ minWidth: "1350px"}}>
           <DataGrid 
-            rows={technician} 
-            columns={columns} 
-            getRowId={(row) => row._id} 
-            pagination 
+            rows={filteredTechnicians}
+            columns={columns}
+            getRowId={(row) => row._id}
+            pagination
           />
         </div>
       </div>
 
-      {isAdding && <TechnicianForm 
-        onCancel={setIsAdding}
-        route={'/new-technician'}
-      />}
+      {isAdding && (
+        <TechnicianForm 
+          onCancel={setIsAdding}
+          route={'/new-technician'}
+        />
+      )}
 
-      {isUpdating && <TechnicianForm 
-        onCancel={setIsUpdating}
-        route={'/update-technician'}
-        technicianData={dataToUpdate}
-        updatedData={setTechnician}
-      />}
+      {isUpdating && (
+        <TechnicianForm 
+          onCancel={setIsUpdating}
+          route={'/update-technician'}
+          technicianData={dataToUpdate}
+          updatedData={setTechnician}
+        />
+      )}
     </div>
   );
 }

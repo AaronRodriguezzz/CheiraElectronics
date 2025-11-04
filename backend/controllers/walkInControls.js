@@ -18,12 +18,8 @@ export const createWalkInRequest = async (req, res) => {
       deviceType,
       remarks,
       servicePrice,
+      downPayment
     } = req.body;
-
-    // === VALIDATION ===
-    if (!customer || !deviceType || !model) {
-      return res.status(400).json({ message: "Missing required fields." });
-    }
 
     // === SAFE PAYLOAD ===
     const payload = {
@@ -36,6 +32,7 @@ export const createWalkInRequest = async (req, res) => {
       deviceType: String(deviceType || "").trim(),
       remarks: remarks ? String(remarks).trim() : "",
       servicePrice: servicePrice || 0,
+      downPayment: downPayment || 0,
       status: "In Progress",
     };
 
@@ -80,9 +77,9 @@ export const getFinishedWalkIns = async (req, res) => {
  */
 export const getInProgressWalkIns = async (req, res) => {
   try {
-    const walkIns = await WalkInRequest.find({ status: 'In Progress'})
+    const walkIns = await WalkInRequest.find({ status: { $in: ['In Progress', 'Reopened'] }})
       .populate("technician")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 }); 
 
     console.log(walkIns)
 
@@ -101,12 +98,12 @@ export const getInProgressWalkIns = async (req, res) => {
  */
 export const updateWalkInRequest = async (req, res) => {
   try {
-    const { id, remarks, updatedBy } = req.body.newData;
+    const { id, remarks, updatedBy, status } = req.body.newData;
 
     const updated = await WalkInRequest.findByIdAndUpdate(
       id,
       {
-        status: 'Completed',
+        status,
         remarks: remarks ? String(remarks).trim() : "",
         updatedBy
       },

@@ -104,10 +104,10 @@ export default function SubmitRequest() {
               {serviceCategories.map((category, index) => (
                 <option
                   key={index}
-                  value={category}
+                  value={category.name}
                   className="bg-black text-white hover:bg-gray-900"
                 >
-                  {category}
+                  {category.name}
                 </option>
               ))}
             </select>

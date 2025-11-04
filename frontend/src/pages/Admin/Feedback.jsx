@@ -1,30 +1,32 @@
-// src/pages/admin/Feedback.jsx
 import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
-import { get_data } from "../../services/getMethod"; // ✅ your existing fetch service
+import { get_data } from "../../services/getMethod";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 export default function Feedback() {
-  const [feedbacks, setFeedbacks] = useState([]);
+  const [allFeedbacks, setAllFeedbacks] = useState([]); // full data
+  const [feedbacks, setFeedbacks] = useState([]); // filtered data
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
 
-  // Fetch feedbacks from backend
   const fetchFeedbacks = async () => {
     try {
       setLoading(true);
       const res = await get_data(`/feedback`);
 
       if (res) {
-        setFeedbacks(
-          res.map((item, index) => ({
-            id: item._id,
-            customer: item.customer?.full_name,
-            rating: item?.feedbackRating ,
-            comment: item?.feedbackMessage,
-            date: item?.createdAt.split("T")[0]
-          }))
-        );
+        const formatted = res.map((item) => ({
+          id: item._id,
+          customer: item.customer?.full_name || "Unknown",
+          rating: item?.feedbackRating,
+          comment: item?.feedbackMessage,
+          date: item?.createdAt.split("T")[0],
+        }));
+
+        setAllFeedbacks(formatted);
+        setFeedbacks(formatted); // show full list default
       }
     } catch (err) {
       console.error("Failed to fetch feedbacks:", err);
@@ -33,9 +35,35 @@ export default function Feedback() {
     }
   };
 
+  const exportToExcel = () => {
+      if (!allFeedbacks.length) return alert("No data to export.");
+  
+      const ws = XLSX.utils.json_to_sheet(allFeedbacks);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Feedback Record File");
+  
+      const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+      const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+      saveAs(blob, "feedback-list.xlsx");
+  };
+
   useEffect(() => {
     fetchFeedbacks();
-  }, [search]);
+  }, []);
+
+  // ✅ Filter function
+  const handleSearch = () => {
+    const filtered = allFeedbacks.filter((item) => {
+      const value = search.toLowerCase();
+      return (
+        item.customer?.toLowerCase().includes(value) ||
+        item.comment?.toLowerCase().includes(value) ||
+        item.rating?.toString().includes(value) ||
+        item.date?.includes(value)
+      );
+    });
+    setFeedbacks(filtered);
+  };
 
   const columns = [
     { field: "customer", headerName: "Customer", flex: 1 },
@@ -50,13 +78,13 @@ export default function Feedback() {
       <div className="w-full flex gap-x-4">
         <input
           type="text"
-          placeholder="Search name, service type, date, etc."
+          placeholder="Search name, rating, comment, date, etc."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full bg-gray-100 px-4 py-2 rounded-lg outline-gray-300"
         />
         <Button
-          onClick={fetchFeedbacks}
+          onClick={handleSearch}
           variant="contained"
           sx={{
             bgcolor: "#f97316",
@@ -90,7 +118,7 @@ export default function Feedback() {
             bgcolor: "#f97316",
             "&:hover": { bgcolor: "#ea580c" },
           }}
-          onClick={() => console.log("Export triggered")}
+          onClick={exportToExcel}
         >
           Export
         </Button>

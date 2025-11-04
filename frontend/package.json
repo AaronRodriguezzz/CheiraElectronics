@@ -18,6 +18,7 @@
     "chart.js": "^4.5.0",
     "clsx": "^2.1.1",
     "dompurify": "^3.3.0",
+    "file-saver": "^2.0.5",
     "framer-motion": "^12.23.22",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.525.0",
@@ -30,7 +31,8 @@
     "socket.io-client": "^4.8.1",
     "tailwindcss": "^4.1.10",
     "three": "^0.180.0",
-    "ticketing": "file:.."
+    "ticketing": "file:..",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

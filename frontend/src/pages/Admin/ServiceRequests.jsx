@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { update_data } from "../../services/putMethod";
 import { get_data } from "../../services/getMethod";
 import { statusColorMap } from "../../data/StatusColor";
 import Button from "@mui/material/Button";
@@ -10,6 +9,9 @@ import ViewServiceRequestModal from "../../components/modals/viewRequestModal";
 
 export default function ServiceRequests() {
   const [requests, setRequests] = useState(null);
+  const [filteredRequests, setFilteredRequests] = useState(null);
+  const [search, setSearch] = useState("");
+
   const [isAccepting, setIsAccepting] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
   const [isViewing, setIsViewing] = useState(false);
@@ -27,24 +29,20 @@ export default function ServiceRequests() {
       field: "submittedAt",
       headerName: "Date Requested",
       width: 120,
-      renderCell: (params) => {
-        return <span>{params.value.split("T")[0]}</span>;
-      },
+      renderCell: (params) => <span>{params.value.split("T")[0]}</span>,
     },
     {
       field: "status",
       headerName: "Status",
       width: 100,
-      renderCell: (params) => {
-        return (
-          <span
-            className="p-2 rounded-full text-white text-md font-medium"
-            style={{ backgroundColor: statusColorMap[params.value] }}
-          >
-            {params.value}
-          </span>
-        );
-      },
+      renderCell: (params) => (
+        <span
+          className="p-2 rounded-full text-white text-md font-medium"
+          style={{ backgroundColor: statusColorMap[params.value] }}
+        >
+          {params.value}
+        </span>
+      ),
     },
     {
       field: "actions",
@@ -107,6 +105,7 @@ export default function ServiceRequests() {
             contactNumber: req.customer?.contact_number,
           }));
           setRequests(formatted);
+          setFilteredRequests(formatted);
         }
 
         setLoading(false);
@@ -118,6 +117,29 @@ export default function ServiceRequests() {
     getAllRequests();
   }, []);
 
+  // 🔍 Search Filter Function
+  useEffect(() => {
+    if (!requests) return;
+
+    const query = search.toLowerCase().trim();
+
+    const filtered = requests.filter((r) =>
+      [
+        r.customer,
+        r.email,
+        r.serviceCategory,
+        r.model,
+        r.status,
+        r.contactNumber,
+        r.submittedAt?.split("T")[0],
+      ]
+        .filter(Boolean)
+        .some((field) => field.toString().toLowerCase().includes(query))
+    );
+
+    setFilteredRequests(filtered);
+  }, [search, requests]);
+
   if (loading) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
@@ -128,10 +150,13 @@ export default function ServiceRequests() {
 
   return (
     <div>
+      {/* Search Input */}
       <div className="w-full p-4 bg-white shadow my-4 rounded-md">
         <input
           type="text"
           placeholder="Search name, service type, date, etc."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
           className="w-full bg-gray-100 px-4 py-2 rounded-lg outline-gray-300"
         />
       </div>
@@ -139,7 +164,7 @@ export default function ServiceRequests() {
       <div className="w-full overflow-x-auto">
         <div style={{ minWidth: "1350px" }}>
           <DataGrid
-            rows={requests || []}
+            rows={filteredRequests || []}
             columns={serviceRequestsCols}
             getRowId={(row) => row._id}
             pagination
@@ -166,7 +191,7 @@ export default function ServiceRequests() {
         />
       )}
 
-      {/* View Modal ✅ */}
+      {/* View Modal */}
       {isViewing && (
         <ViewServiceRequestModal
           isOpen={isViewing}

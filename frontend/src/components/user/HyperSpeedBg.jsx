@@ -3,7 +3,7 @@ import Hyperspeed from "./HyperSpeed";
 
 const HyperSpeedBg = () => {
   return (
-    <div className="fixed inset-0 z-10 overflow-hidden pointer-events-none">
+    <div className="fixed w-screen inset-0 z-10 overflow-hidden pointer-events-none">
       <Hyperspeed
         effectOptions={{
           onSpeedUp: () => {},

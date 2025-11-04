@@ -1,10 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import serviceCatalogData from "../../data/ServiceList";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 export default function ServiceCatalog() {
     const navigate = useNavigate();
-    const [selectedCategory, setSelectedCategory] = useState(null);
+    const location = useLocation();
+    const categoryLocation = location.state?.category || 'TELEVISION';
+    const [selectedCategory, setSelectedCategory] = useState(categoryLocation);
+
+    console.log(selectedCategory);
 
     return (
         <div className="min-h-screen  text-white pt-28 pb-16 px-4 md:px-12 relative z-50">
@@ -19,12 +24,10 @@ export default function ServiceCatalog() {
             <button
                 key={index}
                 onClick={() =>
-                setSelectedCategory(
-                    selectedCategory === category.name ? null : category.name
-                )
+                    setSelectedCategory(category.name.toUpperCase())
                 }
                 className={`border-2 border-orange-500 rounded-lg py-3 px-2 font-medium text-sm md:text-base transition-all duration-300 ${
-                selectedCategory === category.name
+                selectedCategory === category.name.toUpperCase()
                     ? "bg-orange-500 text-black shadow-lg"
                     : "bg-transparent text-orange-400 hover:bg-orange-500 hover:text-black hover:shadow-md"
                 }`}
@@ -40,8 +43,12 @@ export default function ServiceCatalog() {
             <>
 
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl md:text-3xl font-bold text-orange-400 text-center">
-                        {selectedCategory} Services
+                    <h2 className="text-2xl md:text-3xl font-bold text-orange-400 text-center space-x-2">
+                        <span>
+                            {selectedCategory.charAt(0).toUpperCase()}
+                            {selectedCategory.slice(1).toLowerCase()}
+                        </span> 
+                        <span>Services</span>
                     </h2>
 
                     <button 
@@ -58,16 +65,16 @@ export default function ServiceCatalog() {
                     <thead>
                     <tr className="bg-orange-600/20 text-orange-400">
                         <th className="p-3 border border-orange-700 w-[70%]">
-                        Service Name
+                            Service Name
                         </th>
                         <th className="p-3 border border-orange-700 text-right">
-                        Price
+                            Price
                         </th>
                     </tr>
                     </thead>
                     <tbody>
                     {serviceCatalogData
-                        .find((cat) => cat.name === selectedCategory)
+                        .find((cat) => cat.name.toUpperCase() === selectedCategory)
                         ?.services.map((service, idx) => (
                         <tr
                             key={idx}

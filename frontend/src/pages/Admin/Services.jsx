@@ -1,4 +1,3 @@
-// src/pages/admin/ServiceCatalog.jsx
 import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
@@ -11,7 +10,10 @@ export default function ServiceCatalog() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [dataToUpdate, setDataToUpdate] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [services, setServices] = useState([]);
+
+  const [allServices, setAllServices] = useState([]); // ✅ original data
+  const [services, setServices] = useState([]);       // ✅ filtered data
+  const [search, setSearch] = useState("");
 
   const handleDeactivate = async (row) => {
     try {
@@ -19,6 +21,11 @@ export default function ServiceCatalog() {
       const response = await update_data("/update-service", payload);
 
       if (response.updated) {
+        setAllServices((prev) =>
+          prev.map((item) =>
+            item._id === response.service._id ? response.service : item
+          )
+        );
         setServices((prev) =>
           prev.map((item) =>
             item._id === response.service._id ? response.service : item
@@ -85,6 +92,7 @@ export default function ServiceCatalog() {
     const fetchServices = async () => {
       const response = await get_data("/services");
       if (response) {
+        setAllServices(response);
         setServices(response);
       }
       setLoading(false);
@@ -92,6 +100,19 @@ export default function ServiceCatalog() {
 
     fetchServices();
   }, []);
+
+  // ✅ Frontend filter
+  const handleSearch = () => {
+    const value = search.toLowerCase();
+    const filtered = allServices.filter((item) =>
+      item.serviceCategory?.toLowerCase().includes(value) ||
+      item.description?.toLowerCase().includes(value) ||
+      String(item.price)?.includes(value) ||
+      item.createdAt?.toLowerCase().includes(value) ||
+      (item.isActive ? "active" : "inactive").includes(value)
+    );
+    setServices(filtered);
+  };
 
   if (loading) {
     return (
@@ -108,8 +129,11 @@ export default function ServiceCatalog() {
         <input
           type="text"
           placeholder="Search service name, category, or date..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
           className="w-full bg-gray-100 px-4 py-2 rounded-lg outline-gray-300"
         />
+        <Button variant="contained" onClick={handleSearch}>Search</Button>
         <button
           className="w-[160px] rounded-lg text-white bg-orange-500 hover:bg-orange-600"
           onClick={() => setIsAdding(true)}

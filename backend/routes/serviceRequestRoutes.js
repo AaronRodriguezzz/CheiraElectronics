@@ -23,6 +23,7 @@ router.get("/api/progress-requests", verifyAdminToken, requestToAssign);
 router.get("/api/requests-history", verifyAdminToken, requestsHistory);
 router.get("/api/dashboard-record", verifyAdminToken, dashboardRecord);
 router.get("/api/feedback", verifyAdminToken, getFeedbacks);
+router.get("/api/all-feedback", getFeedbacks);
 router.get("/api/for-pickup", verifyAdminToken, getRequest_ForPickUp);
 router.put("/api/accept-request", verifyAdminToken, acceptRequests);
 router.put("/api/update-request", verifyAdminToken, updateRequest);
