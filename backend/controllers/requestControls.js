@@ -253,7 +253,7 @@ export const getRequest_ForPickUp = async (req, res) => {
       ServiceRequest.find({ status: 'For Pick-Up' }).sort({ createdAt: -1 })
         .populate('customer')
         .populate('updatedBy'),
-      WalkInRequests.find({ status: 'For Pick-Up' }).sort({ createdAt: -1 })
+      WalkInRequests.find({ status: 'For Pick-Up' }).sort({ createdAt: -1 }) 
         .populate('updatedBy'),
     ])
      

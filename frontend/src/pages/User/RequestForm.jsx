@@ -127,7 +127,7 @@ export default function SubmitRequest() {
                         transition disabled:opacity-60 appearance-none"
             >
               <option value="" className="bg-black text-white" disabled>
-                Select a Device Type
+                Select a Device Brand
               </option>
               {formData.serviceCategory &&
                 deviceBrands[formData.serviceCategory]?.map((brand, index) => (

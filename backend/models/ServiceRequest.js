@@ -58,7 +58,6 @@ const ServiceRequestSchema = new mongoose.Schema({
         type: Number, 
         min: 1, 
         max: 5,
-        default: 0
     },
     type: {
         type: String,
