@@ -16,7 +16,7 @@ export default function UserLayout() {
       <Navbar setSideBarOpen={setProfileSidebarOpen} />
       {profileSidebarOpen && <ProfileSidebar open={setProfileSidebarOpen} />}
 
-      <main className="relative min-h-screen text-white bg-black flex-grow">
+      <main className="relative min-h-screen text-white bg-black flex-grow z-10">
         <HyperSpeedBg /> 
         <Outlet />
       </main>

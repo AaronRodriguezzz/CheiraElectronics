@@ -35,6 +35,23 @@ export default function ServiceCatalog() {
                 {category.name}
             </button>
             ))}
+
+            {/* {serviceCategories.map((category, index) => (
+                    <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: index * 0.2 }}
+                    className="relative bg-cover bg-center rounded-lg shadow-md cursor-pointer h-40" // ✅ Added height
+                    style={{ backgroundImage: `url(/img/${category.img})` }}
+                    onClick={() => setSelectedCategory(category.name.toUpperCase())}
+                    >
+                    <h3 className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white font-bold text-lg sm:text-xl text-center drop-shadow-lg">
+                        {category.name}
+                    </h3>
+                    </motion.div>
+                ))} */}
         </div>
 
         {/* Services Section */}

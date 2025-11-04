@@ -296,7 +296,8 @@ export const getAllRequests = async (req,res) => {
 export const getFeedbacks = async (req, res) => {
   try {
     const feedbacks = await ServiceRequest.find({
-      feedbackRating: { $ne: 0 }
+      feedbackRating: { $ne: 0 },
+      status: 'Completed'
     })
       .populate('customer')
       .sort({ createdAt: -1 });

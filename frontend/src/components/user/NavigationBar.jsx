@@ -19,7 +19,7 @@ export default function Navbar({ setSideBarOpen }) {
 
   return (
     <>
-      <nav className="fixed w-full top-0 left-0 bg-black shadow-md shadow-orange-800 px-2 py-4 md:px-10 md:py-6 flex justify-between items-center z-20">
+      <nav className="fixed w-full top-0 left-0 bg-black shadow-md shadow-orange-800 px-2 py-4 md:px-10 md:py-6 flex justify-between items-center z-50">
         {/* Mobile menu toggle */}
         <button className="visible md:hidden" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <X size={26} color="orange" /> : <Menu size={26} color="orange" />}
