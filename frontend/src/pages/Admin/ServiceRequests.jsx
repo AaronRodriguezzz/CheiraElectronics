@@ -97,9 +97,11 @@ export default function ServiceRequests() {
         const requests = await get_data("/all-requests");
 
         if (requests) {
+          console.log(requests);
           const formatted = requests.map((req) => ({
             ...req,
             customer: req.customer?.full_name,
+            address: req.customer?.address,
             email: req.customer?.email,
             serviceType: req.serviceType?.name,
             contactNumber: req.customer?.contact_number,

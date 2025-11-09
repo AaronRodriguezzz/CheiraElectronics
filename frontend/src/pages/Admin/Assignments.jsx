@@ -155,12 +155,16 @@ export default function TechnicianAssign() {
           get_data("/progress-walkins"),
         ]);
 
+        console.log(requests, walkIns);
+
         if (requests || walkIns) {
           const formattedRequests = (requests || []).map((req) => ({
             ...req,
             customer: req.customer?.full_name || "N/A",
             email: req.customer?.email || "N/A",
+            address: req.customer?.address || "N/A",
             serviceCategory: req.serviceCategory || "N/A",
+            model: req?.model || "N/A",
             contactNumber: req.customer?.contact_number || "N/A",
             technician: req.technician?.full_name || "Unassigned",
             technicianId: req.technician?._id || null,

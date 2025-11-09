@@ -4,6 +4,8 @@ import { X } from "lucide-react";
 const ViewServiceRequestModal = ({ isOpen, onClose, request }) => {
   if (!isOpen || !request) return null;
 
+  console.log(request)
+
   return (
     <div className="h-screen w-screen fixed top-0 left-0 z-50 bg-black/30 flex items-center justify-center">
       <div className="bg-white rounded-lg shadow-lg w-[90%] max-w-md p-6 relative">
@@ -21,6 +23,32 @@ const ViewServiceRequestModal = ({ isOpen, onClose, request }) => {
         </h2>
 
         {/* Content */}
+        <div className="space-y-3 text-sm mb-2">
+
+          <div>
+            <span className="text-lg text-gray-600">Customer Name:</span>
+            <p className="text-gray-800">
+              {request.customer || "N/A"}
+            </p>
+          </div>
+
+          <div>
+            <span className="text-lg text-gray-600">Address:</span>
+            <p className="text-gray-800">
+              {request.address || "N/A"}
+            </p>
+          </div>
+
+          <div>
+            <span className="text-lg text-gray-600">Contact Number:</span>
+            <p className="text-gray-800">
+              {request.contactNumber || "N/A"}
+            </p>
+          </div>
+        </div>
+
+        <div className="w-full border-1 border-black/10 px-4 my-4" />
+        
         <div className="space-y-3 text-sm">
           <div>
             <span className="text-lg text-gray-600">Category:</span>
@@ -30,15 +58,8 @@ const ViewServiceRequestModal = ({ isOpen, onClose, request }) => {
           </div>
 
           <div>
-            <span className="text-lg text-gray-600">Model:</span>
-            <p className="text-gray-800">
-              {request.model || "N/A"}
-            </p>
-          </div>
-
-          <div>
-            <span className="text-lg text-gray-600">Device Type:</span>
-            <p className="text-gray-800">{request.deviceType}</p>
+            <span className="text-lg text-gray-600">Brand & Model</span>
+            <p className="text-gray-800">{request.deviceType || "N/A"}  |  {request.model || "N/A"}</p>
           </div>
 
           <div>

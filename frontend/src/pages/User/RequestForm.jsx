@@ -23,7 +23,7 @@ export default function SubmitRequest() {
   const selectedCategory = location.state?.selectedCategory || "";
   const user = useUser();
   
-
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     serviceCategory: selectedCategory,
     deviceType: "",
@@ -48,6 +48,7 @@ export default function SubmitRequest() {
     const finalForm = { customerId: user?._id, ...formData };
 
     try {
+      setLoading(true)
       const response = await post_data("/new-request", finalForm);
       if (response) {
         setFormData({
@@ -60,6 +61,8 @@ export default function SubmitRequest() {
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -195,11 +198,7 @@ export default function SubmitRequest() {
           {/* Submit Button */}
           <motion.button
             type="submit"
-            disabled={
-              !formData.serviceCategory ||
-              !formData.deviceType ||
-              !formData.description
-            }
+            disabled={loading}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
             className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg shadow-md transition disabled:bg-orange-500/70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
