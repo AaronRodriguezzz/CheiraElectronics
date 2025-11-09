@@ -7,7 +7,6 @@ export const serviceCategories = [
   { name: 'RICE COOKER', img: 'RICE_COOKER.jpg' },
   { name: 'ELECTRIC STOVE', img: 'ELECTRIC_STOVE.jpg' },
   { name: 'MICROWAVE', img: 'MICROWAVE.jpg' },
-  { name: 'TOASTER', img: 'TOASTER.jpg' },
   { name: 'BLENDER', img: 'BLENDER.jpg' },
   { name: 'VACUUM CLEANER', img: 'VACUUM_CLEANER.jpg' },
   { name: 'FLAT IRON', img: 'FLAT_IRON.jpg' },

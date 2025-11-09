@@ -109,7 +109,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: i * 0.2 }}
+                  transition={{ duration: 0.6, delay: i * 0.1 }}
                   className="relative min-w-[250px] sm:min-w-[300px] md:min-w-[350px] h-[250px] sm:h-[300px] bg-cover bg-center rounded-lg shadow-md cursor-pointer"
                   style={{ backgroundImage: `url(/img/${category.img})` }}
                 >
@@ -225,7 +225,7 @@ export default function Home() {
           </div>
 
           <Link
-            to="/your-target-page"
+            to="/feedbacks"
             className="mt-10 px-6 py-3 rounded-full bg-orange-500 text-white hover:bg-orange-600 transition text-sm sm:text-base"
           >
             VIEW ALL
