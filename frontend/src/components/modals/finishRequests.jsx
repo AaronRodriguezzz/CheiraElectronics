@@ -6,7 +6,7 @@ const FinishRequestModal = ({ onCancel, requestData, updatedData }) => {
     const { user } = useAuth();
     const [remarks, setRemarks] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-
+    
     const handleFinish = async (e) => {
         e.preventDefault();
         
@@ -25,8 +25,8 @@ const FinishRequestModal = ({ onCancel, requestData, updatedData }) => {
             const response = await update_data(requestData.type === 'Online-Requests' ? '/update-request' : '/update-walkin', payload);
 
             if (response) {
-                onCancel(false);
                 updatedData(prev => prev.filter(r => r._id !== response._id))
+                onCancel(false);
             }
         } catch (err) {
         console.error('Failed to finish request:', err);

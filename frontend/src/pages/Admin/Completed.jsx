@@ -111,6 +111,7 @@ export default function CompletedRequests() {
         }));
 
         const combined = [...(formattedRequests || []), ...(formattedWalkIns || [])];
+
         setRequests(combined);
         setFilteredRequests(combined);
       } catch (err) {

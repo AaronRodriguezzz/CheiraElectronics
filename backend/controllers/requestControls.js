@@ -119,7 +119,7 @@ export const updateFeedback = async (req, res) => {
 
 export const acceptRequests = async (req, res) => {
 
-  const { id, email, serviceType, status, technician, servicePrice, remarks, downPayment } = req.body.newData;
+  const { id, serviceType, status, technician, servicePrice, remarks, downPayment } = req.body.newData;
 
   console.log(req.body.newData)
 

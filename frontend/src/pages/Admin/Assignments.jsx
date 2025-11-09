@@ -155,6 +155,8 @@ export default function TechnicianAssign() {
           get_data("/progress-walkins"),
         ]);
 
+        console.log(requests, walkIns);
+
         if (requests || walkIns) {
           const formattedRequests = (requests || []).map((req) => ({
             ...req,
