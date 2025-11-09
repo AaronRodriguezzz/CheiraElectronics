@@ -155,8 +155,6 @@ export default function TechnicianAssign() {
           get_data("/progress-walkins"),
         ]);
 
-        console.log(requests, walkIns);
-
         if (requests || walkIns) {
           const formattedRequests = (requests || []).map((req) => ({
             ...req,
@@ -203,17 +201,15 @@ export default function TechnicianAssign() {
 
     const filtered = requests.filter((r) =>
       [
-        r.customer,
-        r.email,
-        r.serviceCategory,
-        r.model,
-        r.status,
-        r.technician,
-        r.contactNumber,
-        r.submittedAt?.split("T")[0],
-      ]
-        .filter(Boolean)
-        .some((field) => field.toString().toLowerCase().includes(query))
+        r.customer || "",
+        r.email || "",
+        r.serviceCategory || "",
+        r.model || "",
+        r.status || "",
+        r.technician || "",
+        r.contactNumber || "",
+        r.submittedAt?.split("T")[0] || "",
+      ].some((field) => field.toLowerCase().includes(query))
     );
 
     setFilteredRequests(filtered);
@@ -238,7 +234,7 @@ export default function TechnicianAssign() {
           className="w-full bg-gray-100 px-4 py-2 rounded-lg outline-gray-300"
         />
         <button
-          className="w-[160px] bg-orange-500 hover:bg-orange-600 text-white rounded-lg py-2 font-semibold"
+          className="w-[160px] bg-orange-500 hover:bg-orange-600 text-white rounded-lg py-2"
           onClick={() => setIsAdding(true)}
         >
           NEW REQUEST
@@ -289,7 +285,7 @@ export default function TechnicianAssign() {
 
       {isAdding && (
         <WalkInRequestModal
-          onCancel={() => setIsAdding(false)}
+          onCancel={setIsAdding}
           updatedData={setRequests}
         />
       )}

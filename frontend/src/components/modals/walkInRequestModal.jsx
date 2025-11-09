@@ -13,6 +13,7 @@ const AddWalkInCustomerModal = ({ onCancel, updatedData }) => {
     contactNumber: "",
     email: "",
     technician: "",
+    deviceType: "", // ✅ added
     model: "",
     serviceCategory: "",
     remarks: "",
@@ -74,17 +75,21 @@ const AddWalkInCustomerModal = ({ onCancel, updatedData }) => {
           },
           ...prev,
         ]);
-        setFormData({ 
+
+        // ✅ Reset form
+        setFormData({
           customer: "",
           contactNumber: "",
           email: "",
           technician: "",
+          deviceType: "", // ✅ added
           model: "",
           serviceCategory: "",
           remarks: "",
           servicePrice: "",
           downPayment: "",
-        })
+        });
+
         onCancel(false);
       }
     } catch (err) {
@@ -116,29 +121,27 @@ const AddWalkInCustomerModal = ({ onCancel, updatedData }) => {
             className="w-full border px-3 py-2 rounded placeholder:text-black"
           />
 
-          {/* Contact number */}
-
-          <div className="flex gap-2"> 
-
+          {/* Contact number & Email */}
+          <div className="flex gap-2">
             <input
               type="text"
               name="contactNumber"
               placeholder="Contact Number"
               value={formData.contactNumber}
               onChange={handleChange}
-              className="w-full border px-3 py-2 rounded placeholder:text-black"
+              minLength={11}
+              maxLength={11}
+              className="w-1/2 border px-3 py-2 rounded placeholder:text-black"
             />
 
-            {/* Email */}
             <input
               type="email"
               name="email"
               placeholder="Email Address"
               value={formData.email}
               onChange={handleChange}
-              className="w-full border px-3 py-2 rounded placeholder:text-black"
+              className="w-1/2 border px-3 py-2 rounded placeholder:text-black"
             />
-
           </div>
 
           {/* Category & Device Type */}
@@ -148,12 +151,12 @@ const AddWalkInCustomerModal = ({ onCancel, updatedData }) => {
               value={formData.serviceCategory}
               onChange={handleChange}
               required
-              className="w-full border px-3 py-2 rounded bg-white"
+              className="w-1/2 border px-3 py-2 rounded bg-white"
             >
               <option value="">Select Category</option>
               {serviceCategories.map((category, index) => (
-                <option key={index} value={category}>
-                  {category}
+                <option key={index} value={category.name}>
+                  {category.name}
                 </option>
               ))}
             </select>
@@ -163,7 +166,7 @@ const AddWalkInCustomerModal = ({ onCancel, updatedData }) => {
               onChange={handleChange}
               value={formData.deviceType}
               disabled={!formData.serviceCategory}
-              className="w-full border px-3 py-2 rounded bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-1/2 border px-3 py-2 rounded bg-white disabled:opacity-50 disabled:cursor-not-allowed"
               required
             >
               <option value="">Select Device Type</option>
@@ -189,7 +192,7 @@ const AddWalkInCustomerModal = ({ onCancel, updatedData }) => {
             className="w-full border px-3 py-2 rounded placeholder:text-black"
           />
 
-          {/* Technician (optional) */}
+          {/* Technician */}
           <select
             name="technician"
             value={formData.technician}
@@ -204,9 +207,8 @@ const AddWalkInCustomerModal = ({ onCancel, updatedData }) => {
             ))}
           </select>
 
-          {/* Price */}
-
-          <div className="flex gap-2  ">
+          {/* Price & Down Payment */}
+          <div className="flex gap-2">
             <input
               type="number"
               name="servicePrice"
@@ -214,7 +216,7 @@ const AddWalkInCustomerModal = ({ onCancel, updatedData }) => {
               value={formData.servicePrice}
               onChange={handleChange}
               min="0"
-              className="w-full border px-3 py-2 rounded placeholder:text-black"
+              className="w-1/2 border px-3 py-2 rounded placeholder:text-black"
             />
 
             <input
@@ -223,13 +225,12 @@ const AddWalkInCustomerModal = ({ onCancel, updatedData }) => {
               placeholder="Down Payment"
               value={formData.downPayment}
               onChange={handleChange}
-              disabled={formData.servicePrice === 0}
-              min={formData.servicePrice * 0.20}
-              max={formData.servicePrice}
-              className="w-full border px-3 py-2 rounded placeholder:text-black"
+              disabled={!formData.servicePrice || formData.servicePrice < 200}
+              min={Number(formData.servicePrice) * 0.2}
+              max={Number(formData.servicePrice)}
+              className="w-1/2 border px-3 py-2 rounded placeholder:text-black"
             />
           </div>
-          
 
           {/* Remarks */}
           <textarea

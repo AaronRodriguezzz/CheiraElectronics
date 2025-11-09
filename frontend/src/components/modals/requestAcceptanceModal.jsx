@@ -117,17 +117,17 @@ const AssignTechnicianForm = ({ onCancel, requestData, updatedData }) => {
             <input 
               type="number" 
               className='w-full border px-3 py-2 rounded placeholder:text-black mt-2' 
-              placeholder='Down Payment'
-              onChange={(e) => setDownPayment(e.target.value)}
-              value={downPayment}
-            />
-
-            <input 
-              type="number" 
-              className='w-full border px-3 py-2 rounded placeholder:text-black mt-2' 
               placeholder='Total Price'
               onChange={(e) => setServicePrice(e.target.value)}
               value={servicePrice}
+            />
+            
+            <input 
+              type="number" 
+              className='w-full border px-3 py-2 rounded placeholder:text-black mt-2' 
+              placeholder='Down Payment'
+              onChange={(e) => setDownPayment(e.target.value)}
+              value={downPayment}
             />
           </>
         )}

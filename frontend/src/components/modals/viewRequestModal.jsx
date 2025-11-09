@@ -63,9 +63,9 @@ const ViewServiceRequestModal = ({ isOpen, onClose, request }) => {
           </div>
 
           <div>
-            <span className="text-lg text-gray-600">Description:</span>
+            <span className="text-lg text-gray-600">{ request.remarks ? 'Remarks:' : 'Description' }</span>
             <p className="text-gray-800 whitespace-pre-wrap">
-              {request.remarks || "No remarks provided."}
+              {request.remarks || request.description || "No notes provided."}
             </p>
           </div>
         </div>

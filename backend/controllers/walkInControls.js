@@ -40,7 +40,8 @@ export const createWalkInRequest = async (req, res) => {
     const savedRequest = await newRequest.save();
     const populated = await savedRequest.populate("technician", "full_name");
 
-    return res.status(201).json(populated);
+    return res.status(200).json(populated);
+
   } catch (error) {
     console.error("Error creating walk-in request:", error);
     return res

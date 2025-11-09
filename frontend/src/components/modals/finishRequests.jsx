@@ -24,9 +24,9 @@ const FinishRequestModal = ({ onCancel, requestData, updatedData }) => {
 
             const response = await update_data(requestData.type === 'Online-Requests' ? '/update-request' : '/update-walkin', payload);
 
-            if (response) {w
-                updatedData(prev => prev.filter(r => r._id !== response._id))
+            if (response) {
                 onCancel(false);
+                updatedData(prev => prev.filter(r => r._id !== response._id))
             }
         } catch (err) {
         console.error('Failed to finish request:', err);
