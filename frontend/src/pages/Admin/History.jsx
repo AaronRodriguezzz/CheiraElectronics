@@ -81,14 +81,48 @@ export default function History() {
   ];
 
   const exportToExcel = () => {
-    if (!allRequests.length) return alert("No data to export.");
+  if (!allRequests.length) {
+    alert("No data to export.");
+    return;
+  }
 
-    const ws = XLSX.utils.json_to_sheet(allRequests.length);
+  // 🧹 Clean and reformat data for export
+  const exportData = allRequests.map((item) => ({
+      "Customer Name": item.customer || "N/A",
+      "Contact Number": item.contactNumber || "N/A",
+      Email: item.email || "N/A",
+      "Service Category": item.serviceCategory || "N/A",
+      "Device Type": item.deviceType || "N/A",
+      "Description": item.description || "N/A",
+      "Price": item.servicePrice || "N/A",
+      "Status": item.status || "N/A",
+      "Type": item.type || "N/A",
+      "Technician": item.technician || "N/A",
+      "Updated By": item.updatedBy || "N/A",
+      "Remarks": item.remarks || "N/A",
+      "Date Updated": item.updatedAt?.split("T")[0] || "N/A",
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(exportData);
+
+    // ✨ Auto-format column widths (based on longest value in each column)
+    const colWidths = Object.keys(exportData[0]).map((key) => ({
+      wch: Math.max(
+        key.length,
+        ...exportData.map((row) => (row[key] ? row[key].toString().length : 0))
+      ) + 2,
+    }));
+    ws["!cols"] = colWidths;
+
+    // 🧾 Create workbook and export
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "History File");
+    XLSX.utils.book_append_sheet(wb, ws, "Service History");
 
     const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+    const blob = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
     saveAs(blob, "service-history.xlsx");
   };
 
@@ -109,7 +143,7 @@ export default function History() {
             contactNumber: req.customer?.contact_number,
             technician: req.technician?.full_name,
             updatedBy: req?.updatedBy?.full_name,
-            servicePrice: `₱${req.servicePrice}`,
+            servicePrice: `${req.servicePrice}`,
           }));
 
           const formattedWalkIns = walkIns.map((req) => ({
@@ -119,7 +153,7 @@ export default function History() {
             contactNumber: req.contactNumber,
             technician: req.technician?.full_name,
             updatedBy: req.updatedBy?.full_name,
-            servicePrice: `₱${req.servicePrice}`,
+            servicePrice: `${req.servicePrice}`,
           }));
 
           const combined = [...formattedRequests, ...formattedWalkIns];
@@ -192,7 +226,7 @@ export default function History() {
       )}
 
       {isReAssigning && <ReopenRequestModal 
-        onCancel={setIsViewing}
+        onCancel={() => setIsReAssigning(false)}
         requestData={selectedRequest}
         updatedData={setAllRequests}
       />}

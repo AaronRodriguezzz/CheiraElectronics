@@ -29,7 +29,7 @@ const ReopenRequestModal = ({ onCancel, requestData, updatedData }) => {
 
             if (response) {
                 updatedData(prev => prev.filter(r => r._id !== response._id));
-                onCancel(false);
+                onCancel();
             }
         } catch (err) {
             console.error('Failed to reopen request:', err);
@@ -79,7 +79,7 @@ const ReopenRequestModal = ({ onCancel, requestData, updatedData }) => {
                 <div className="flex justify-end gap-2 mt-5">
                     <button
                         type="button"
-                        onClick={() => onCancel(false)}
+                        onClick={onCancel}
                         className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
                     >
                         Cancel
