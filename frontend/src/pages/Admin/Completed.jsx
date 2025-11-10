@@ -7,7 +7,6 @@ import PickUpModal from "../../components/modals/pickUpModal";
 import ViewServiceRequestModal from "../../components/modals/viewRequestModal";
 
 export default function CompletedRequests() {
-
   const [requests, setRequests] = useState([]);
   const [filteredRequests, setFilteredRequests] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -42,7 +41,6 @@ export default function CompletedRequests() {
       width: 200,
       renderCell: (params) => (
         <div className="h-full flex items-center gap-2">
-
           <Tooltip title="View Details">
             <Button
               variant="contained"
@@ -96,8 +94,8 @@ export default function CompletedRequests() {
           customer: req.customer?.full_name,
           contactNumber: req.customer?.contact_number,
           updatedBy: req?.updatedBy?.full_name,
-          downPayment: `₱${req.downPayment}`,
-          servicePrice: `₱${req.servicePrice}`,
+          downPayment: `${req.downPayment}`,
+          servicePrice: `${req.servicePrice}`,
         }));
 
         const formattedWalkIns = response.walkIns?.map((req) => ({
@@ -106,14 +104,16 @@ export default function CompletedRequests() {
           email: req.email,
           contactNumber: req.contactNumber,
           updatedBy: req.updatedBy?.full_name,
-          downPayment: `₱${req.downPayment}`,
-          servicePrice: `₱${req.servicePrice}`,
+          downPayment: `${req.downPayment}`,
+          servicePrice: `${req.servicePrice}`,
         }));
 
-        const combined = [...(formattedRequests || []), ...(formattedWalkIns || [])];
+        const combined = [
+          ...(formattedRequests || []),
+          ...(formattedWalkIns || []),
+        ];
 
         setRequests(combined);
-        setFilteredRequests(combined);
       } catch (err) {
         console.error("Error fetching pickup requests:", err);
       } finally {
@@ -124,15 +124,14 @@ export default function CompletedRequests() {
     fetchRequests();
   }, []);
 
-  // ✅ Search Handler
-  const handleSearch = (text) => {
-    setSearch(text);
-    if (!text.trim()) {
+  // ✅ Real-time filter: automatically reapply filter whenever requests or search changes
+  useEffect(() => {
+    if (!search.trim()) {
       setFilteredRequests(requests);
       return;
     }
 
-    const lower = text.toLowerCase();
+    const lower = search.toLowerCase();
     const filtered = requests.filter(
       (r) =>
         r.customer?.toLowerCase().includes(lower) ||
@@ -143,6 +142,12 @@ export default function CompletedRequests() {
     );
 
     setFilteredRequests(filtered);
+  }, [search, requests]);
+
+  const handleSearch = (text) => setSearch(text);
+
+  const handleRequestsUpdate = (updatedList) => {
+    setRequests(updatedList);
   };
 
   if (loading) {
@@ -190,9 +195,9 @@ export default function CompletedRequests() {
 
       {showClaim && (
         <PickUpModal
-          onCancel={setShowClaim}
+          onCancel={() => setShowClaim(false)}
           requestData={selectedRequest}
-          updatedData={setRequests}
+          updatedData={handleRequestsUpdate}
         />
       )}
 

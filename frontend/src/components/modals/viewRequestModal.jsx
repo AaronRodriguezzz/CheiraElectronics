@@ -75,12 +75,12 @@ const ViewServiceRequestModal = ({ isOpen, onClose, request }) => {
         <div className="w-full flex gap-2">
           <div className="w-1/2">
             <p>Down Payment: </p>
-            <span>{request?.downPayment ? `${request?.downPayment}` : 'N/A'}</span>
+            <span>{request?.downPayment ? `₱${request?.downPayment}` : 'N/A'}</span>
           </div>
 
           <div className="w-1/2">
             <p>Price: </p>
-            <span>{request?.servicePrice ? `${request?.servicePrice}` : 'N/A'}</span>
+            <span>{request?.servicePrice ? `₱${request?.servicePrice}` : 'N/A'}</span>
           </div>
         </div>
       </div>

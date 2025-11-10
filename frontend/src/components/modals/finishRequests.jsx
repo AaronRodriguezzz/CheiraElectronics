@@ -25,7 +25,8 @@ const FinishRequestModal = ({ onCancel, requestData, updatedData }) => {
             const response = await update_data(requestData.type === 'Online-Requests' ? '/update-request' : '/update-walkin', payload);
 
             if (response) {
-                updatedData(prev => prev.filter(r => r._id !== response._id))
+                console.log(response);
+                updatedData(prev => prev.filter(r => r._id !== requestData._id))
                 onCancel(false);
             }
         } catch (err) {
