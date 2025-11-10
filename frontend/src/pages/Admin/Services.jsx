@@ -62,7 +62,7 @@ export default function ServiceCatalog() {
       headerName: "Actions",
       flex: 1.2,
       renderCell: (params) => (
-        <div className="flex items-center gap-2">
+        <div className="h-full flex items-center gap-2">
           <Button
             variant="contained"
             size="small"

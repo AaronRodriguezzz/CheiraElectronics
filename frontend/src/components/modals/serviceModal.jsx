@@ -19,7 +19,7 @@ const ServiceForm = ({ onCancel, route, updatedData, serviceData = null }) => {
 
   // preload if editing
   useEffect(() => {
-    if (isEdit && serviceData) {
+    if (isEdit) {
       setService({
         id: serviceData._id || '',
         serviceCategory: serviceData.serviceCategory || '',
@@ -91,8 +91,8 @@ const ServiceForm = ({ onCancel, route, updatedData, serviceData = null }) => {
               Select Service Category
             </option>
             {serviceCategories.map((category, index) => (
-              <option key={index} value={category}>
-                {category}
+              <option key={index} value={category.name}>
+                {category.name}
               </option>
             ))}
           </select>
