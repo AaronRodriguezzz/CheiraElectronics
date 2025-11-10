@@ -43,7 +43,7 @@ export default function ServiceCatalog() {
       headerName: "Actions",
       flex: 1,
       renderCell: (params) => (
-        <div className="flex gap-2 items-center">
+        <div className="h-full flex gap-2 items-center">
           <Button
             variant="contained"
             size="small"
@@ -56,14 +56,14 @@ export default function ServiceCatalog() {
           </Button>
 
           <Button
-            variant="contained"
+            variant="outlined" 
             size="small"
+            color={params.row.status === 'Active' ? "error" : "success"}
             onClick={() => {
               handleDeactivate(params.row._id);
-            }} // 🔹 triggers update modal
-            sx={{ backgroundColor: 'transparent', color: 'red', border: '1px solid red', opacity: params.row.status === 'Inactive' ? 0.5 : 1 }}
+            }} 
           >
-            DEACTIVATE
+            {params.row.status === 'Active' ? 'DEACTIVATE' : 'ACTIVATE'}
           </Button>
         </div>
       ),
@@ -79,15 +79,17 @@ export default function ServiceCatalog() {
       )
     );
 
-  const handleDeactivate = async (adminId) => {
+  const handleDeactivate = async (adminId, status) => {
+    const statusPayload = status === 'Active' ? "Inactive" : "Active"
+
     try{
-      const response = await update_data(`/deactivate-account/${adminId}` , { updatedBy: user?._id });
+      const response = await update_data(`/deactivate-account/${adminId}` , { updatedBy: user?._id, status: statusPayload });
 
       if(response){
         setAccounts((prevAccounts) =>
           prevAccounts.map((account) =>
             account._id === adminId
-              ? { ...account, status: "Inactive" }
+              ? { ...response.admin }
               : account
           )
         );

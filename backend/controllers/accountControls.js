@@ -43,7 +43,9 @@ export const addAdmin = async (req, res) => {
 
 export const updateAdmin = async (req, res) => {
   try {
-    const { id, email, full_name, password, currentPassword, updatedBy } = req.body.newData;
+    const { id, email, full_name, password, currentPassword, updatedBy, status } = req.body.newData;
+
+    console.log( req.body.newData);
 
     if (!id) {
       return res.status(400).json({ message: 'Admin ID is required' });
@@ -57,7 +59,7 @@ export const updateAdmin = async (req, res) => {
       }
     }
 
-    const updatedData = { full_name, email, updatedBy};
+    const updatedData = { full_name, email, updatedBy, status};
 
     // If new password is being set, validate the current one
     if (password) {

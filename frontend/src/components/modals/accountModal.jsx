@@ -123,7 +123,6 @@ const AdminForm = ({ onCancel, route, updatedData, adminData = null }) => {
           >
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
-            <option value="Removed">Removed</option>
           </select>
         </div>
 

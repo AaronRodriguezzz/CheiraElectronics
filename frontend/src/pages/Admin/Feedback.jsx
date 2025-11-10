@@ -6,11 +6,12 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
 export default function Feedback() {
-  const [allFeedbacks, setAllFeedbacks] = useState([]); // full data
-  const [feedbacks, setFeedbacks] = useState([]); // filtered data
+  const [allFeedbacks, setAllFeedbacks] = useState([]);
+  const [feedbacks, setFeedbacks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
 
+  // ✅ Fetch feedbacks from API
   const fetchFeedbacks = async () => {
     try {
       setLoading(true);
@@ -26,7 +27,7 @@ export default function Feedback() {
         }));
 
         setAllFeedbacks(formatted);
-        setFeedbacks(formatted); // show full list default
+        setFeedbacks(formatted);
       }
     } catch (err) {
       console.error("Failed to fetch feedbacks:", err);
@@ -35,6 +36,7 @@ export default function Feedback() {
     }
   };
 
+  // ✅ Export data to Excel
   const exportToExcel = () => {
     if (!allFeedbacks.length) return alert("No data to export.");
 
@@ -47,23 +49,27 @@ export default function Feedback() {
     saveAs(blob, "feedback-list.xlsx");
   };
 
+  // ✅ Live Search Logic
+  useEffect(() => {
+    if (!search.trim()) {
+      setFeedbacks(allFeedbacks); // Reset when search is empty
+    } else {
+      const filtered = allFeedbacks.filter((item) => {
+        const value = search.toLowerCase();
+        return (
+          item.customer.toLowerCase().includes(value) ||
+          item.comment.toLowerCase().includes(value) ||
+          item.rating.toString().includes(value) ||
+          item.date.includes(value)
+        );
+      });
+      setFeedbacks(filtered);
+    }
+  }, [search, allFeedbacks]);
+
   useEffect(() => {
     fetchFeedbacks();
   }, []);
-
-  // ✅ Filter function
-  const handleSearch = () => {
-    const filtered = allFeedbacks.filter((item) => {
-      const value = search.toLowerCase();
-      return (
-        item.customer?.toLowerCase().includes(value) ||
-        item.comment?.toLowerCase().includes(value) ||
-        item.rating?.toString().includes(value) ||
-        item.date?.includes(value)
-      );
-    });
-    setFeedbacks(filtered);
-  };
 
   const columns = [
     { field: "customer", headerName: "Customer", flex: 1 },
@@ -89,28 +95,31 @@ export default function Feedback() {
 
   return (
     <div className="p-4 bg-white rounded-md shadow space-y-4">
-      {/* Search bar */}
+      {/* 🔍 Search bar */}
       <div className="w-full flex gap-x-4">
         <input
           type="text"
-          placeholder="Search name, rating, comment, date, etc."
+          placeholder="Search name, rating, comment, or date..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full bg-gray-100 px-4 py-2 rounded-lg outline-gray-300"
         />
-        <Button
-          onClick={handleSearch}
-          variant="contained"
-          sx={{
-            bgcolor: "#f97316",
-            "&:hover": { bgcolor: "#ea580c" },
-          }}
-        >
-          Search
-        </Button>
+        {search && (
+          <Button
+            onClick={() => setSearch("")}
+            variant="outlined"
+            sx={{
+              color: "#f97316",
+              borderColor: "#f97316",
+              "&:hover": { borderColor: "#ea580c", color: "#ea580c" },
+            }}
+          >
+            Clear
+          </Button>
+        )}
       </div>
 
-      {/* DataGrid */}
+      {/* 📋 DataGrid Table */}
       <DataGrid
         rows={feedbacks}
         columns={columns}
@@ -133,7 +142,7 @@ export default function Feedback() {
         }}
       />
 
-      {/* Export Button */}
+      {/* 📤 Export Button */}
       <div className="w-full flex justify-end">
         <Button
           variant="contained"
