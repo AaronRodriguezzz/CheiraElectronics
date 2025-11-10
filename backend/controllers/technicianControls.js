@@ -79,10 +79,10 @@ export const removeTechnician = async (req, res) => {
       return res.status(404).json({ removed: false, message: 'Technician not found.' });
     }
 
-    technician.status = 'Removed';
+    technician.status = 'Inactive';
     const updated = await technician.save();
 
-    res.status(200).json({ removed: true, technician: updated });
+    res.status(200).json({ updated: true, technician: updated });
   } catch (error) {
     res.status(500).json({ removed: false, message: 'Server error: ' + error.message });
   }

@@ -87,7 +87,7 @@ const AssignTechnicianForm = ({ onCancel, requestData, updatedData }) => {
           className="w-full border px-3 py-2 rounded mb-2"
         >
           <option value="" disabled>Select Technician</option>
-          {technicians.map((tech) => (
+          {technicians.filter(t => t.status !== 'Inactive').map((tech) => (
             <option key={tech._id} value={tech._id}>
               {tech.full_name}
             </option>

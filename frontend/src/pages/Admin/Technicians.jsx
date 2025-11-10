@@ -3,6 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
 import TechnicianForm from "../../components/modals/technicianModal";
 import { get_data } from '../../services/getMethod';
+import { update_data } from "../../services/putMethod";
 import { statusColorMap } from "../../data/StatusColor";
 
 export default function Technicians() {
@@ -54,14 +55,28 @@ export default function Technicians() {
           <Button 
             variant="outlined" 
             size="small" 
-            color="error"
+            color={params.row.status === 'Active' ? "error" : "success"}
+            onClick={() => handleDeactivate(params.row)}
           >
-            Delete
+            {params.row.status === 'Active' ? "Deactivate" : "Activate"}
           </Button>
         </div> 
       ),
     },
   ];
+
+  const handleDeactivate = async (row) => {
+      try {
+        const payload = { ...row, id: row._id, status: row.status === 'Active' ? "Inactive" : "Active" };
+        const response = await update_data("/update-technician", payload);
+  
+        if (response.updated) {
+          setTechnician(prev => prev.map(p => p._id ===  row._id ? response.technician : p))
+        }
+      } catch (err) {
+        console.error("Failed to deactivate service:", err);
+      }
+  };
 
   // Fetch technicians
   useEffect(() => {

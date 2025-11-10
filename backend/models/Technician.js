@@ -17,7 +17,7 @@ const TechnicianSchema = new mongoose.Schema({
     status: { 
         type: String, 
         default: "Active",
-        enum: ['Active', 'Inactive', 'Removed']
+        enum: ['Active', 'Inactive']
     },
 }, { timestamps: true });
 
