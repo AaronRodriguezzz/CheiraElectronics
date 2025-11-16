@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
 import {
-  Wrench,
   MessageSquareText,
-  Layers,
   Laptop,
   Truck,
   ClipboardList,
   Cpu,
   Settings,
 } from "lucide-react";
-import { post_data } from "../../services/PostMethod";
+import { post_data } from "../../services/postMethod";
 import { motion } from "framer-motion";
 import { serviceCategories } from "../../data/ServiceCategory";
 import { deviceBrands } from "../../data/DeviceBrands";
