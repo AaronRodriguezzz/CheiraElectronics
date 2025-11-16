@@ -29,7 +29,7 @@ export default function ServiceRequests() {
       field: "submittedAt",
       headerName: "Date Requested",
       width: 120,
-      renderCell: (params) => <span>{params.value.split("T")[0]}</span>,
+      renderCell: (params) => <span>{new Date(params.value).toLocaleDateString("en-CA", { timeZone: "Asia/Manila" })}</span>,
     },
     {
       field: "status",

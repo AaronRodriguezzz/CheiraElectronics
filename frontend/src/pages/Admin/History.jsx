@@ -208,7 +208,7 @@ export default function History() {
       </div>
 
       <div className="w-full overflow-x-auto">
-        <div style={{ minWidth: "1350px" }}>
+        <div style={{ minWidth: "1450px" }}>
           <DataGrid rows={requests} columns={columns} getRowId={(row) => row._id} pagination />
         </div>
       </div>

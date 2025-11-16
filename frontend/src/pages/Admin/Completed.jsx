@@ -20,7 +20,6 @@ export default function CompletedRequests() {
     { field: "contactNumber", headerName: "Contact Number", flex: 1 },
     { field: "serviceCategory", headerName: "Category", flex: 1 },
     { field: "servicePrice", headerName: "Price", flex: 1 },
-    { field: "downPayment", headerName: "Down Payment", flex: 1 },
     {
       field: "type",
       headerName: "Type",

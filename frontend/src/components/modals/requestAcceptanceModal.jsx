@@ -42,19 +42,7 @@ const AssignTechnicianForm = ({ onCancel, requestData, updatedData }) => {
       const response = await update_data('/accept-request', payload);
 
       if (response) {
-        updatedData((prev) =>
-          prev.map((r) =>
-            r._id === response._id
-              ? {
-                  ...response,
-                  customer: response.customer?.full_name || 'N/A',
-                  contactNumber: response.customer?.contact_number || 'N/A',
-                  technician: response.technician?.full_name || 'Unassigned',
-                  technicianId: response.technician?._id || null,
-                }
-              : r
-          )
-        );
+        window.location.reload();
         onCancel(false);
       }
     } catch (err) {

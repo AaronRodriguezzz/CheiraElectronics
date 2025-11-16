@@ -62,10 +62,10 @@ const ViewServiceRequestModal = ({ isOpen, onClose, request }) => {
             <p className="text-gray-800">{request.deviceType || "N/A"}  |  {request.model || "N/A"}</p>
           </div>
 
-          <div>
+          {request.status === 'For Pick-Up' && <div>
             <span className="text-lg text-gray-600">Completion Date</span>
-            <p className="text-gray-800">{new Date(request.updatedAt).toISOString().split("T")[0]}</p>
-          </div>
+            <p className="text-gray-800">{new Date(request.updatedAt).toLocaleDateString("en-CA", { timeZone: "Asia/Manila" })}</p>
+          </div>}
 
           <div>
             <span className="text-lg text-gray-600">{ request.remarks ? 'Remarks:' : 'Description' }</span>
