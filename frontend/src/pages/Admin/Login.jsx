@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {useNavigate} from 'react-router-dom';
 import TextField from "@mui/material/TextField";
 import { Wrench, ShieldCheck, UserCog } from "lucide-react";
-import { post_data } from "../../services/PostMethod";
+import { post_data } from "../../services/postMethod";
 import { useUserProtection } from '../../hooks/protectHooks';
 import { useAuth } from "../../contexts/UserContext";
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { post_data } from "../../services/PostMethod";
+import { post_data } from "../../services/postMethod";
 import { get_data } from "../../services/getMethod";
 import { serviceCategories } from "../../data/ServiceCategory";
 import { deviceBrands } from "../../data/DeviceBrands";

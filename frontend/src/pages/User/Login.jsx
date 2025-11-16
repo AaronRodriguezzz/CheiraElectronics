@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Wrench, ShieldCheck, UserCog } from "lucide-react";
-import { useCustomerPageProtection, useUserProtection } from "../../hooks/protectHooks";
+import { useCustomerPageProtection } from "../../hooks/protectHooks";
 import LoginSection from "../../components/user/sections/LoginSection";
 import RegistrationSection from "../../components/user/sections/RegistrationSection";
 

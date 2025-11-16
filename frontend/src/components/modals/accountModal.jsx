@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { post_data } from '../../services/PostMethod';
+import { post_data } from '../../services/postMethod';
 import { update_data } from '../../services/putMethod';
 import { useUser } from '../../hooks/protectHooks';
 
