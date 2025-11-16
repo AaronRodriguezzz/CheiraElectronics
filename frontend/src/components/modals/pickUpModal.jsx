@@ -55,7 +55,7 @@ const PickUpModal = ({ onCancel, requestData, updatedData }) => {
                     <strong>Device Type:</strong> {requestData?.deviceType}
                 </p>
                 <p className="text-md mb-4 text-gray-700">
-                    <strong>Amount To Pay:</strong> ₱{Number(requestData?.servicePrice || 0) - Number(requestData?.downPayment || 0) }
+                    <strong>Remaining Balance:</strong> ₱{Number(requestData?.servicePrice || 0) - Number(requestData?.downPayment || 0) }
                 </p>
 
                 <label className="block text-md mb-1 font-medium">Remarks</label>

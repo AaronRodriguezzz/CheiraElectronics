@@ -63,6 +63,11 @@ const ViewServiceRequestModal = ({ isOpen, onClose, request }) => {
           </div>
 
           <div>
+            <span className="text-lg text-gray-600">Completion Date</span>
+            <p className="text-gray-800">{new Date(request.updatedAt).toISOString().split("T")[0]}</p>
+          </div>
+
+          <div>
             <span className="text-lg text-gray-600">{ request.remarks ? 'Remarks:' : 'Description' }</span>
             <p className="text-gray-800 whitespace-pre-wrap">
               {request.remarks || request.description || "No notes provided."}

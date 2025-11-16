@@ -172,6 +172,7 @@ export default function SubmitRequest() {
               name="model"
               type="text"
               placeholder="Device Model (N/A if unknown)"
+              required
               value={formData.model}
               onChange={handleChange}
               className="w-full pl-10 pr-4 py-3 bg-black text-white border border-gray-300 rounded-lg shadow-sm 

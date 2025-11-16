@@ -26,6 +26,7 @@ const AddWalkInCustomerModal = ({ onCancel, updatedData }) => {
     const fetchTechnicians = async () => {
       try {
         const techs = await get_data("/technicians");
+        
         setTechnicians(techs || []);
       } catch (err) {
         console.error("Error loading technicians:", err);
@@ -71,7 +72,7 @@ const AddWalkInCustomerModal = ({ onCancel, updatedData }) => {
         updatedData((prev) => [
           {
             ...response,
-            technicianName: response.technician?.full_name,
+            technician: response.technician?.full_name,
           },
           ...prev,
         ]);

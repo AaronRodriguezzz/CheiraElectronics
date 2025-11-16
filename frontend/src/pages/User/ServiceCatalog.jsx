@@ -27,29 +27,53 @@ export default function ServiceCatalog() {
       </motion.h1>
 
       {/* Category Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6 mb-14">
-        {serviceCategories.map((category, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: i * 0.05 }}
-            className={`relative rounded-xl overflow-hidden shadow-md cursor-pointer h-36 sm:h-48 lg:h-52 transition-all duration-300 ${
-              selectedCategory === category.name.toUpperCase()
-                ? "ring-4 ring-orange-500 scale-[1.03]"
-                : "hover:scale-[1.04]"
-            }`}
-            style={{ backgroundImage: `url(/img/${category.img})`, backgroundSize: "cover", backgroundPosition: "center" }}
+      <div className="overflow-x-auto overflow-y-hidden py-3 mb-8 custom-scrollbar">
+        <div className="flex gap-5 w-max">
+          {serviceCategories.map((category, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: i * 0.05 }}
+              onClick={() => setSelectedCategory(category.name.toUpperCase())}
+              className={`relative min-w-[160px] h-[120px] sm:min-w-[200px] sm:h-[150px] rounded-xl overflow-hidden cursor-pointer shadow-lg transition-all duration-300
+                ${
+                  selectedCategory === category.name.toUpperCase()
+                    ? "ring-4 ring-orange-500 scale-105"
+                    : "hover:scale-105"
+                }`}
+              style={{
+                backgroundImage: `url(/img/${category.img})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-center">
+                <h3 className="text-white font-semibold text-sm sm:text-base drop-shadow-md">
+                  {category.name}
+                </h3>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+       <div className="flex flex-wrap justify-center gap-3 mb-10">
+        {serviceCategories.map((category) => (
+          <button
+            key={category.name}
             onClick={() => setSelectedCategory(category.name.toUpperCase())}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all
+              ${
+                selectedCategory === category.name.toUpperCase()
+                  ? "bg-orange-500 text-white shadow-lg"
+                  : "bg-white/10 hover:bg-white/20 text-gray-300"
+              }`}
           >
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent transition-all duration-300 hover:from-black/90" />
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-center px-2">
-              <h3 className="font-semibold text-white text-sm sm:text-base lg:text-lg drop-shadow-md">
-                {category.name}
-              </h3>
-            </div>
-          </motion.div>
+            {category.name}
+          </button>
         ))}
       </div>
 

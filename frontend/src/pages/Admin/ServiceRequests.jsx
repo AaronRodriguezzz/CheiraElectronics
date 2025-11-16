@@ -21,10 +21,10 @@ export default function ServiceRequests() {
 
   const serviceRequestsCols = [
     { field: "customer", headerName: "Customer Name", flex: 1 },
-    { field: "contactNumber", headerName: "Contact Number", flex: 1 },
-    { field: "email", headerName: "Email", flex: 1 },
-    { field: "serviceCategory", headerName: "Category", flex: 1 },
-    { field: "model", headerName: "Model", flex: 1 },
+    { field: "contactNumber", headerName: "Contact Number", width: 150 },
+    { field: "serviceCategory", headerName: "Category", width:180 },
+    { field: "model", headerName: "Model", width: 160 },
+    { field: "serviceType", headerName: "Service Type", width: 200 },
     {
       field: "submittedAt",
       headerName: "Date Requested",
@@ -103,7 +103,6 @@ export default function ServiceRequests() {
             customer: req.customer?.full_name,
             address: req.customer?.address,
             email: req.customer?.email,
-            serviceType: req.serviceType?.name,
             contactNumber: req.customer?.contact_number,
           }));
           setRequests(formatted);
@@ -164,7 +163,7 @@ export default function ServiceRequests() {
       </div>
 
       <div className="w-full overflow-x-auto">
-        <div style={{ minWidth: "1350px" }}>
+        <div className="min-w-[1500px]">
           <DataGrid
             rows={filteredRequests || []}
             columns={serviceRequestsCols}
