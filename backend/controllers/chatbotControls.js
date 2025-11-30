@@ -1,52 +1,25 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import fs from 'fs';
+import path from 'path';
 
 const apiKey = process.env.GEMINI_API_KEY;
+
 
 export const chat_bot = async (req, res) => {
   try {
     const { prompt } = req.body;
 
+    const systemInstruction = fs.readFileSync(
+      path.join(process.cwd(), 'backend/textfile/instruction.txt'),
+      'utf8'
+    );
+
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
       model: 'gemini-2.5-flash',
-      systemInstruction: `
-        You are a smart, helpful assistant that responds only to inquiries related to **Chreia Electronics**, an electronics repair and service business. 
-        But make sure to answer a basic troubleshooting questions about their device. Do NOT answer unrelated questions, and NEVER provide personal opinions. 
-        But answer appropriately when it is not a question, don't apologize, instead give the user a appropriate response. You should respond in html format.
-
-        📌 **Company Overview**:
-        - Business Name: Chreia Electronics
-        - Services:
-          - Mobile phone repair (Android & iPhone)
-          - Laptop and computer repair
-          - Appliance servicing (aircon, TV, refrigerators)
-          - CCTV installation and configuration
-          - Printer repair and refill services
-          - Home service and office contracts
-
-        📍 Address: 11 Pres. Roxas St., Tondo, Manila, Philippines  
-        📞 Contact: 0935-451-8696  
-        📧 Email: cheiraelectronics@gmail.com  
-        🔗 Facebook: https://facebook.com/ChreiaElectronics
-
-        🕑 Operating Hours:
-        - Monday to Saturday, 9:00 AM – 6:00 PM  
-        - Closed on Sundays
-
-        💳 Payments: Cash, GCash, Maya, Bank Transfer  
-        📦 Pickup/Delivery available upon request (with fee)
-
-        📄 Policies:
-        1. Diagnostics first before pricing.
-        2. Warranty covers only the fixed issue.
-        3. Diagnostic fees are non-refundable.
-        4. Major appliances need appointment.
-
-        ❗ Unrelated questions → Respond:  
-        "I'm sorry, but I can only help you with questions related to Chreia Electronics' services and policies."
-      `
+      systemInstruction
     });
 
     const result = await model.generateContentStream(prompt);
@@ -55,7 +28,10 @@ export const chat_bot = async (req, res) => {
       fullResponse += chunk.text();
     }
 
-    console.log(fullResponse);
+    fullResponse = fullResponse
+    .replace(/```html/gi, "")
+    .replace(/```/g, "");
+
     return res.status(200).json({ message: fullResponse });
   } catch (err) {
     console.error('ChatBot Error:', err);
