@@ -42,7 +42,11 @@ const AssignTechnicianForm = ({ onCancel, requestData, updatedData }) => {
       const response = await update_data('/accept-request', payload);
 
       if (response) {
-        window.location.reload();
+        updatedData((prev) =>
+          prev.filter((r) => (r._id !== response._id ))
+        );
+        setIsLoading(false);
+        onCancel(false);
       }
       
     } catch (err) {

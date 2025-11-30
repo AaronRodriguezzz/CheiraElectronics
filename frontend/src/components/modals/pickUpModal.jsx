@@ -26,14 +26,14 @@ const PickUpModal = ({ onCancel, requestData, updatedData }) => {
             const response = await update_data(requestData.type === 'Online-Requests' ? '/update-request' : '/update-walkin', payload);
 
             if (response) {
-                console.log('response', response)
                 updatedData(prev => prev.filter(r => r._id !== requestData._id))
+                setIsLoading(false);
                 onCancel(false);
             }
         } catch (err) {
-        console.error('Failed to finish request:', err);
+            console.error('Failed to finish request:', err);
         } finally {
-        setIsLoading(false);
+            setIsLoading(false);
         }
     };
 

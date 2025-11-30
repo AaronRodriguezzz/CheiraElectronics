@@ -32,12 +32,14 @@ const FinishRequestModal = ({ onCancel, requestData, updatedData }) => {
 
       if (response) {
         updatedData((prev) => prev.filter((r) => r._id !== requestData._id));
+        setIsLoading(false);
         onCancel(false);
       }
     } catch (err) {
       console.error("Failed to finish request:", err);
     } finally {
       setIsLoading(false);
+      onCancel(false);
     }
   };
 

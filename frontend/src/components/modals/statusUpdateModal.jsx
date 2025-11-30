@@ -29,6 +29,8 @@ const UpdateRequestModal = ({ onCancel, requestData, updatedData, newStatus }) =
         updatedData((prev) =>
           prev.filter((r) => (r._id !== response._id ))
         );
+        setIsLoading(false);
+        onCancel(false);
       }
     } catch (err) {
       console.error('Failed to update request:', err);
