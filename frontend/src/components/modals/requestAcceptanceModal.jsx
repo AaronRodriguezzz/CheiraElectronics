@@ -43,12 +43,13 @@ const AssignTechnicianForm = ({ onCancel, requestData, updatedData }) => {
 
       if (response) {
         window.location.reload();
-        onCancel(false);
       }
+      
     } catch (err) {
       console.error('Error updating request:', err);
     } finally {
       setIsLoading(false);
+      onCancel(false);
     }
   };
 
