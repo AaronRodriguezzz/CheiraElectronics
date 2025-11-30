@@ -27,7 +27,7 @@ export default function Navbar({ setSideBarOpen }) {
 
         {/* Brand name */}
         <h1 className="text-2xl md:text-3xl font-bold text-orange-500 tracking-tight">
-          Cheira Electronics
+          Cheira Onehub
         </h1>
 
         {/* Desktop nav links */}
