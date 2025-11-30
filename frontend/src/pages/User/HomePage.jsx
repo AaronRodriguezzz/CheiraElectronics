@@ -40,26 +40,31 @@ export default function Home() {
       {/* ================= ABOUT US SECTION ================= */}
       <AnimatedSection>
         <div
-          className="block space-y-8 p-6 md:p-14 lg:p-16 md:flex justify-evenly items-center z-50 bg-black/70 backdrop-blur-sm rounded-xl mx-3 md:mx-6 mb-8"
+          className="relative block space-y-8 p-6 md:p-14 lg:p-16 md:flex justify-evenly items-center z-50 bg-black/70 backdrop-blur-sm rounded-xl mx-3 md:mx-6 mb-8"
           id="About Us"
         >
-          <div className="block w-full md:w-1/2 text-gray-200">
+          <div className="block w-full md:w-1/2 text-gray-200 relative z-50">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight text-orange-500">
               ABOUT US
             </h2>
             <p className="text-sm sm:text-base md:text-lg leading-relaxed">
-              At Cheira Electronics, we specialize in fast and reliable repairs
-              for home appliances, computers, and everyday tech. Our skilled
-              technicians are committed to quality service, honest pricing, and
-              making sure your devices work when you need them most.
+              Cheira Electronics Service Center is a trusted provider of electronics repair and maintenance services. 
+              Founded in 2012, the company has built a strong reputation for delivering reliable and efficient technical solutions to customers within its service area. 
               <br />
               <br />
-              We’re not just fixing gadgets — we’re helping people stay
-              connected.
+              Cheira Electronics Service Center is a TCL-accredited service partner, ensuring that its repair standards, technical capabilities, and customer support 
+              align with the quality expectations of the TCL brand
             </p>
           </div>
 
-          <div className="h-[250px] sm:h-[300px] md:h-[400px] w-full md:w-1/2 rounded-xl bg-[url('/img/electronics_Bg.png')] bg-cover bg-center shadow-lg" />
+          {/* Image container */}
+          <div className="relative w-full md:w-1/3">
+            {/* Overlay (behind the image) */}
+            <div className="absolute inset-0 rounded-xl bg-black/20 shadow-lg z-30" />
+
+            {/* Actual image */}
+            <div className="h-[250px] sm:h-[300px] md:h-[400px] w-full rounded-xl bg-[url('/img/shop_photo.jfif')] bg-cover bg-center shadow-lg relative z-20" />
+          </div>
         </div>
       </AnimatedSection>
 
